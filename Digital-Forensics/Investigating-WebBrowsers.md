@@ -5,7 +5,7 @@ This document details the steps taken to gain hands-on experience with **Windows
 
 💡 **This project was inspired by my learning in the** [**Blue Team Level 1**](https://www.securityblue.team/blue-team-level-1) **course, reinforcing key digital forensics concepts in a controlled environment. By applying real-world investigative techniques within a secure VM, I am able to deepen my understanding of forensic methodologies while gaining practical experience with industry-standard tools and software.
 
-You can find the setup of the secure VM in AWS here -> [EC2 VM](https://github.com/wilbcn/DigitalForensics/blob/main/AWS-SecureVM/README.md)
+You can find the setup of the secure VM in AWS here -> [EC2 VM](https://github.com/wilbcn/BlueTeam/blob/main/Digital-Forensics/EC2-HomeLab-Setup.md)
 
 ## 🎯 Goals
 - Create a **Non-Admin User** and simulate **suspicious activity**

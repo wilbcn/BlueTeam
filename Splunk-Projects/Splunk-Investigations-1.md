@@ -6,7 +6,7 @@ The goal is to detect, alert, and mitigate potential threats using Splunk SPL se
 
 By structuring our detection and response techniques around MITRE's T1003.008 (OS Credential Dumping), I ensure alignment with real-world security methodologies. This project also serves as a learning resource for developing Blue Team skills, including log analysis, alerting, and security monitoring.
 
-[Splunk Cloud Setup](https://github.com/wilbcn/Splunk/blob/main/Splunk-Cloud-HomeLab.md)
+[Splunk Cloud Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Cloud-HomeLab.md)
 
 ## 🎯 Goals
 ✅ Detect unauthorised access attempts on /etc/shadow and /etc/passwd.

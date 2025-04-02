@@ -11,7 +11,7 @@ This is a **scenario-based forensic project** in which an **insider threat actor
 💡 **This project was inspired by my learning in** [**Blue Team Level 1**](https://www.securityblue.team/blue-team-level-1), reinforcing key digital forensics concepts in a controlled environment. By applying **real-world investigative techniques** within a secure VM, I am deepening my understanding of forensic methodologies while gaining **hands-on experience with industry-standard tools**.
 
 📌 **AWS VM Setup for Forensics:**  
-You can find the full **AWS EC2 virtual machine setup guide** here → [EC2 VM](https://github.com/wilbcn/DigitalForensics/blob/main/AWS-SecureVM/README.md)
+You can find the full **AWS EC2 virtual machine setup guide** here → [EC2 VM](https://github.com/wilbcn/BlueTeam/blob/main/Digital-Forensics/EC2-HomeLab-Setup.md)
 
 ---
 

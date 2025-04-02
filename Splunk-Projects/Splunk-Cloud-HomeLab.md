@@ -293,7 +293,7 @@ This project served as a fundamental introduction to Splunk Universal Forwarders
 
 In the future I aim to expand on this project, building scenario-based investigations to simulate more security events. Additionally, carry out more advanced SPL searches to detect anomalies and trends, and to get familiar with the SPL language. Also, creating alerts and reports in splunk, much like a cybersecurity professional would do in a real world setting. Finally, leveraging dashboards for proactive monitoring. 
 
-[Follow up Project](https://github.com/wilbcn/Splunk/blob/main/Splunk-Investigations.md)
+[Follow up Project](https://github.com/wilbcn/Splunk/blob/main/Splunk-Investigations-1.md)
 
 
 

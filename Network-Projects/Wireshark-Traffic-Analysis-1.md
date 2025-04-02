@@ -30,7 +30,7 @@ Once the `.pcap` file was extracted using the password `infected<date>`, I loade
 
 <img width="1439" alt="image" src="https://github.com/user-attachments/assets/373fa684-e2b9-442e-9865-83a7a71f1319" />
 
-### 1.1 Initial PCAP analysis
+### 1.1 Initial PCAP analysis - Leveraging Wireshark Statistics
 The first step after loading the capture was to review its basic properties via **Statistics → Capture File Properties**. This pane provides essential metadata that helps establish a baseline understanding of the capture. Key findings included:
 - Number of packets captured: 1633
 - SHA1 Hash: 1c8f8d8fc4fa0872de90c126e9187884b54812ae
@@ -40,6 +40,7 @@ The first step after loading the capture was to review its basic properties via 
 
 These hashes are useful for ensuring integrity if the file is shared or submitted as evidence. Additionally, this section gives you details on the time span of the capture, data link type, and whether any packets were dropped, which can all affect analysis quality.
 
+### 1.2 Investigating Protocol Hierarchy
 Next, I analyed how many packets were associated with key protocols via **Statistics -> Protocol Hierarchy**. This step helps build a profile of the network activity observed. Key findings include:
 - TCP Packets: 1631
 - HTTP Packets: 10
@@ -51,6 +52,12 @@ Next, I analyed how many packets were associated with key protocols via **Statis
 - IPv4 Packets: 100% (no IPv6 packets)
 
 <img width="1152" alt="image" src="https://github.com/user-attachments/assets/37dbc587-8b67-4966-8630-a8f44fb4e0d7" />
+
+### 1.3 Investigating Resolved Addresses
+Next, I enabled **Name Resolution** for addresses, and then **Statistics -> Resolved Addresses**. This may allow us to spot suspicious or unusual domains from an instant glance. In our example PCAP, we already are beginning to see some red flags, given the domain `makemoneyeasywith.me`. This is definately worth investigating in later steps of this project and investigation. 
+
+<img width="617" alt="image" src="https://github.com/user-attachments/assets/7570f8e1-3584-4e36-af89-81bae09ddb4a" />
+
 
 
 

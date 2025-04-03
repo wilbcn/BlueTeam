@@ -19,7 +19,7 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 ## 📖 Project Walkthrough: Analyzing a Real-World PCAP in Wireshark
 This section showcases the steps and thought process behind my decisions to carry out this project. 
 
-### 1. Getting the sample PCAP file. Initial file analysis.
+### 1. Getting the sample PCAP file. Baseline file analysis.
 To kick off this project, I booted up my secure AWS-based Homelab EC2 instance. I then downloaded a real-world packet capture file from [Malware-Traffic-Analysis.net](https://www.malware-traffic-analysis.net/2019/06/24/index.html), which is also noted in the **Tools & Resources** section.
 
 Once the `.pcap` file was extracted using the password `infected<date>`, I loaded it into Wireshark for investigation.
@@ -88,6 +88,30 @@ Verdict: Highly suspicious! Sent nearly 1MB of data to our internal host.
 - Host sent 13 packets to this IP address
 
 Verdict: Appears to be a one time connection, possibly a fairly large download. Definately worth investigating further.
+
+### 1.6 Expert Information Analysis
+
+To close off my artifact gathering phase, I checked **Analyse → Expert Information**.
+
+![image](https://github.com/user-attachments/assets/f6c6e5e7-e91b-44f9-85dc-6e6b57ff5398)
+
+In this capture, several key items are highlighted:
+
+- 12 TCP connection resets (RST) — abrupt connection terminations, possibly due to firewalls, payload rejection, or evasive behavior
+- 390 suspected retransmissions — a high count, possibly indicating unstable connections, scanning activity, or packet filtering
+- Several standard TCP events like SYN, FIN, and ACK — indicating typical connection activity
+
+**🧠 Verdict:**  
+The presence of many retransmissions and reset packets further supports the idea that the host (`10.6.24.101`) was either:
+- Reaching out to a large number of hosts (likely scanning or beaconing)
+- Or receiving responses from systems that then refused or dropped the connection (malware defense or C2 instability)
+
+### 2. Stream & Payload Analysis
+The plan of this phase was to investigate the actual contents of the suspicious traffic. To do this, I will determine the nature of the traffic, and uncover any other signs of suspicious/malicious activity.
+
+### 2.1 Investigate streams
+
+
 
 
 

@@ -176,6 +176,8 @@ Multiple functions contain extremely long strings assigned to variables (e.g., v
 - Malicious redirects
 - Loader/downloader stages of malware
 
+To investigate further, I decided to decode these payloads using CyberChef.
+
 ### 2.4 Decoding Base64 in CyberChef
 
 

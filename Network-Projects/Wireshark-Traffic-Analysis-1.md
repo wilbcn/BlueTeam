@@ -109,7 +109,35 @@ The presence of many retransmissions and reset packets further supports the idea
 ### 2. Stream & Payload Analysis
 The plan of this phase was to investigate the actual contents of the suspicious traffic. To do this, I will determine the nature of the traffic, and uncover any other signs of suspicious/malicious activity.
 
-### 2.1 Investigate streams
+### 2.1 Identify the ports of interest
+Next, I returned to **statistics -> conversations**, and navigated to TCP.
+
+![image](https://github.com/user-attachments/assets/fa057803-85ed-402a-83f6-985ee0fe2f8a)
+
+Key takeaways:
+`188.222.26.48`
+- Port B: 80 - `http`
+- Bytes B -> A: `861kB`
+- Stream ID: `3`
+
+This is our main payload candidate.
+
+`195.154.255.65`
+- Non-standard port, `2287`
+- `25kB` sent to the local host
+
+Could be C2 or dropper delivery on a custom port.
+
+### 2.2 Follow the streams
+To investigate further, I ran a filter in Wireshark on `tcp.stream == 3`, which is the unique TCP connection between our host `10.6.24.101` and the suspicious IP `188.222.26.48`
+
+```
+tcp.stream == 3
+```
+
+After applying the filter, I right clicked and followed the TCP stream. Initial view:
+
+<img width="1432" alt="image" src="https://github.com/user-attachments/assets/b0265131-2300-4901-994d-9cb697d0df1d" />
 
 
 

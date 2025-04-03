@@ -13,7 +13,9 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 
 ## Tools & Resources
 - [PCAP Analysed](https://www.malware-traffic-analysis.net/2019/06/24/index.html)
-
+- Wireshark
+- Amazon EC2 Instances
+- [CyberChef](https://gchq.github.io/CyberChef/)
 ---
 
 ## 📖 Project Walkthrough: Analyzing a Real-World PCAP in Wireshark
@@ -155,7 +157,27 @@ By navigating to **File -> Export Objects -> HTTP**, I have now discovered 2 add
 
 ![image](https://github.com/user-attachments/assets/b5665fc9-58b9-4c43-acb2-0072691cd917)
 
-Lets start with the first packet `text/html`. 
+Lets start with the first packet `text/html`. As we are using a secure VM, I will be opening this in notepad++. There will be no execution of any files, this project is purely for analysis and self-development. 
+
+In notepad++, I then ran an initial analysis of this file. Searching via keyword searches such as `script`, `iframe`, `a href`, etc. `Script`, actually returned 14 matches in the file.
+
+<img width="1434" alt="image" src="https://github.com/user-attachments/assets/7147702e-d5ab-4f3c-b612-be683c4ac052" />
+
+Inside this file, I was able to identify many key artifacts, such as:
+- `["createElement"]("script")`
+
+This indicates obfuscated or malicious JavaScript to dynamically inject new scripts into the DOM.
+
+- various base64 encoded text -> `var s = ....`
+
+Multiple functions contain extremely long strings assigned to variables (e.g., var s = "..."). These are likely encoded payloads (Base64, hex, or custom encoding) which are then decoded and injected as executable script. This is commonly seen in:
+
+- Drive-by downloads
+- Malicious redirects
+- Loader/downloader stages of malware
+
+### 2.4 Decoding Base64 in CyberChef
+
 
 
 

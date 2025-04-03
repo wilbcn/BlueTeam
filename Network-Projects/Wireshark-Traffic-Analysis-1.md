@@ -1,6 +1,6 @@
  📡 Wireshark Project 1: Traffic Analysis & Scan Detection
 
-This project is part of my Blue Team learning journey. It focuses on using **Wireshark** to investigate real network traffic, understand protocol behaviors, and detect network scans like those performed by tools such as **Nmap**.
+This project is part of my Blue Team learning journey. It focuses on using **Wireshark** to investigate real network traffic, understand protocol behaviors, and detect network scans like those performed by tools such as **Nmap**. This project was carried out in a secure virtual environment, leveraging AWS EC2 instances with tight security rules.
 
 ## 🎯 Objectives
 
@@ -114,7 +114,7 @@ Next, I returned to **statistics -> conversations**, and navigated to TCP.
 
 ![image](https://github.com/user-attachments/assets/fa057803-85ed-402a-83f6-985ee0fe2f8a)
 
-Key takeaways:
+Key Takeaways:
 `188.222.26.48`
 - Port B: 80 - `http`
 - Bytes B -> A: `861kB`
@@ -139,7 +139,23 @@ After applying the filter, I right clicked and followed the TCP stream. Initial 
 
 <img width="1432" alt="image" src="https://github.com/user-attachments/assets/b0265131-2300-4901-994d-9cb697d0df1d" />
 
+Key Takeaways:
+- `GET /?NDE2NzQw&lgPow ..... HTTP/1.1` Internal host makes a `GET` request to the malicious server
+- The response back: A windows executable, of roughly 828kB, which is what we observed earlier
 
+<img width="310" alt="image" src="https://github.com/user-attachments/assets/69079d3b-04f6-4b62-ac1a-d4401f66bf35" />
+
+Lets now export the HTTP objects to continue with our investigation. 
+
+### 2.3 Investigating HTTP objects
+By navigating to **File -> Export Objects -> HTTP**, I have now discovered 2 additional details that require further analysis. I exported all 3 to my desktop. 
+- Packet 95: The initial landing page
+- Packet 106: A shockwave flash exploit.
+- Packet 999: The malicious payload.
+
+![image](https://github.com/user-attachments/assets/b5665fc9-58b9-4c43-acb2-0072691cd917)
+
+Lets start with the first packet `text/html`. 
 
 
 

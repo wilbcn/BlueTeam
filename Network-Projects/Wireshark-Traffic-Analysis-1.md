@@ -234,3 +234,6 @@ Key takeaways:
 -  The .tw1.ru subdomain pattern is commonly seen in shady or short-lived domains used in attacks.
 
 Verdict: The IP was actively involved in malicious behavior as seen in the packet capture and JavaScript deobfuscation. It appears to host malware infrastructure, likely C2 or a second-stage payload server. Although WHOIS records list the IP as belonging to Sky UK Limited (UK), AbuseIPDB indicated the IP is currently hosted by TimeWeb Ltd., a Russian hosting provider. This mismatch is a red flag.
+
+### 4. Investigating the XSF
+

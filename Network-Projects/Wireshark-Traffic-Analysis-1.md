@@ -156,33 +156,21 @@ This is our main payload candidate.
 Could be C2 or dropper delivery on a custom port.
 
 ### 2.2 Follow the streams
-To investigate further, I ran a filter in Wireshark on `tcp.stream == 3`, which is the unique TCP connection between our host `10.6.24.101` and the suspicious IP `188.222.26.48`
+To investigate further, I navigated to **Statistics -> Conversations -> TCP**, and filtered on various stream ids. After applying the filters, I right clicked and followed the TCP streams.
 
-```
-tcp.stream == 3
-```
-
-After applying the filter, I right clicked and followed the TCP stream. Initial view:
+<img width="956" alt="image" src="https://github.com/user-attachments/assets/2db57923-0d1e-4c7e-ab03-42fafbffbf94" />
+- Rig EK sends flash exploit (later on we discover this)
 
 <img width="1432" alt="image" src="https://github.com/user-attachments/assets/b0265131-2300-4901-994d-9cb697d0df1d" />
 
-Key Takeaways:
 - `GET /?NDE2NzQw&lgPow ..... HTTP/1.1` Internal host makes a `GET` request to the malicious server
 - The response back: A windows executable, of roughly 828kB, which is what we observed earlier
 
 <img width="310" alt="image" src="https://github.com/user-attachments/assets/69079d3b-04f6-4b62-ac1a-d4401f66bf35" />
 
-I also invistaged the other flagged IP address, `195.154.255.65`. 
+- Post infection traffic over TCP port `2287`.
 
-Filter ran:
-
-```
-ip.dst == 195.154.255.65
-```
-<img width="1177" alt="image" src="https://github.com/user-attachments/assets/0b867834-1901-4a6d-a2cd-56c765e62f23" />
-
-We can see the non-standard port I noted earlier, `2287`. 
-
+<img width="1430" alt="image" src="https://github.com/user-attachments/assets/f78330fe-f379-4d52-9079-154abd7e9098" />
 
 Lets now export the HTTP objects to continue with our investigation. 
 
@@ -329,17 +317,32 @@ Verdict:
 Just because a file isn’t flagged doesn’t mean it’s safe. This may be a stage-2 payload designed to execute only under specific conditions — for example, when run by a real victim’s machine or after sandbox evasion checks.
 
 ### 5. Summary and Blue Team Recommendations
-This project served as an introduction into inspecting malware sample PCAPs, gaining hands-on experience in Wireshark not only on its UI but experience on how to spot artifacts and IOCs. Furthermore, I was able to leverage many analysis tools to conduct a fundemental investigation, practising the knowledge I have gained from Blue Team Level 1, and TryHackMe CTFs. 
+This project was a deep dive into real-world network traffic analysis, using Wireshark to dissect a malicious packet capture (PCAP) file from a real Rig Exploit Kit (EK) infection chain. The hands-on experience gained through this investigation significantly enhanced my skills in packet analysis, protocol comprehension, and identifying Indicators of Compromise (IOCs).
 
-In this project, we discovered that a user, most likely uknowingly, visited a malicious website `makemoneyeasywith.me`, which then redirected the user to `188.225.26.48`, where a malicious payload was downloaded. As mentioned, this payload is tied to `CVE-2018-4878`, a malicious exploit in Adobe Flash.
+Through this investigation, I:
+- Gained proficiency with Wireshark’s UI, filters, and statistical views
+- Practiced analyzing common protocols like HTTP, DNS, TCP, and ICMP
+- Identified a malvertising redirect chain leading to a Flash-based exploit delivery
+- Correlated suspicious domains and IPs with external intelligence (VirusTotal, WHOIS, AbuseIPDB)
+- Identified CVE-2018-4878 — a critical Adobe Flash vulnerability used in the exploit
+- Exported and analyzed malicious HTTP objects including:
+  - A redirector/landing page
+  - An obfuscated .xsf Flash exploit
+  - A potential stage-2 malware payload
 
-For future development and growth, I now plan to tackle various other training PCAPS, found here [Training PCAPS](https://www.malware-traffic-analysis.net/training-exercises.html)
+In particular, I was able to link the exploit delivery and post-infection traffic back to 188.225.26.48, a confirmed malicious IP. The Flash file exploited a known vulnerability and the downloaded executable, while not flagged by AV, matched the expected behavior and size of a second-stage payload, potentially fileless or sandbox-aware.
+
+This project marks a significant milestone in my Blue Team journey, reinforcing both analytical process and practical tooling. For future development and growth, I now plan to tackle various other training PCAPS, found here [Training PCAPS](https://www.malware-traffic-analysis.net/training-exercises.html)
 
 Security Recommendations:
 - Remove Adove Flash, as it is a discontinued software platform, with a known vulnerability. `CVE-2018-4878`
 - Regularly patch software
-- Block the identified IPs and Domains:
-  -
+- Block the malicious IPs and Domains:
+  - makemoneyeasywith.me
+  - 188.225.26.48
+  - 195.154.255.65
+ 
+- User awareness training on how to identify malicious urls. Its possible 
 
 
 

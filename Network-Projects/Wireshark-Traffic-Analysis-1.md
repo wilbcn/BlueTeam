@@ -19,6 +19,7 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 - [AbuseIPDB](https://www.abuseipdb.com/)
 - [urlscan.io](https://urlscan.io/result/0196005a-b8b1-724a-b146-be02d738fddb/)
 - [httpstatus.io](https://httpstatus.io/)
+- [Hybrid-Analysis](https://www.hybrid-analysis.com/)
 
 - Wireshark
 - Amazon EC2 Instances
@@ -184,7 +185,7 @@ Multiple functions contain extremely long strings assigned to variables (e.g., v
 To investigate further, I decided to decode these payloads using CyberChef.
 
 ### 2.4 Decoding Base64 in CyberChef
-I leveraged ChatGPT to help me analyse this output, as I am seeing this kind of data for the first time. This was a great learning process, and through this tool I was able to pick out several key artifacts. 
+I leveraged ChatGPT to help me analyse this output, as I am seeing this kind of data for the first time. This was a great learning process, and through this tool I was able to pick out several key artifacts. Using CyberChef, I decoded some parts of the first object exported, which contained numerous base64 encoded strings.
 
 ![image](https://github.com/user-attachments/assets/16df75c8-6c6c-4011-8659-0ef5db9d25c7)
 
@@ -235,5 +236,43 @@ Key takeaways:
 
 Verdict: The IP was actively involved in malicious behavior as seen in the packet capture and JavaScript deobfuscation. It appears to host malware infrastructure, likely C2 or a second-stage payload server. Although WHOIS records list the IP as belonging to Sky UK Limited (UK), AbuseIPDB indicated the IP is currently hosted by TimeWeb Ltd., a Russian hosting provider. This mismatch is a red flag.
 
-### 4. Investigating the XSF
+### 4. Leveraging Hybrid-Analysis to investigate the remaining and all files
+<intro>
+
+Next, I generated hashes in powershell for our 3 files. Example command ran, which generates SHA256 hash:
+
+```
+Get-FileHash packet_95
+```
+
+output
+
+```
+SHA256          F8D568A1A76ECC5382A7E4BADA5CE5241D0DDC0CDCEA1A494925CBD89A2C2B63       C:\Users\Administrator\Desktop\Wireshark PCAPS\packet_95
+```
+
+Lets investigate the hash of the landing page using `Hybrid-Analysis`.
+
+<img width="1407" alt="image" src="https://github.com/user-attachments/assets/2e5e95f9-ac15-46be-a572-96590dfa6a79" />
+
+Scan results:
+
+<img width="990" alt="image" src="https://github.com/user-attachments/assets/5eaeeb9f-4c27-413b-ad8f-c27e7292363f" />
+
+Here we can clearly say that the initial landing page is confirmed malicious. Multiple antivirus engines have flagged this file, and have labelled it as a Trojan. Trojan malware misleads users of its true intent by disguising itself as a normal program.
+
+Next, I scanned XSF files SHA256 hash using the same approach. 
+
+<img width="990" alt="image" src="https://github.com/user-attachments/assets/a7005ba4-bb00-4782-9f69-4e3c8694dba8" />
+
+Scan results:
+
+Again, this file has multiple red flags. It has multiple labels including Trojan, Script, and Exploit. We also are given a CVE - `Cve-2018-4878.` [CVE Overview](https://www.cve.org/CVERecord?id=CVE-2018-4878)
+
+Using cve.org, we are able to find out more information about this file, which exploits vulnerabilities in Adobe Flash Player.
+
+![image](https://github.com/user-attachments/assets/fb60e485-54f6-4aa2-9624-3349464bcad4)
+
+
+
 

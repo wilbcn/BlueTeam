@@ -16,6 +16,10 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 - Wireshark
 - Amazon EC2 Instances
 - [CyberChef](https://gchq.github.io/CyberChef/)
+- [VirusTotal](https://www.virustotal.com/gui/)
+- [WHOIS](https://whois.domaintools.com/)
+- [AbuseIPDB](https://www.abuseipdb.com/)
+
 ---
 
 ## 📖 Project Walkthrough: Analyzing a Real-World PCAP in Wireshark
@@ -149,7 +153,7 @@ Key Takeaways:
 
 Lets now export the HTTP objects to continue with our investigation. 
 
-### 2.3 Investigating HTTP objects
+### 2.3 Extracting and Analyzing HTTP Objects in Wireshark
 By navigating to **File -> Export Objects -> HTTP**, I have now discovered 2 additional details that require further analysis. I exported all 3 to my desktop. 
 - Packet 95: The initial landing page
 - Packet 106: A shockwave flash exploit.
@@ -157,9 +161,7 @@ By navigating to **File -> Export Objects -> HTTP**, I have now discovered 2 add
 
 ![image](https://github.com/user-attachments/assets/b5665fc9-58b9-4c43-acb2-0072691cd917)
 
-Lets start with the first packet `text/html`. As we are using a secure VM, I will be opening this in notepad++. There will be no execution of any files, this project is purely for analysis and self-development. 
-
-In notepad++, I then ran an initial analysis of this file. Searching via keyword searches such as `script`, `iframe`, `a href`, etc. `Script`, actually returned 14 matches in the file.
+Starting with the first packet (text/html), I opened the file in `notepad++` within a secure analysis VM. This ensures no execution occurs — the project is strictly static analysis and self-development. I then ran an initial analysis of this file, searching via keyword searches such as `script`, `iframe`, `a href`, etc. `Script`, actually returned 14 matches in the file.
 
 <img width="1434" alt="image" src="https://github.com/user-attachments/assets/7147702e-d5ab-4f3c-b612-be683c4ac052" />
 
@@ -179,9 +181,19 @@ Multiple functions contain extremely long strings assigned to variables (e.g., v
 To investigate further, I decided to decode these payloads using CyberChef.
 
 ### 2.4 Decoding Base64 in CyberChef
+I leveraged ChatGPT to help me analyse this output, as I am seeing this kind of data for the first time. This was a great learning process, and through this tool I was able to pick out several key artifacts. 
 
+![image](https://github.com/user-attachments/assets/16df75c8-6c6c-4011-8659-0ef5db9d25c7)
 
+![image](https://github.com/user-attachments/assets/a6be7043-b989-4362-9f7b-e6c5acac245c)
 
+- The use of unescape() and a hardcoded XOR key ("l0I9r") is common in malware obfuscation. It decrypts embedded or downloaded strings, hiding malicious payloads from static detection.
+- C2 Communication to Suspicious IP. This function sends a request to a suspicious IP (188.225.26.48) with an obfuscated, parameter-heavy URL and a decryption key. This is likely a payload delivery or second-stage downloader command.
+
+This function sends a request to a suspicious IP (188.225.26.48) with an obfuscated, parameter-heavy URL and a decryption key.
+This same IP was identified earlier in our Wireshark HTTP object list (Packet 95), confirming it as the Command & Control (C2) server involved in the attack.
+
+Before proceeding to investigate the next packet (x-shockwave-flash), I decided to investigate this confirmed malicious IP address using `WHOIS`, `VirusTotal`, and `AbuseIPDB`.
 
 
 

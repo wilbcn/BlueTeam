@@ -1,4 +1,4 @@
- 📡 Wireshark Project 1: Traffic Analysis & Scan Detection
+ 📡 Wireshark Project 1: Traffic Analysis & Scan Detection (THIS IS A WIP)
 
 This project is part of my Blue Team learning journey. It focuses on using **Wireshark** to investigate real network traffic, understand protocol behaviors, and detect network scans like those performed by tools such as **Nmap**. This project was carried out in a secure virtual environment, leveraging AWS EC2 instances with tight security rules.
 
@@ -237,9 +237,11 @@ Key takeaways:
 Verdict: The IP was actively involved in malicious behavior as seen in the packet capture and JavaScript deobfuscation. It appears to host malware infrastructure, likely C2 or a second-stage payload server. Although WHOIS records list the IP as belonging to Sky UK Limited (UK), AbuseIPDB indicated the IP is currently hosted by TimeWeb Ltd., a Russian hosting provider. This mismatch is a red flag.
 
 ### 4. Leveraging Hybrid-Analysis to investigate the remaining and all files
-<intro>
+In this phase, I use Hybrid Analysis to assess the three suspicious files extracted via Wireshark's HTTP object export. This tool allows me to perform sandbox-based static and dynamic analysis, helping to uncover malware behavior even if a file evades traditional antivirus detection.
 
-Next, I generated hashes in powershell for our 3 files. Example command ran, which generates SHA256 hash:
+To begin, I generated SHA256 hashes for each file using PowerShell. This is useful for identifying files across platforms, verifying integrity, and performing lookups on services like VirusTotal and Hybrid Analysis.
+
+Example powershell command used:
 
 ```
 Get-FileHash packet_95
@@ -259,20 +261,54 @@ Scan results:
 
 <img width="990" alt="image" src="https://github.com/user-attachments/assets/5eaeeb9f-4c27-413b-ad8f-c27e7292363f" />
 
-Here we can clearly say that the initial landing page is confirmed malicious. Multiple antivirus engines have flagged this file, and have labelled it as a Trojan. Trojan malware misleads users of its true intent by disguising itself as a normal program.
+Key takeaways:
+- Detected by multiple antivirus vendors
+- Classified as Trojan – suggesting deceptive functionality, likely a loader or redirector
+- Behavioral indicators suggest it initiates further downloads and potentially injects scripts
 
 Next, I scanned XSF files SHA256 hash using the same approach. 
 
 <img width="990" alt="image" src="https://github.com/user-attachments/assets/a7005ba4-bb00-4782-9f69-4e3c8694dba8" />
 
-Scan results:
+Key takeaways:
+- Detected as Trojan / Exploit / Script
+- Exploits CVE-2018-4878, a critical vulnerability in Adobe Flash Player
+- Designed to execute arbitrary code via SWF files, typically used in drive-by attacks
 
-Again, this file has multiple red flags. It has multiple labels including Trojan, Script, and Exploit. We also are given a CVE - `Cve-2018-4878.` [CVE Overview](https://www.cve.org/CVERecord?id=CVE-2018-4878)
+Using cve.org, we are able to find out more information about this file, which exploits vulnerabilities in Adobe Flash Player.
+[CVE Overview](https://www.cve.org/CVERecord?id=CVE-2018-4878)
 
 Using cve.org, we are able to find out more information about this file, which exploits vulnerabilities in Adobe Flash Player.
 
 ![image](https://github.com/user-attachments/assets/fb60e485-54f6-4aa2-9624-3349464bcad4)
 
+Lastly, I ran a scan on the 3rd object, x-msdownload file.
+
+<img width="1149" alt="image" src="https://github.com/user-attachments/assets/e436735d-4bee-43ad-8036-82a599cefd0d" />
+
+Key takeaways:
+- Surprisingly, 0 antivirus detections
+- Hybrid Analysis did not flag this as malicious
+- Minimal observable behavior during sandbox execution
+
+However, we know for a fact that:
+- Delivered from a previously confirmed malicious IP
+- Large file size (~800kB), consistent with observed transfer
+- Behavior may be delayed, encrypted, or triggered by specific runtime arguments (common in droppers or fileless malware)
+
+Verdict:
+Just because a file isn’t flagged doesn’t mean it’s safe. This may be a stage-2 payload designed to execute only under specific conditions — for example, when run by a real victim’s machine or after sandbox evasion checks.
+
+### 5. Summary and Blue Team Recommendations
+This project served as an introduction into inspecting malware sample PCAPs, gaining hands-on experience in Wireshark not only on its UI but experience on how to spot artifacts and IOCs. Furthermore, I was able to leverage many analysis tools to conduct a fundemental investigation, practising the knowledge I have gained from Blue Team Level 1, and TryHackMe CTFs. 
+
+For future development and growth, I now plan to tackle various other training PCAPS, found here [Training PCAPS](https://www.malware-traffic-analysis.net/training-exercises.html)
+
+Security Recommendations:
+- Remove Adove Flash, as it is a discontinued software platform, with a known vulnerability. `CVE-2018-4878`
+- Regularly patch software
+- Block the identified IPs and Domains:
+  -
 
 
 

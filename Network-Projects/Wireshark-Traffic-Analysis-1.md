@@ -174,7 +174,35 @@ To investigate further, I navigated to **Statistics -> Conversations -> TCP**, a
 
 Lets now export the HTTP objects to continue with our investigation. 
 
-### 2.3 Extracting and Analyzing HTTP Objects in Wireshark
+### 2.3 Tracing back to the first attack vector
+Now that we understand that a redirect the user from a suspicious domain to a malicious landing page, I want to dig deeper into how this happened in the first place. Remember that earlier, we identified that there were 55 SMTP packets in this PCAP via **Protocol Hierarchy**.
+
+Filter ran:
+
+```
+smtp
+```
+
+![image](https://github.com/user-attachments/assets/fc9523f6-10cd-4bc5-8c53-0dd2a144cf56)
+
+Packet 1157 looks suspicious! Below are some of the artifacts.
+- From: tgeorge@alum.rpi.edu
+- To: innocent.nshizirungu@edu.janakkala.fi
+- Subject: "Erectile Meds"
+- Content-Type: text/plain
+
+By following the TCP stream for this packet 1157, we are able to identify further why this is malicious activity.
+
+![image](https://github.com/user-attachments/assets/4e297ea5-4261-43b7-9878-ca90e8f3fed2)
+
+It is becoming obvious now that this is our lure!
+- We have a legitimate file hosting service (google), to evade possible detection.
+- The email content is highly suspicious. Why do we have a google drive link in relation to "Erectile Meds". Possibly this was done to provoke curiosity from the user to click the link.
+- The link in the email starts off the malicious process. Victim clicks the Drive link, downloads and opens the file, gets redirected or executes exploit chain that triggers connection to makemoneyeasywith.me which redirects to 188.225.26.48. Flash exploit → Malware download!
+
+I will continue with this investigation to practive leveraring other tools and to continue using Wireshark software for more hand-on experience.
+
+### 2.4 Extracting and Analyzing HTTP Objects in Wireshark
 By navigating to **File -> Export Objects -> HTTP**, I have now discovered 2 additional details that require further analysis. I exported all 3 to my desktop. 
 - Packet 95: The initial landing page
 - Packet 106: A shockwave flash exploit.
@@ -201,7 +229,7 @@ Multiple functions contain extremely long strings assigned to variables (e.g., v
 
 To investigate further, I decided to decode these payloads using CyberChef.
 
-### 2.4 Decoding Base64 in CyberChef
+### 2.5 Decoding Base64 in CyberChef
 I leveraged ChatGPT to help me analyse this output, as I am seeing this kind of data for the first time. This was a great learning process, and through this tool I was able to pick out several key artifacts. Using CyberChef, I decoded some parts of the first object exported, which contained numerous base64 encoded strings.
 
 ![image](https://github.com/user-attachments/assets/16df75c8-6c6c-4011-8659-0ef5db9d25c7)
@@ -320,7 +348,7 @@ Just because a file isn’t flagged doesn’t mean it’s safe. This may be a st
 This project was a deep dive into real-world network traffic analysis, using Wireshark to dissect a malicious packet capture (PCAP) file from a real Rig Exploit Kit (EK) infection chain. The hands-on experience gained through this investigation significantly enhanced my skills in packet analysis, protocol comprehension, and identifying Indicators of Compromise (IOCs).
 
 Through this investigation, I:
-- Gained proficiency with Wireshark’s UI, filters, and statistical views
+- Gained proficiency with Wireshark’s UI, filters, and statistical views. This was fairly new to me, so perhaps some of these checks were not required, it was good practice to leverage as much as possible through wireshark.
 - Practiced analyzing common protocols like HTTP, DNS, TCP, and ICMP
 - Identified a malvertising redirect chain leading to a Flash-based exploit delivery
 - Correlated suspicious domains and IPs with external intelligence (VirusTotal, WHOIS, AbuseIPDB)
@@ -341,8 +369,9 @@ Security Recommendations:
   - makemoneyeasywith.me
   - 188.225.26.48
   - 195.154.255.65
- 
-- User awareness training on how to identify malicious urls. Its possible 
 
+- Create stricter rules on inbound emails with attachments
+- Implement SPF, DKIM, and DMARC checks
+- User awareness training! This all started because a user downloaded and ran a malicious google drive link they received via a phishing email.
 
-
+Please check out my other wireshark investigations!

@@ -119,8 +119,25 @@ The presence of many retransmissions and reset packets further supports the idea
 ### 2. Stream & Payload Analysis
 The plan of this phase was to investigate the actual contents of the suspicious traffic. To do this, I will determine the nature of the traffic, and uncover any other signs of suspicious/malicious activity.
 
-### 2.1 Identify the ports of interest
-Next, I returned to **statistics -> conversations**, and navigated to TCP.
+### 2.1 Investigating the suspicious domain 
+Tracking back to the initial load up of this PCAP file, we came accross a suspicious domain: `makemoneyeasywith.me` which I noted warranted further investigation. 
+
+I ran the below filter in Wireshark, to filter for HTTP GET requests.
+
+```
+http.request.method == "GET"
+```
+
+By right clicking and following the TCP stream, we are presented with supportive information to our earlier findings.
+
+<img width="957" alt="image" src="https://github.com/user-attachments/assets/ba675358-f148-42e5-8ff9-109c48e088b7" />
+
+This is a 302 Redirect / **Malvertising** from makemoneyeasywith.me to 188.225.26.48. A quick `VirusTotal` search further confirms that this domain is malicious.
+
+![image](https://github.com/user-attachments/assets/32be3a7c-4423-450b-88d8-a80e7638acc0)
+
+### 2.2 Identify the ports of interest
+Continuining on with our investigation, I returned to **statistics -> conversations**, and navigated to TCP.
 
 ![image](https://github.com/user-attachments/assets/fa057803-85ed-402a-83f6-985ee0fe2f8a)
 
@@ -154,6 +171,18 @@ Key Takeaways:
 - The response back: A windows executable, of roughly 828kB, which is what we observed earlier
 
 <img width="310" alt="image" src="https://github.com/user-attachments/assets/69079d3b-04f6-4b62-ac1a-d4401f66bf35" />
+
+I also invistaged the other flagged IP address, `195.154.255.65`. 
+
+Filter ran:
+
+```
+ip.dst == 195.154.255.65
+```
+<img width="1177" alt="image" src="https://github.com/user-attachments/assets/0b867834-1901-4a6d-a2cd-56c765e62f23" />
+
+We can see the non-standard port I noted earlier, `2287`. 
+
 
 Lets now export the HTTP objects to continue with our investigation. 
 
@@ -301,6 +330,8 @@ Just because a file isn’t flagged doesn’t mean it’s safe. This may be a st
 
 ### 5. Summary and Blue Team Recommendations
 This project served as an introduction into inspecting malware sample PCAPs, gaining hands-on experience in Wireshark not only on its UI but experience on how to spot artifacts and IOCs. Furthermore, I was able to leverage many analysis tools to conduct a fundemental investigation, practising the knowledge I have gained from Blue Team Level 1, and TryHackMe CTFs. 
+
+In this project, we discovered that a user, most likely uknowingly, visited a malicious website `makemoneyeasywith.me`, which then redirected the user to `188.225.26.48`, where a malicious payload was downloaded. As mentioned, this payload is tied to `CVE-2018-4878`, a malicious exploit in Adobe Flash.
 
 For future development and growth, I now plan to tackle various other training PCAPS, found here [Training PCAPS](https://www.malware-traffic-analysis.net/training-exercises.html)
 

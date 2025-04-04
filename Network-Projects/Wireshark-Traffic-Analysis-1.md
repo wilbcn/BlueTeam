@@ -13,12 +13,15 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 
 ## Tools & Resources
 - [PCAP Analysed](https://www.malware-traffic-analysis.net/2019/06/24/index.html)
-- Wireshark
-- Amazon EC2 Instances
 - [CyberChef](https://gchq.github.io/CyberChef/)
 - [VirusTotal](https://www.virustotal.com/gui/)
 - [WHOIS](https://whois.domaintools.com/)
 - [AbuseIPDB](https://www.abuseipdb.com/)
+- [urlscan.io](https://urlscan.io/result/0196005a-b8b1-724a-b146-be02d738fddb/)
+- [httpstatus.io](https://httpstatus.io/)
+
+- Wireshark
+- Amazon EC2 Instances
 
 ---
 
@@ -193,8 +196,41 @@ I leveraged ChatGPT to help me analyse this output, as I am seeing this kind of 
 This function sends a request to a suspicious IP (188.225.26.48) with an obfuscated, parameter-heavy URL and a decryption key.
 This same IP was identified earlier in our Wireshark HTTP object list (Packet 95), confirming it as the Command & Control (C2) server involved in the attack.
 
-Before proceeding to investigate the next packet (x-shockwave-flash), I decided to investigate this confirmed malicious IP address using `WHOIS`, `VirusTotal`, and `AbuseIPDB`.
+Before proceeding to investigate the next packet (x-shockwave-flash), I decided to investigate this confirmed malicious IP address `188.222.26.48`, using `WHOIS`, `VirusTotal`, and `AbuseIPDB`.
 
+### 3. Investigating the malicious IP addresses using web analysis tools
+Tool: WHOIS Lookup
 
+![image](https://github.com/user-attachments/assets/4f14e9fa-a8d9-4cd1-8b0d-607712bad282)
 
+Key takeaways:
+- Registered ISP: Sky UK Limited
+- Reverse DNS: bcde1a30.skybroadband.com
+- The IP falls under a residential broadband ISP (Sky UK), suggesting this may be a compromised home machine.
 
+Tool: VirusTotal
+
+![image](https://github.com/user-attachments/assets/de220fab-e916-4e0c-96ac-6995f36a7d41)
+
+![image](https://github.com/user-attachments/assets/ae48b5b6-b3f4-4071-b22f-79cb1f118852)
+
+Key takeaways:
+- 0/1 flagged vendors, which could happen if the server is down, dormant, or newly re-used. Also, it only delivers malware when a specific User-Agent or JavaScript is sent (common in drive-by or staged attacks). Still, community score was negative, and our analysis revealed obfuscated script targeting it.
+
+Tool: URLScan.io
+
+![image](https://github.com/user-attachments/assets/e5b3abeb-271d-4a15-bfd9-e88ce818312b)
+
+Key takeaways:
+- Host is offline, and likely only responds to crafted/targeted requests
+- httpstatus.io also generated an error.
+
+Tool: AbuseIPDB
+
+![image](https://github.com/user-attachments/assets/ef70b6b4-210d-451c-8083-e1d2d574b335)
+
+Key takeaways:
+-  The mismatch between WHOIS (UK, Sky UK) and AbuseIPDB (Russia, TimeWeb Ltd.) is a red flag.
+-  The .tw1.ru subdomain pattern is commonly seen in shady or short-lived domains used in attacks.
+
+Verdict: The IP was actively involved in malicious behavior as seen in the packet capture and JavaScript deobfuscation. It appears to host malware infrastructure, likely C2 or a second-stage payload server. Although WHOIS records list the IP as belonging to Sky UK Limited (UK), AbuseIPDB indicated the IP is currently hosted by TimeWeb Ltd., a Russian hosting provider. This mismatch is a red flag.

@@ -22,7 +22,55 @@ Questions to answer:
 
 
 
-## 📖 Project Walkthrough: Analyzing a Real-World PCAP in Wireshark
-This section showcases the steps and thought process behind my decisions to carry out this project. 
+## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
+This section breaks down the steps and thought process I followed while working through this PCAP. 
 
-### 1. Insert
+### 1. PCAP Summary and Overview
+For this section, I explored **Statistics** and other options in Wireshark, to gain an initial understanding of what we are working with.
+
+**Capture File Properties**
+- Total Packets: 39427
+- File Size: 26MB
+- First Packet: 2025-01-22 19:44:56
+- Last Packet: 2025-01-22 20:38:18
+- Duration: 53 minutes, 22 seconds
+- SHA256: e59db1c07c6fdefafa0abdbca03248c341cdc36c09c34753204d3162802a3586
+- SHA1: 7b2ecacbbefa615157c2cc2ecdbe43f0677fcbad
+
+**Conversations Extract**
+
+![image](https://github.com/user-attachments/assets/5adf4699-f94f-4ff5-b566-d58b7dcff6a5)
+
+![image](https://github.com/user-attachments/assets/55e62ea2-5d64-4703-81cc-8d4ef6202258)
+
+Key takeaways:
+- `freedomlovestyle.life`
+    - Somewhat suspicious domain name
+    - 10MB, 10940 packets
+    - Non-standard port: `elvin-client`
+    - Multiple TCP streams associated
+    - Has the most traffic
+    - `DESKTOP-L8C5GSJ.bluemoontuesday.com` is the local machine
+    - Most likely the top candidate for the payload and fake download site.
+    
+- `hosted-by.csrp.host`
+    - 7MB, 9076 packets
+    - Ports used: `HTTP`
+    - Multiple stream IDs observed
+    - Potentially related to `freedomlovestyle.life`. 
+
+- `srv-45-125-66-252.serveroffer.net`
+    - Low byte count, but the domain look suspicious
+    - Ports used: `HTTPS`
+    - Stream ID: 288
+    - 107kB, potential beaconing or C2
+
+- `authenticatoor.org`
+    - 2MB, 2470 packets
+    - Clearly suspicious due to misspelling of “authenticator”
+    - Stream ID 50
+
+### 2. Conducting the investigation
+Now it was time to investigate the PCAP file, leveraging the findings from our initial analysis and overview in section 1. We have lots to investigate, such as multiple suspicious domains and use of non-standard ports. 
+
+

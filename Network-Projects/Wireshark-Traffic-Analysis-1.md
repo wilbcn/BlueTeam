@@ -26,7 +26,7 @@ This project is part of my Blue Team learning journey. It focuses on using **Wir
 
 ---
 
-## 📖 Project Walkthrough: Analyzing a Real-World PCAP in Wireshark
+## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
 This section showcases the steps and thought process behind my decisions to carry out this project. 
 
 ### 1. Getting the sample PCAP file. Baseline file analysis.

@@ -11,9 +11,10 @@ This follow-up Wireshark project dives into another real-world malware PCAP, thi
 
 ## Tools & Resources
 - [Sample PCAP source](https://www.malware-traffic-analysis.net/2025/01/22/index.html)
-
-
-
+- [VirusTotal](https://www.virustotal.com/gui/)
+- [WHOIS](https://whois.domaintools.com/)
+- [AbuseIPDB](https://www.abuseipdb.com/)
+- [Cisco Talos](https://talosintelligence.com/)
 
 ## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
 This section breaks down the steps and thought process I followed while working through this PCAP. 

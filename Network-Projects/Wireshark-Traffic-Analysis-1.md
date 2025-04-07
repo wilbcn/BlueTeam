@@ -317,7 +317,9 @@ Next, I scanned XSF files SHA256 hash using the same approach.
 
 Key takeaways:
 - Detected as Trojan / Exploit / Script
-- Exploits CVE-2018-4878, a critical vulnerability in Adobe Flash Player
+- Exploits CVE-2018-4878, a critical vulnerability in Adobe Flash Player.
+- By searching `CVE-2018-4878` on MITRE ATTACK, we see that this CVE is related to `APT37`, a North Korean state-sponsored cyber espionage group.
+- This CVE is also tied to MITRE Technique `T1203 Exploitation for Client Execution`.
 - Designed to execute arbitrary code via SWF files, typically used in drive-by attacks
 
 Using cve.org, we are able to find out more information about this file, which exploits vulnerabilities in Adobe Flash Player.
@@ -364,6 +366,7 @@ This project marks a significant milestone in my Blue Team journey, reinforcing 
 
 Security Recommendations:
 - Remove Adove Flash, as it is a discontinued software platform, with a known vulnerability. `CVE-2018-4878`
+- This CVE is tied to MITRE Technique `T1203 Exploitation for Client Execution`. Here we have a handful of mitigation and detection strategies such as `DS0029 Network Traffic`, which involves looking for unusual outbound connections following abnormal process execution, which could indicate an adversary has established a foothold and is initiating communication with C2 infrastructure.
 - Regularly patch software
 - Block the malicious IPs and Domains:
   - makemoneyeasywith.me

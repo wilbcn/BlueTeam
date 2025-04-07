@@ -6,7 +6,7 @@ This follow-up Wireshark project dives into another real-world malware PCAP, thi
 
 - Answer the provided questions from the Malware Sample PCAP provider, listed in the tools & resources
 - Demonstrate how I investigated and was able to workout the answer to each question, ensuring a logical and well-thought approach to each one.
-- Answer the **questions** and the bottom of the report!
+- Answer the **questions** at the bottom of the report!
 
 
 ## Tools & Resources

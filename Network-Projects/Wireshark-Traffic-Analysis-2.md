@@ -52,22 +52,27 @@ Key takeaways:
     - Has the most traffic
     - `DESKTOP-L8C5GSJ.bluemoontuesday.com` is the local machine
     - Most likely the top candidate for the payload or C2
-    
+    - Underlying IP 45.125.66.32 is malicious on VT.
+
 - `hosted-by.csrp.host`
     - 7MB, 9076 packets
     - Ports used: `HTTP`
     - Multiple stream IDs observed
+    - Underlying IP is very malicious on VT: 5.252.153.241 
 
 - `srv-45-125-66-252.serveroffer.net`
     - Low byte count, but the domain look suspicious
     - Ports used: `HTTPS`
     - Stream ID: 288
     - 107kB,
+    - Underlying IP 45.125.66.252 is malicious on VT. Within the same /24 subnet as `freedomlovestyle.life`
 
 - `authenticatoor.org`
     - 2MB, 2470 packets
     - Clearly suspicious due to misspelling of “authenticator”
     - Stream ID 50
+    - 6/94 VT Score. Phishing Label
+    - Underlying IP 82.221.136.26 marked as malicious and phishing on VT.
 
 ### 2. Investigating the PCAP
 Now it was time to investigate the PCAP file, leveraging the findings from our initial analysis and overview in section 1. We have lots to investigate, such as multiple suspicious domains and use of non-standard ports. 
@@ -156,7 +161,7 @@ Querying the file hashes on reputable threat intelligence platforms provides dee
 File scan results:
 
 File: 29842.ps1
-Result: 27/62 VT Score. Flagged as malicious. Threat label: trojan.powershell/obfuse. First seen 2025-01-22 16:41:17 UTC. Rleated to IP address `5.252.153.241` which we already flagged. 
+Result: 27/62 VT Score. Flagged as malicious. Threat label: trojan.powershell/obfuse. First seen 2025-01-22 16:41:17 UTC. Related to IP address `5.252.153.241` which we already flagged. 
 
 File: pas.ps1
 Result: 25/62 VT Score. Flagged as malicious. Threat label: trojan.powershell/malgent. First seen 
@@ -174,7 +179,7 @@ Result: 47/73 VT Score. Flagged as malicious. Threat label: trojan.malgent/ahcr.
 While I was using threat intelligence platforms, I decided now is a good time to check out our offending IP address `5.252.153.241`. VT labels this as malicious, with VY score 12/97. First seen on 2025-01-22 16:49:21 UTC. Also, although unknown on `AbuseIPDB`, we know for a fact from our investigation this is a malicious IP address. 
 
 ### 4. Finding the C2 server
-Now that I have identified that `5.252.153.241` // `hosted-by.csrp.host` is malicious, I wanted to check out the other flagged addresses, as well as building up a timeline of events so I am able to see clearly what happened throughout this event.
+Now that I have identified that `5.252.153.241` // `hosted-by.csrp.host` is malicious, I wanted to check out the other flagged addresses, as well the beginning of a timeline of events.
 
 By filtering for `http` traffic, we get the below packets.
 
@@ -190,7 +195,7 @@ ip.addr==45.125.66.32 && tcp.port==2917
 
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/0e706d0c-536a-4e5a-863c-6511a4bc7902" />
 
-Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was downloaded from `hosted-by.csrp.host`, which occured at `19:45:58`. This rules it out as the trigger, but is now considered post-infection traffic, and is most likely the Command & Control C2 server. This address had the most packets too from our initial overview: 10940 packets. In summary, this address is highly-likely to be the C2 server because:
+Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was downloaded from `hosted-by.csrp.host`, which occured at `19:45:56`. This rules it out as the trigger, but is now considered post-infection traffic, and is most likely the Command & Control C2 server. This address had the most packets too from our initial overview: 10940 packets. In summary, this address is highly-likely to be the C2 server because:
 - Strong timing indicator of beaconing, post compromise
 - Unusual port 2917 Elvin-client. Non standard port is typical in C2 servers to evade detection
 - Traffic after TLS handhsake is application data only, normal for TLS-based C2 channels.
@@ -199,7 +204,16 @@ Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was down
 - Scan on VT showed as malicious (45.125.66.32)
 - AbuseIPDB: 45.125.66.32 is known in their database, and has 100% confidence of abuse.
 
-### 4. Initial landing page?
+In summary, this identified address is our C2 server, along side `45.125.66.252`:`srv-45-125-66-252.serveroffer.net`, which is part of the /24 subnet. 
+
+### 4. Finding the fake software site for initial download
+From our flagged addresses, we have one remaining: `authenticatoor.org`.
+
+Applying a filter on the underlying IP, shows us that all traffic related to this address happened before the payload download (.ps1).
+
+<img width="1435" alt="image" src="https://github.com/user-attachments/assets/3bf8029c-5655-4427-a16c-d22afdd5d43e" />
+
+
 
 
 

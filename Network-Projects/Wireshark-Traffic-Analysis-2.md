@@ -6,15 +6,8 @@ This follow-up Wireshark project dives into another real-world malware PCAP, thi
 
 - Answer the provided questions from the Malware Sample PCAP provider, listed in the tools & resources
 - Demonstrate how I investigated and was able to workout the answer to each question, ensuring a logical and well-thought approach to each one.
+- Answer the **questions** and the bottom of the report!
 
-Questions to answer:
-
-- What is the IP address of the infected Windows client?
-- What is the mac address of the infected Windows client?
-- What is the host name of the infected Windows client?
-- What is the user account name from the infected Windows client?
-- What is the likely domain name for the fake Google Authenticator page?
-- What are the IP addresses used for C2 servers for this infection?
 
 ## Tools & Resources
 - [Sample PCAP source](https://www.malware-traffic-analysis.net/2025/01/22/index.html)
@@ -213,13 +206,39 @@ Applying a filter on the underlying IP, shows us that all traffic related to thi
 
 <img width="1435" alt="image" src="https://github.com/user-attachments/assets/3bf8029c-5655-4427-a16c-d22afdd5d43e" />
 
+Starting with the payload itself, we know that the timestamp is `2025-01-22 19:45:56`. We should investigate all network activity just before that. 
 
+Next filters ran:
 
+```
+tcp.port == 443
+```
 
+This showed all encrypted communications. Among the most notable pre-payload domains was authenticatoor.org, which showed multiple connections just seconds before the download.
 
-### ?. Key findings and lessons learned
+```
+tls.handshake.type == 2
+```
+
+This helped us identify successful TLS handshakes:
+
+<img width="1431" alt="image" src="https://github.com/user-attachments/assets/05bf7765-734b-4c33-9f50-92763a7738ec" />
+
+Here we clearly see a TLS Server Hello from `google-authenticator.burleson-appliance.net → authenticatoor.org`. This is a typosquatted and deceptive domain, mimicking the legitimate "Google Authenticator" service, likely to trick the user into initiating a download.
+
+### 5. Key findings and lessons learned
 - How to spot beaconing
 - Post infection
-- 
+- Writing down the first recorded packet for endpoints is crucial for understanding a timeline of events
 
+### 6. Project wrap-up and answering the questions
+
+Questions to answer:
+
+- What is the IP address of the infected Windows client? In **Statistics -> Endpoints**, by enabling name resolution, we can see our windows client IP address. `10.1.17.215`
+- What is the mac address of the infected Windows client? In the same place, under Ethernet, we can see our mac address. `00:d0:b7:26:4a:74`
+- What is the host name of the infected Windows client? `DESKTOP-L8C5GSJ.bluemoontuesday.com`
+- What is the user account name from the infected Windows client?
+- What is the likely domain name for the fake Google Authenticator page?
+- What are the IP addresses used for C2 servers for this infection?
 

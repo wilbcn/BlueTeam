@@ -129,4 +129,27 @@ By navigating to **File -> Export Objects -> HTTP**, and applying filename exten
 Each exported file was then reviewed for indicators of compromise. While a full dynamic analysis is outside the scope of this project, static inspection and threat intelligence lookups were performed to identify common traits or known signatures.
 
 
+### 3.1 Checking file hashes
+The first thing I did was generate SHA256 Hashes of each of these files, and generate reports using **VirusTotal**, and **Cisco Talos Intelligence**.
 
+```
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          4/7/2025  11:05 AM           1512 29842.ps1
+-a----          4/7/2025  11:05 AM           1553 pas.ps1
+-a----          4/7/2025  11:05 AM        4380968 TeamViewer
+-a----          4/7/2025  11:06 AM         668968 Teamviewer_Resource_fr
+-a----          4/7/2025  11:06 AM          12920 TV
+
+PS C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports> Get-FileHash *
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          B8CE40900788EA26B9E4C9AF7EFAB533E8D39ED1370DA09B93FCF72A16750DED       C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports\...
+SHA256          A833F27C2BB4CAD31344E70386C44B5C221F031D7CD2F2A6B8601919E790161E       C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports\...
+SHA256          904280F20D697D876AB90A1B74C0F22A83B859E8B0519CB411FDA26F1642F53E       C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports\...
+SHA256          9634ECAF469149379BBA80A745F53D823948C41CE4E347860701CBDFF6935192       C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports\...
+SHA256          3448DA03808F24568E6181011F8521C0713EA6160EFD05BFF20C43B091FF59F7       C:\Users\Administrator\Desktop\Wireshark PCAPS\Wireshark Exports\TV
+```
+
+Querying the file hashes on reputable threat intelligence platforms provides deeper context on the attack, helping to identify known malware families, associated campaigns, and threat actor behavior.

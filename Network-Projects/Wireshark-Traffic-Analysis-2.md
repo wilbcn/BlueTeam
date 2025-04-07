@@ -174,7 +174,7 @@ Result: 47/73 VT Score. Flagged as malicious. Threat label: trojan.malgent/ahcr.
 
 While I was using threat intelligence platforms, I decided now is a good time to check out our offending IP address `5.252.153.241`. VT labels this as malicious, with VY score 12/97. First seen on 2025-01-22 16:49:21 UTC. Also, although unknown on `AbuseIPDB`, we know for a fact from our investigation this is a malicious IP address. 
 
-### Timeline of events
+### 4. Finding the C2 server
 Now that I have identified that `5.252.153.241` // `hosted-by.csrp.host` is malicious, I wanted to check out the other flagged addresses, as well as building up a timeline of events so I am able to see clearly what happened throughout this event.
 
 By filtering for `http` traffic, we get the below packets.
@@ -182,6 +182,24 @@ By filtering for `http` traffic, we get the below packets.
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/853acb08-6d5c-4204-9bfd-2c2ec0f4f28e" />
 
 Here I learned something new. The request for connecttest.txt is legit Windows behavior, and a **red herring** in our timeline. This is good to know for future investigations. It indicates the host had just joined the network or refreshed its connectivity—providing context for the timing of the first PowerShell download.
+
+The second identified address to investigate is `freedomlovestyle.life`,  IP address `45.125.66.32`. I applied a filter from **Statistics -> Endpoints** to investigate further.
+
+```
+ip.addr==45.125.66.32 && tcp.port==2917
+```
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/0e706d0c-536a-4e5a-863c-6511a4bc7902" />
+
+Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was downloaded from `hosted-by.csrp.host`, which occured at `19:45:56`. This rules it out as the trigger, but is now considered post-infection traffic, and is most likely the Command & Control C2 server. This address had the most packets too from our initial overview: 10940 packets. In summary, this address is highly-likely to be the C2 server because:
+- Strong timing indicator of beaconing, post compromise
+- Unusual port 2917 Elvin-client. Non standard port is typical in C2 servers to evade detection
+- Traffic after TLS handhsake is application data only, normal for TLS-based C2 channels.
+- Beaconing patterns: Each packet is exactly 1414 bytes, suggesting a scripted or automated payload — not standard browsing behavior.
+- No legitimate purpose. The domain and domain TLD is suspicious.
+
+### 4. Finding the C2 server
+
 
 
 

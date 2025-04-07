@@ -153,3 +153,17 @@ SHA256          3448DA03808F24568E6181011F8521C0713EA6160EFD05BFF20C43B091FF59F7
 ```
 
 Querying the file hashes on reputable threat intelligence platforms provides deeper context on the attack, helping to identify known malware families, associated campaigns, and threat actor behavior.
+
+File scan results:
+
+File: 29842.ps1
+Result: 27/62 VT Community Score. Flagged as malicious. Threat label: trojan.powershell/obfuse. First seen 2025-01-22 16:41:17 UTC. Rleated to IP address `5.252.153.241` which we already flagged. 
+
+File: pas.ps1
+Result: 25/62 VT Community Score. 
+
+File: TeamViewer
+
+File: Teamviewer_Resource_fr
+
+File: TV

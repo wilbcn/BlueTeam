@@ -70,7 +70,24 @@ Key takeaways:
     - Clearly suspicious due to misspelling of “authenticator”
     - Stream ID 50
 
-### 2. Conducting the investigation
+### 2. Investigating the PCAP
 Now it was time to investigate the PCAP file, leveraging the findings from our initial analysis and overview in section 1. We have lots to investigate, such as multiple suspicious domains and use of non-standard ports. 
+
+The first thing I did, was apply the stream id `61` as a filter from **statistics -> conversations -> TCP**. This stream contained the highest number of packets exchanged with our local machine, from address `hosted-by.csrp.host` 
+
+After applying this filter, I noticed straight away a GET request on a .ps1 (powershell) file served via HTTP, highlighted below.
+
+<img width="1439" alt="image" src="https://github.com/user-attachments/assets/05e94e58-0e23-46df-b010-2271ba1180e2" />
+
+By following the HTTP stream, I was able to see the servers response and the payload content. The .ps1 file appears to be obfuscated PowerShell code, leveraging GetString() and System.Text.Encoding::UTF8. The script was likely designed to decode and execute malicious commands on the target system.
+
+<img width="964" alt="image" src="https://github.com/user-attachments/assets/2ebfb770-c608-4c70-8a70-92a6fa31f8dd" />
+
+A reverse DNS on the `host: 5.252.153.241` confirms this is the domain where our user initiated a GET request on the powershell file.
+
+![image](https://github.com/user-attachments/assets/0cf98ab9-2d9c-41d0-bbd3-00701e39f36f)
+
+The next step in the investigation was to determine if the script was executed, and what hapened next. 
+
 
 

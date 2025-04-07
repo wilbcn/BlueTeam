@@ -157,13 +157,32 @@ Querying the file hashes on reputable threat intelligence platforms provides dee
 File scan results:
 
 File: 29842.ps1
-Result: 27/62 VT Community Score. Flagged as malicious. Threat label: trojan.powershell/obfuse. First seen 2025-01-22 16:41:17 UTC. Rleated to IP address `5.252.153.241` which we already flagged. 
+Result: 27/62 VT Score. Flagged as malicious. Threat label: trojan.powershell/obfuse. First seen 2025-01-22 16:41:17 UTC. Rleated to IP address `5.252.153.241` which we already flagged. 
 
 File: pas.ps1
-Result: 25/62 VT Community Score. 
+Result: 25/62 VT Score. Flagged as malicious. Threat label: trojan.powershell/malgent. First seen 
+2025-01-22 17:35:46 UTC. Also tied to identified malicious IP.
 
 File: TeamViewer
+Result: 0/72 VT Score. Also unknown on Cisco Talos. Most likely a legitimate file being abused.
 
 File: Teamviewer_Resource_fr
+Result: 0/72 VT Score. Also unknown on Cisco Talos. Also a potentially normal file being abused.
 
 File: TV
+Result: 47/73 VT Score. Flagged as malicious. Threat label: trojan.malgent/ahcr. First seen 2025-01-22 11:49:32 UTC. 
+
+While I was using threat intelligence platforms, I decided now is a good time to check out our offending IP address `5.252.153.241`. VT labels this as malicious, with VY score 12/97. First seen on 2025-01-22 16:49:21 UTC. Also, although unknown on `AbuseIPDB`, we know for a fact from our investigation this is a malicious IP address. 
+
+### Timeline of events
+Now that I have identified that `5.252.153.241` // `hosted-by.csrp.host` is malicious, I wanted to check out the other flagged addresses, as well as building up a timeline of events so I am able to see clearly what happened throughout this event.
+
+By filtering for `http` traffic, we get the below packets.
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/853acb08-6d5c-4204-9bfd-2c2ec0f4f28e" />
+
+Here I learned something new. The request for connecttest.txt is legit Windows behavior, and a **red herring** in our timeline. This is good to know for future investigations. It indicates the host had just joined the network or refreshed its connectivity—providing context for the timing of the first PowerShell download.
+
+
+
+

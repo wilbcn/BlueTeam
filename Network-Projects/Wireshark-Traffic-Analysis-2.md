@@ -235,10 +235,10 @@ Here we clearly see a TLS Server Hello from `google-authenticator.burleson-appli
 
 Questions to answer:
 
-- What is the IP address of the infected Windows client? In **Statistics -> Endpoints**, by enabling name resolution, we can see our windows client IP address. `10.1.17.215`
-- What is the mac address of the infected Windows client? In the same place, under Ethernet, we can see our mac address. `00:d0:b7:26:4a:74`
+- What is the IP address of the infected Windows client? `10.1.17.215`
+- What is the mac address of the infected Windows client? `00:d0:b7:26:4a:74`
 - What is the host name of the infected Windows client? `DESKTOP-L8C5GSJ.bluemoontuesday.com`
-- What is the user account name from the infected Windows client?
-- What is the likely domain name for the fake Google Authenticator page?
-- What are the IP addresses used for C2 servers for this infection?
+- What is the user account name from the infected Windows client? 
+- What is the likely domain name for the fake Google Authenticator page? `authenticatoor.org`
+- What are the IP addresses used for C2 servers for this infection? `45.125.66.32` `45.125.66.252` `5.252.153.241`
 

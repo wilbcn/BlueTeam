@@ -226,10 +226,28 @@ This helped us identify successful TLS handshakes:
 
 Here we clearly see a TLS Server Hello from `google-authenticator.burleson-appliance.net → authenticatoor.org`. This is a typosquatted and deceptive domain, mimicking the legitimate "Google Authenticator" service, likely to trick the user into initiating a download.
 
-### 5. Key findings and lessons learned
-- How to spot beaconing
-- Post infection
-- Writing down the first recorded packet for endpoints is crucial for understanding a timeline of events
+`google-authenticator.burleson-appliance.net` web page does not load anymore. However, It is marked as malicious/phishing on VT.
+
+### 5. Key Findings and Lessons Learned
+
+- **How to spot beaconing**
+  - Regular, repeating packet intervals (often identical in size and timing)
+  - High volume of small packets to the same IP/port (e.g., C2 over port 2917)
+
+- **Post-infection behavior**
+  - Payloads downloaded to hidden directories (e.g., `C:\ProgramData\huo`)
+  - Persistence via shortcut creation in startup folder
+  - Callback logs sent to C2 confirming success (`GET /1517096937?k=...`)
+
+- **Writing down the first recorded packet for endpoints is crucial for understanding a timeline of events**
+  - Helps trace back the initial access point (e.g., `authenticatoor.org` before `.ps1` download)
+  - Clarifies the flow from infection vector → payload delivery → callback
+
+- **TLS filtering is key when payloads are delivered via HTTPS**
+  - Use `tcp.port == 443` and `tls.handshake.type == 2` to identify Server Hello patterns and domain involvement
+
+- **Typosquatting and fake domains are common lures**
+  - E.g., `authenticatoor.org`, `google-authenticator.burleson-appliance.net` mimicking legitimate services to trick users
 
 ### 6. Project wrap-up and answering the questions
 
@@ -238,7 +256,7 @@ Questions to answer:
 - What is the IP address of the infected Windows client? `10.1.17.215`
 - What is the mac address of the infected Windows client? `00:d0:b7:26:4a:74`
 - What is the host name of the infected Windows client? `DESKTOP-L8C5GSJ.bluemoontuesday.com`
-- What is the user account name from the infected Windows client? 
+- What is the user account name from the infected Windows client? Filter: `dhcp` -> 
 - What is the likely domain name for the fake Google Authenticator page? `authenticatoor.org`
 - What are the IP addresses used for C2 servers for this infection? `45.125.66.32` `45.125.66.252` `5.252.153.241`
 

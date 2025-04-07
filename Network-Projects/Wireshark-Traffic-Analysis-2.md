@@ -51,19 +51,18 @@ Key takeaways:
     - Multiple TCP streams associated
     - Has the most traffic
     - `DESKTOP-L8C5GSJ.bluemoontuesday.com` is the local machine
-    - Most likely the top candidate for the payload and fake download site.
+    - Most likely the top candidate for the payload or C2
     
 - `hosted-by.csrp.host`
     - 7MB, 9076 packets
     - Ports used: `HTTP`
     - Multiple stream IDs observed
-    - Potentially related to `freedomlovestyle.life`. 
 
 - `srv-45-125-66-252.serveroffer.net`
     - Low byte count, but the domain look suspicious
     - Ports used: `HTTPS`
     - Stream ID: 288
-    - 107kB, potential beaconing or C2
+    - 107kB,
 
 - `authenticatoor.org`
     - 2MB, 2470 packets
@@ -191,16 +190,22 @@ ip.addr==45.125.66.32 && tcp.port==2917
 
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/0e706d0c-536a-4e5a-863c-6511a4bc7902" />
 
-Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was downloaded from `hosted-by.csrp.host`, which occured at `19:45:56`. This rules it out as the trigger, but is now considered post-infection traffic, and is most likely the Command & Control C2 server. This address had the most packets too from our initial overview: 10940 packets. In summary, this address is highly-likely to be the C2 server because:
+Traffic to `freedomlovestyle.life` begins after the malicious .ps1 file was downloaded from `hosted-by.csrp.host`, which occured at `19:45:58`. This rules it out as the trigger, but is now considered post-infection traffic, and is most likely the Command & Control C2 server. This address had the most packets too from our initial overview: 10940 packets. In summary, this address is highly-likely to be the C2 server because:
 - Strong timing indicator of beaconing, post compromise
 - Unusual port 2917 Elvin-client. Non standard port is typical in C2 servers to evade detection
 - Traffic after TLS handhsake is application data only, normal for TLS-based C2 channels.
 - Beaconing patterns: Each packet is exactly 1414 bytes, suggesting a scripted or automated payload — not standard browsing behavior.
 - No legitimate purpose. The domain and domain TLD is suspicious.
+- Scan on VT showed as malicious (45.125.66.32)
+- AbuseIPDB: 45.125.66.32 is known in their database, and has 100% confidence of abuse.
 
-### 4. Finding the C2 server
+### 4. Initial landing page?
 
 
 
+### ?. Key findings and lessons learned
+- How to spot beaconing
+- Post infection
+- 
 
 

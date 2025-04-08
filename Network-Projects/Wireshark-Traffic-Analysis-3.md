@@ -26,26 +26,49 @@ This section breaks down the steps and thought process I followed while working 
 ### 1. PCAP Summary and Overview
 Exploring the file in Wireshark to gain an initial understanding of what we are working with.
 
-Total Packets: 26922
-PCAP SHA256 Hash: a38267943a7bf3b0e445d7e51cb0a68b3dee797d67081bc9a033f73d079c0f50
-PCAP SHA1 Hash: cd0210e13050859e745daf9e168df74ed39198d3
-98.6% of packets are IPv4
-96.1% of packets are TCP
+**PCAP Info:**
+- **Total Packets:** 26,922
+- **SHA256:** `a38267943a7bf3b0e445d7e51cb0a68b3dee797d67081bc9a033f73d079c0f50`
+- **SHA1:** `cd0210e13050859e745daf9e168df74ed39198d3`
+- **IPv4:** 98.6% of traffic
+- **TCP:** 96.1% of traffic
 
-Local machine info:
-- `10.11.26.183` - `DESKTOP-B8TQK49.local` - `d0:57:7b:ce:fc:8b`
+**Local Machine Identified:**
+- **IP:** `10.11.26.183`
+- **Hostname:** `DESKTOP-B8TQK49.local`
+- **MAC Address:** `d0:57:7b:ce:fc:8b`
 
-Top IPv4 conversations:
-- `modandcrackedapk.com` - `193.42.38.139` - 13248 packets - Most return traffic 7600 packets - 11MB
-- `classicgrand.com` - `213.246.109.5` - 3996 packets - 2492 return packets - 4MB
-- `e11271.dscg.akamaiedge.net` - `173.222.49.101` - 3442 packets - 2283 return packets - 3MB
-- `nemotoes-dc.nemotoads.health` - `10.11.26.3` - 1508 packets - 710 return packets - 343kB
+---
 
-Key Takeaways:
-- `modandcrackedapk.com` - Multiple TCP streams `https` - Largest return traffic - First packet: 
-- `classicgrand.com` - Multiple TCP streams `https` - Second largest packet count - First packet:
-- `e11271.dscg.akamaiedge.net`- Multiple TCP streams `https` - First packet: 
-- `nemotoes-dc.nemotoads.health` - Multiple TCP streams `microsoft-ds` - Many UDP Streams `Port 53` - First Packet: 
+### Top IPv4 Conversations:
+
+| Domain                          | IP                | Packet Count | Return Packets | Total Bytes |
+|---------------------------------|-------------------|--------------|----------------|-------------|
+| `modandcrackedapk.com`          | `193.42.38.139`   | 13,248       | 7,600          | 11 MB       |
+| `classicgrand.com`              | `213.246.109.5`   | 3,996        | 2,492          | 4 MB        |
+| `e11271.dscg.akamaiedge.net`    | `173.222.49.101`  | 3,442        | 2,283          | 3 MB        |
+| `nemotoes-dc.nemotoads.health`  | `10.11.26.3`      | 1,508        | 710            | 343 kB      |
+
+---
+
+### 🔍 Early Observations
+
+- **`modandcrackedapk.com`**  
+  - Most data exchanged (~11MB)
+  - Multiple `HTTPS` TCP streams  
+  - High return packet count  
+  - **Strong candidate as initial download source**
+
+- **`classicgrand.com`**  
+  - Second-highest byte count  
+  - Encrypted traffic via HTTPS
+
+- **`e11271.dscg.akamaiedge.net`**  
+  - Akamai CDN; could be legitimate or abused for payload delivery
+
+- **`nemotoes-dc.nemotoads.health`**  
+  - Internal host communication  
+  - SMB (`microsoft-ds`) and DNS (UDP port 53)
 
 
 

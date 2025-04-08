@@ -18,7 +18,10 @@ This PCAP is part of a series of traffic analysis exercises, found in the **Tool
 
 ## Tools & Resources
 - [Sample PCAP source](https://www.malware-traffic-analysis.net/2024/11/26/index.html)
-
+- [VirusTotal](https://www.virustotal.com/gui/)
+- [WHOIS](https://whois.domaintools.com/)
+- [AbuseIPDB](https://www.abuseipdb.com/)
+- [Cisco Talos](https://talosintelligence.com/)
 
 ## 📖 Project Walkthrough: Incident report writing on a real-world malware PCAP.
 This section breaks down the steps and thought process I followed while working through this PCAP. 
@@ -148,12 +151,25 @@ tls.handshake.type == 1 && ip.addr == 213.246.109.5
 
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/537fec0b-95cf-4cfd-9a60-1ca14ec809a5" />
 
-This confirms the first Client Hello happens at 04:50:11.5, which is right before any other TLS connections — very early in the infection timeline. The other domains such as `modandcrackedapk.com` - `194.180.191.64` happen after this domain appears. This makes `classicgrand.com` the earliest external domain in the PCAP aside from expected traffic (like Akamai or Windows connect test).     The domain name doesn’t align with enterprise or common services. Combined with the encrypted traffic and early timing, this is suspicious. Based on everything, the traffic pattern matches what you’d expect from a landing page — first contact, possible payload delivery (though TLS hides content), and immediate follow-ups to malicious domains afterward.
+This confirms the first `Client Hello` happens at `04:50:11.5`, which is right before any other TLS connections. The other domains such as `modandcrackedapk.com` - `194.180.191.64` happen after this domain appears making `classicgrand.com` the earliest external domain in the PCAP aside from expected traffic. Furthermore, this domain name doesn’t align with enterprise or common services and combined with the encrypted traffic and early timing, this domain is suspicious. Based on everything, the traffic pattern matches what you’d expect from a landing page — first contact, possible payload delivery (though TLS hides content), and immediate follow-ups to malicious domains afterward.
 
 ### 3. Summary and Incident Report
+A Windows host was infected with NetSupport RAT, delivered from `modandcrackedapk.com`, likely after visiting address `classicgrand.com`. Incident details:
+- 2024-11-26 04:50 UTC
+- IP Address `10.11.26.183`
+- Host Name `DESKTOP-B8TQK49.local`
+- MAC Address `d0:57:7b:ce:fc:8b`
+
+IOCS:
+- `194.180.191.164:443 – POST http:// 194.180.191.164/fakeurl.htm`
+- `modandcrackedapk.com - 193.42.38.139`
+- `classicgrand.com` - `213.246.109.5`
 
 ### 4. Lessons Learned
-
+- Early DNS queries and TLS handshakes helped us to pinpoint `classisgrand.com` as the first suspicious domain - likely the landing page. This helped us to chronologically identify the infection chain.
+- TLS traffic still provides value. Even though we cant decrypt it, handshake timing and other attributes like SNI give us information to help with the investigation. 
+- NetSupport RAT abuse - I had not seen this before. NetSupport Manager is a legit remote access tool, however here it is used maliciously. The repetitive `POST` requests show beaconing to the C2.
+- HTTP traffic help provide us with export artifacts to assist in the investigation. 
 
 
 

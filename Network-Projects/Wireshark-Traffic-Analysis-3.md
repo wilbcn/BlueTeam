@@ -57,19 +57,40 @@ Exploring the file in Wireshark to gain an initial understanding of what we are 
   - Most data exchanged (~11MB)
   - Multiple `HTTPS` TCP streams  
   - High return packet count  
-  - **Strong candidate as initial download source**
+  - First packet: 26-11-2024 04:50:14
 
 - **`classicgrand.com`**  
   - Second-highest byte count  
   - Encrypted traffic via HTTPS
+  - First packet: 26-11-2024 04:50:11
 
 - **`e11271.dscg.akamaiedge.net`**  
   - Akamai CDN; could be legitimate or abused for payload delivery
+  - First packet: 26-11-2024 05:04:59
 
 - **`nemotoes-dc.nemotoads.health`**  
   - Internal host communication  
   - SMB (`microsoft-ds`) and DNS (UDP port 53)
+  - The internal Domain Controller
+  - First packet: 26-11-2024 04:49:38
+  - First address with traffic out of the 4 identified
 
+### 2. Investigating the PCAP
+After gathering the initial, but important artifacts from this PCAP file, I now invesigated further leveraging these findings.
+
+Firstly i ran the below filter.
+
+```
+dns.qry.name == "modandcrackedapk.com"
+```
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/d458a634-9adc-4083-b700-2d764da193c5" />
+
+This confirmed that nemotoes-dc.nemotoads.health is functioning as the domain controller (DC) and internal DNS resolver. We can see the infected host, DESKTOP-B8TQK49.local, querying the DC for the domain modandcrackedapk.com. The DC responds with the IP address 193.42.38.139, which becomes the destination for encrypted traffic shortly after.
+
+This address `modandcrackedapk.com` is definately worth investigating further, a VT scan confirms this.
+
+![image](https://github.com/user-attachments/assets/63d1a31f-5291-4a81-89b9-6fe285828a94)
 
 
 

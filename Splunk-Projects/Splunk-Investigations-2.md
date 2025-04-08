@@ -2,7 +2,7 @@
 
 ## 📖 Overview
 This project is a continuation of my Splunk series, aimed at gaining hands-on experience with the Splunk platform and learning how to use the Splunk Processing Language (SPL) effectively to investigate and report on security events. 
-In this follow-up, I explore and continue learning key Splunk features such as alerts** and dashboards, while aligning all detection and mitigation strategies with the MITRE ATT&CK framework to mirror real-world security operations.
+In this follow-up, I explore and continue learning key Splunk features such as alerts and dashboards, while aligning all detection and mitigation strategies with the MITRE ATT&CK framework to mirror real-world security operations.
 This projects focuses on unauthorised administrator account creation and privilege escalation on a Windows machine — a critical persistence tactic used by adversaries (MITRE Technique: `T1098 - Account Manipulation`).
 
 To carry out this project, I configured universal forwarders on some EC2 instances.

@@ -92,6 +92,43 @@ This address `modandcrackedapk.com` is definately worth investigating further, a
 
 ![image](https://github.com/user-attachments/assets/63d1a31f-5291-4a81-89b9-6fe285828a94)
 
+Next filter ran:
 
+```
+ip.addr == 193.42.38.139
+```
+
+![image](https://github.com/user-attachments/assets/7b9e3f93-0d77-4250-9c0b-7b597c79f732)
+
+![image](https://github.com/user-attachments/assets/0a59e4fb-0e6a-4eb8-bac3-d2902acfc794)
+
+Key takeaways:
+- Spurious retransmissions (TCP Spurious Retransmission)
+- Duplicate ACKs (TCP Dup ACK)
+- Consistent TLS record sizes (e.g. 1430)
+- Continuation Data entries with TLSv1.3 and SSLv2 (Encrypted content)
+
+It is now becoming clear that `193.42.38.139` - `modandcrackedapk.com` is the C2 Server. 
+
+Even though there is minimal `http` traffic (74 packets), we should still investigate for any potential web application downloads. 
+
+Filter ran:
+
+```
+http
+```
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/e36bdd7e-fe33-4fcd-980c-78c8cf6e5361" />
+
+Key takeaways:
+- Suspicious high number of POSTs to the same path (/fakeurl.htm) and address: `194.180.191.64` - ` 194-180-191-64.mivocloud.com`
+- `194.180.191.64` is a known malicious IP on VT. 
+- New address introduced `geo.netsupportsoftware.com` - VT Scan indicates malicious too.
+- Two GET requests `/loca.asp` and `/MFMwUTBPME0wSzAJBgUrDgMCGgUABBRpD%2BQVZ%2B1vf7U0RGQGBm8JZwdxcgQUdKR2KRcYVIUxN75n5gZYwLzFBXICEgRSsdGCXQJklJZNbHi669GH4A%3D%3D`
+
+The identified IPs by filtering for `http` are malicious. By following the `http` stream, we can see that `NetSupport Manager` appears to be abused, posting to `http://194.180.191.64/fakeurl.htm`.
+`CMD=POLL` and `CMD=ENCD` commands show command polling and data exfiltration. `DATA= values` are encoded/encrypted blobs (not plain exfil, so we won’t see creds or strings in cleartext).
+
+<img width="1433" alt="image" src="https://github.com/user-attachments/assets/fe974e6f-8f7f-4d1d-a36c-91b2ee2aaa73" />
 
 

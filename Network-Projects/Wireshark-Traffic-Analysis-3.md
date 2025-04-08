@@ -150,5 +150,10 @@ tls.handshake.type == 1 && ip.addr == 213.246.109.5
 
 This confirms the first Client Hello happens at 04:50:11.5, which is right before any other TLS connections — very early in the infection timeline. The other domains such as `modandcrackedapk.com` - `194.180.191.64` happen after this domain appears. This makes `classicgrand.com` the earliest external domain in the PCAP aside from expected traffic (like Akamai or Windows connect test).     The domain name doesn’t align with enterprise or common services. Combined with the encrypted traffic and early timing, this is suspicious. Based on everything, the traffic pattern matches what you’d expect from a landing page — first contact, possible payload delivery (though TLS hides content), and immediate follow-ups to malicious domains afterward.
 
+### 3. Summary and Incident Report
+
+### 4. Lessons Learned
+
+
 
 

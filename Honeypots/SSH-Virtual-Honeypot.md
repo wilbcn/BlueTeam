@@ -48,7 +48,7 @@ Firsly I logged into my AWS account, and navigated to `EC2`. From here, I select
 
 | Port | Purpose | Source | Description |
 |------|---------|--------|-------------|
-| 22 | SSH access | Your IP only | For administrative access to the server |
+| 22 | SSH access | My IP only | For administrative access to the server |
 | 2222 | Cowrie honeypot port | 0.0.0.0/0 | Used to attract SSH scans/attacks (Rule to be activated after Cowrie is running) |
 
 ### SSH Key Pair

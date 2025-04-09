@@ -6,17 +6,6 @@
 
 ---
 
-## 📁 Table of Contents
-
-- [Project Goals](#project-goals)
-- [Phase 1 – Cloud Setup](#phase-1--cloud-setup)
-- [Phase 2 – Honeypot Installation](#phase-2--honeypot-installation)
-- [Phase 3 – Logging & Observations](#phase-3--logging--observations)
-- [Phase 4 – Ethical Considerations](#phase-4--ethical-considerations)
-- [Future Expansion](#future-expansion)
-- [Acknowledgements](#acknowledgements)
-
----
 
 ## 🎯 Project Goals
 

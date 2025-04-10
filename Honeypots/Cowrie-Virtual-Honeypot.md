@@ -198,4 +198,146 @@ cowrie@my-ip-address:~/cowrie/var/log/cowrie$ tail -f cowrie.log
 2025-04-10T09:18:42.213129Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
 2025-04-10T09:18:42.213323Z [HoneyPotSSHTransport,my-ip-address] Connection lost after 33.7 seconds
 
-This log extract showcases that someone (me) attempted to access the Honeypot via SSH on port 2222, with user `ubuntu`. Cowrie can allow us to simulate a successful login however, which we need to define seperately. I will now go and showcase this so we can begin to capture more attacker behaviour.
+This log extract showcases that someone (me) attempted to access the Honeypot via SSH on port 2222, with user `ubuntu`. Cowrie can allow us to simulate a successful login however, which we need to define seperately. Later I will showcase this so we can begin to capture more attacker behaviour.
+```
+
+## 4 - First Real Attacker Session Logged
+On 10/04/2025, the honeypot logged an unsolicited connection from IP `60.21.134.178`. The attacker connected twice using the `libssh` SSH client and attempted public key authentication with a randomised username (`wqmarlduiqkmgs`). The session caused Cowrie to raise an `Unhandled Error` due to a malformed authentication packet, which is common with automated or poorly written scanning tools.
+
+Key behavioral characteristics:
+- No password-based brute force attempts
+- No shell interaction
+- Session duration: 1.6 seconds
+- Behavior suggests a **low-complexity scanner**, not a human attacker
+
+The full Cowrie log for this interaction is shown below:
+```
+2025-04-10T10:17:28.580651Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 60.21.134.178:9893 (10.0.0.11:2222) [session: 4eedb436f764]
+2025-04-10T10:17:40.912746Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-04-10T10:17:40.912963Z [HoneyPotSSHTransport,1,60.21.134.178] Connection lost after 12.3 seconds
+2025-04-10T10:17:41.161561Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 60.21.134.178:33446 (10.0.0.11:2222) [session: 3cd4817c270f]
+2025-04-10T10:17:41.205739Z [HoneyPotSSHTransport,2,60.21.134.178] Remote SSH version: SSH-2.0-libssh_0.7.4
+2025-04-10T10:17:41.675742Z [HoneyPotSSHTransport,2,60.21.134.178] SSH client hassh fingerprint: e37f354a101aff5871ba233aa82b84ec
+2025-04-10T10:17:41.676561Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] kex alg=b'curve25519-sha256@libssh.org' key alg=b'ssh-ed25519'
+2025-04-10T10:17:41.676699Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] outgoing: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-04-10T10:17:41.678893Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] incoming: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-04-10T10:17:42.144789Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] NEW KEYS
+2025-04-10T10:17:42.392631Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] starting service b'ssh-userauth'
+2025-04-10T10:17:42.737884Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'wqmarlduiqkmgs' trying auth b'publickey'
+2025-04-10T10:17:42.738161Z [HoneyPotSSHTransport,2,60.21.134.178] Unhandled Error
+	Traceback (most recent call last):
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 491, in _doReadOrWrite
+	    why = selectable.doRead()
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/internet/tcp.py", line 250, in doRead
+	    return self._dataReceived(data)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/internet/tcp.py", line 255, in _dataReceived
+	    rval = self.protocol.dataReceived(data)
+	  File "/home/cowrie/cowrie/src/cowrie/ssh/transport.py", line 145, in dataReceived
+	    self.dispatchMessage(messageNum, packet[1:])
+	  File "/home/cowrie/cowrie/src/cowrie/ssh/transport.py", line 149, in dispatchMessage
+	    transport.SSHServerTransport.dispatchMessage(self, messageNum, payload)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/transport.py", line 792, in dispatchMessage
+	    self.service.packetReceived(messageNum, payload)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/service.py", line 50, in packetReceived
+	    return f(packet)
+	  File "/home/cowrie/cowrie/src/cowrie/ssh/userauth.py", line 73, in ssh_USERAUTH_REQUEST
+	    return userauth.SSHUserAuthServer.ssh_USERAUTH_REQUEST(self, packet)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/userauth.py", line 173, in ssh_USERAUTH_REQUEST
+	    d = self.tryAuth(method, user, rest)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/userauth.py", line 148, in tryAuth
+	    ret = f(data)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/userauth.py", line 263, in auth_publickey
+	    algName, blob, rest = getNS(packet[1:], 2)
+	  File "/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/common.py", line 38, in getNS
+	    (l,) = struct.unpack("!L", s[c : c + 4])
+	struct.error: unpack requires a buffer of 4 bytes
+
+2025-04-10T10:17:42.748252Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-04-10T10:17:42.748456Z [HoneyPotSSHTransport,2,60.21.134.178] Connection lost after 1.6 seconds
+```
+
+## Brief analysis of identified IP address
+For additional enrichment, I investigated the IP address `60.21.134.178` captured during the first unsolicited connection to the honeypot.
+
+![image](https://github.com/user-attachments/assets/094d378a-ed44-4573-917b-c62fb1c51a07)
+
+![image](https://github.com/user-attachments/assets/6d4ee674-847f-4e2b-aef2-fb940c2fe975)
+
+Honeypots are intentionally deployed in passive and non-advertised environments. Meaning they are not exposed to regular internet users or legitimate traffic. This means that any unsolicited interaction with our honeypot is almost certainly malicious.
+
+## 5 Enable Simulated Logins with Fake Users in Cowrie
+Cowries default credentials file can be found here: 
+
+```
+cowrie@my-ip-address:~/cowrie/etc$ more userdb.example
+# Example userdb.txt
+# This file may be copied to etc/userdb.txt.
+# If etc/userdb.txt is not present, built-in defaults will be used.
+#
+# ':' separated fields, file is processed line for line
+# processing will stop on first match
+#
+# Field #1 contains the username
+# Field #2 is currently unused
+# Field #3 contains the password
+# '*' for any username or password
+# '!' at the start of a password will not grant this password access
+# '/' can be used to write a regular expression
+#
+root:x:!root
+root:x:!123456
+root:x:!/honeypot/i
+root:x:*
+tomcat:x:*
+oracle:x:*
+*:x:somepassword
+*:x:*
+```
+
+This file outlines how Cowrie processes fake user logins, including support for wildcards, password restrictions, and regular expressions. If no userdb.txt file exists, Cowrie falls back to built-in defaults. To increase realism and allow simulated logins—which is essential for observing attacker behaviour, I copied the example file and created my own set of fake users:
+
+```
+cowrie@my-ip-address:~/cowrie/etc$ cp userdb.example userdb.txt
+cowrie@my-ip-address:~/cowrie/etc$ ls -l
+total 88
+-rw-rw-r-- 1 cowrie cowrie 37839 Apr  9 19:03 cowrie.cfg
+-rw-rw-r-- 1 cowrie cowrie 37839 Apr  9 18:44 cowrie.cfg.dist
+-rw-rw-r-- 1 cowrie cowrie   589 Apr  9 18:44 userdb.example
+-rw-rw-r-- 1 cowrie cowrie   589 Apr 10 10:35 userdb.txt
+cowrie@my-ip-address:~/cowrie/etc$ vi userdb.txt
+# Example userdb.txt
+# This file may be copied to etc/userdb.txt.
+# If etc/userdb.txt is not present, built-in defaults will be used.
+#
+# ':' separated fields, file is processed line for line
+# processing will stop on first match
+#
+# Field #1 contains the username
+# Field #2 is currently unused
+# Field #3 contains the password
+# '*' for any username or password
+# '!' at the start of a password will not grant this password access
+# '/' can be used to write a regular expression
+#
+root:x:*
+admin:x:*
+cowrie:x:*
+guest:x:*
+```
+
+These entries allow attackers to "successfully" authenticate with any password for the listed users. This gives us access to a fake shell environment where every command is then logged, enabling deeper behavioral insights. With these changes made, I restarted Cowrie to apply the new configuration.
+
+```
+cowrie@my-ip-address:~/cowrie$ bin/cowrie restart
+Stopping cowrie...
+Using default Python virtual environment "/home/cowrie/cowrie/cowrie-env"
+Starting cowrie: [twistd  --umask=0022 --pidfile=var/run/cowrie.pid --logger cowrie.python.logfile.logger cowrie ]...
+/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/transport.py:105: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  b"3des-cbc": (algorithms.TripleDES, 24, modes.CBC),
+/home/cowrie/cowrie/cowrie-env/lib/python3.12/site-packages/twisted/conch/ssh/transport.py:112: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  b"3des-ctr": (algorithms.TripleDES, 24, modes.CTR),
+```
+
+## 6 Project wrap-up and Future Integrations
+
+

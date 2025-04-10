@@ -2,13 +2,15 @@
 
 ## 📚 Overview
 
-<project intro>
+This documentation outlines the process of configuring and deploying a virtual machine in AWS to host a Cowrie SSH honeypot, with the goal of gaining hands-on experience in honeypot deployment and behavioral data collection. Honeypots are a foundational concept in cybersecurity, touching on key areas such as network security, secure architecture, and command-line interface (CLI) proficiency.
+
+This project serves as an ideal entry point into Honeypots, offering practical exposure to deploying deception-based security mechanisms in the cloud. In addition to Cowrie, the project also highlights opportunities for future integration with tools like Splunk and various AWS-native services (e.g., CloudWatch, VPC Flow Logs), aligning with my broader goal of developing practical, cross-platform skills with industry-standard tools.
 
 ---
 
 ## 🎯 Project Goals
 
-- Deploy a low-interaction honeypot in the cloud securely
+- Deploy a SSH honeypot in the cloud securely
 - Simulate a vulnerable SSH service to attract real-world attacks
 - Log attacker behavior and extract useful insights
 - Gain practical experience with legal and ethical security practices
@@ -19,19 +21,23 @@
 ## Acknowledgements
 - [Cowrie Documentation](https://docs.cowrie.org/en/latest/README.html)
 
-
-
-
+## Tools used
+- [VirusTotal](https://www.virustotal.com/gui/home/upload)
+- [WHOIS Lookup](https://whois.domaintools.com/)
+- Amazon EC2 Instances
+- Cowrie SSH Honeypot
 
 ---
 
 ## 📦 1 – Cloud Setup
+
 In this phase, I outline the steps taken to configure and launch a new EC2 instance that will serve as our SSH honeypot. This virtual machine must be carefully provisioned—with appropriate instance specifications, network isolation, and security controls—to ensure it can run the honeypot reliably and safely in a cloud environment. 
 
 - Public IP redacted for security reasons
 
-### 1.1 ☁Honeypot Overview
-Firsly I logged into my AWS account, and navigated to `EC2`. From here, I selected `launch instance` to begin setting up our Virtual Machine. I have provided an overview of the EC2 configuration as well as any necessary explanations. 
+### 1.1 - Honeypot Overview
+
+Firstly I logged into my AWS account, and navigated to `EC2`. From here, I selected `launch instance` to begin setting up our Virtual Machine. I have provided an overview of the EC2 configuration as well as any necessary explanations. 
 
 - **Instance Name**: `Cowrie-Honeypot`
 - **Region**: `eu-north-1a` (GDPR-compliant region)
@@ -39,19 +45,21 @@ Firsly I logged into my AWS account, and navigated to `EC2`. From here, I select
 - **AMI**: `Ubuntu Server 24.04 LTS (HVM),EBS General Purpose (SSD) Volume Type`.
 - **Storage**: `128GB`
 
-### 1.2 Network settings
+### 1.2 - Network settings
+
 - **VPC**: A new VPC was created to ensure full isolation of the honeypot from any other cloud resources. An Internet Gateway was attached to allow inbound and outbound traffic. IGW was also added to VPC route table.
 - **Subnet**: A new Subnet was created within eu-north-1a for logical separation.
 - **Auto-assign public IP**: This is required so the honeypot can be accessed by external attackers. Without a public IP, no unsolicited traffic can reach the system.
 
-### Security Group Rules
+### 1.3 - Security Group Rules
 
 | Port | Purpose | Source | Description |
 |------|---------|--------|-------------|
 | 22 | SSH access | My IP only | For administrative access to the server |
 | 2222 | Cowrie honeypot port | 0.0.0.0/0 | Used to attract SSH scans/attacks (Rule to be activated after Cowrie is running) |
 
-### SSH Key Pair
+### 1.4 - SSH Key Pair
+
 - Create a new key pair
 - Run `chmod 600 example_key.pem`. This permission is required by SSH to prevent unauthorised access and is enforced by AWS security standards.
 - Connect with:  
@@ -60,6 +68,7 @@ Firsly I logged into my AWS account, and navigated to `EC2`. From here, I select
 ---
 
 ## 2 – Honeypot Installation
+
 Now that the EC2 instance was up and running, I connected for the first time from my local machine. To begin with, I ran some commands to refresh the system’s package list and apply the latest updates.
 
 ```
@@ -154,7 +163,7 @@ With that last step finished, I can now start Cowrie (As a non-root user `cowrie
 cowrie@my-ip-address:~/cowrie$ bin/cowrie start
 ```
 
-In the below code, I confirmed that Cowrie is listening on port `2222`. I then went back to AWS and finished the Security Group rule to allow attackers access to our Honeypot. Port 22 is also open, however our Security Group rule allows only ssh access from my IP only.
+In the below code, I confirmed that Cowrie is listening on port `2222`. I then went back to AWS and finished the Security Group rule to allow attackers access to our Honeypot. Port 22 is also open, however our Security Group rule allows only SSH access from my IP only.
 
 ```
 sudo apt install net-tools
@@ -165,7 +174,8 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 ```
 
 ## 3 – Log Verification
-Cowrie logs are stored under `/cowrie/var/log/cowrie/cowrie.log`. To verify this is working as expected, I attempted to ssh into our Honeypot on port 2222 from another virtual machine. This was correctly logged, shown below:
+
+Cowrie logs are stored under `/cowrie/var/log/cowrie/cowrie.log`. To verify this is working as expected, I attempted to SSH into our Honeypot on port 2222 from another virtual machine. This was correctly logged, shown below:
 
 ```
 cowrie@my-ip-address:~/cowrie/var/log/cowrie$ tail -f cowrie.log
@@ -202,6 +212,7 @@ This log extract showcases that someone (me) attempted to access the Honeypot vi
 ```
 
 ## 4 - First Real Attacker Session Logged
+
 On 10/04/2025, the honeypot logged an unsolicited connection from IP `60.21.134.178`. The attacker connected twice using the `libssh` SSH client and attempted public key authentication with a randomised username (`wqmarlduiqkmgs`). The session caused Cowrie to raise an `Unhandled Error` due to a malformed authentication packet, which is common with automated or poorly written scanning tools.
 
 Key behavioral characteristics:
@@ -257,6 +268,7 @@ The full Cowrie log for this interaction is shown below:
 ```
 
 ## Brief analysis of identified IP address
+
 For additional enrichment, I investigated the IP address `60.21.134.178` captured during the first unsolicited connection to the honeypot.
 
 ![image](https://github.com/user-attachments/assets/094d378a-ed44-4573-917b-c62fb1c51a07)
@@ -265,7 +277,7 @@ For additional enrichment, I investigated the IP address `60.21.134.178` capture
 
 Honeypots are intentionally deployed in passive and non-advertised environments. Meaning they are not exposed to regular internet users or legitimate traffic. This means that any unsolicited interaction with our honeypot is almost certainly malicious.
 
-## 5 Enable Simulated Logins with Fake Users in Cowrie
+## 5 - Enable Simulated Logins with Fake Users in Cowrie
 Cowries default credentials file can be found here: 
 
 ```
@@ -338,6 +350,26 @@ Starting cowrie: [twistd  --umask=0022 --pidfile=var/run/cowrie.pid --logger cow
   b"3des-ctr": (algorithms.TripleDES, 24, modes.CTR),
 ```
 
-## 6 Project wrap-up and Future Integrations
+## 6 - Project wrap-up and Future Integrations
 
+With Cowrie now live on AWS and successfully logging unsolicited traffic, this project has achieved its core goals:
 
+- Hands-on experience logging, interpretation, and attacker fingerprinting
+- Secure cloud-based deployment of a low-interaction honeypot
+- Exposure to real-world SSH scanning and brute force activity
+- Successful simulation of fake login sessions for behavioral data capture
+
+### Key findings
+
+- The honeypot received real attack traffic within hours of going live.
+- A connection attempt caused an `Unhandled Error`, showing Cowrie’s ability to detect malformed SSH payloads.
+- Simulated login environments are now active, enabling us to track attacker commands and behaviors post-authentication.
+- There are many options available now for expansion of our setup. Cowrie offers multiple options for customisation honeypots, with banners, fake file systems, and more.
+
+### Future Expansion Possibilities
+
+As a next phase, I plan to explore the following extensions to this environment:
+- **Port Switching Strategy**: Move Cowrie to port `22` and shift admin SSH to `22222` to increase attacker interactions
+- **CloudWatch Metrics & Alerts**: Configure connection alerts with refined rules
+- **VPC Flow Logs**: Enable network logging IP correlation and pattern detection
+- **Splunk Cloud Integration**: Configure Cowrie to push logs to Splunk for advanced querying

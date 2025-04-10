@@ -165,4 +165,37 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 ```
 
 ## 3 – Log Verification
+Cowrie logs are stored under `/cowrie/var/log/cowrie/cowrie.log`. To verify this is working as expected, I attempted to ssh into our Honeypot on port 2222 from another virtual machine. This was correctly logged, shown below:
 
+```
+cowrie@my-ip-address:~/cowrie/var/log/cowrie$ tail -f cowrie.log
+
+2025-04-10T09:12:30.264217Z [-] Removing stale pidfile /home/cowrie/cowrie/var/run/cowrie.pid
+2025-04-10T09:12:30.266800Z [-] Python Version 3.12.3 (main, Feb  4 2025, 14:48:35) [GCC 13.3.0]
+2025-04-10T09:12:30.266838Z [-] Twisted Version 24.11.0
+2025-04-10T09:12:30.266851Z [-] Cowrie Version 2.6.1
+2025-04-10T09:12:30.270937Z [-] Loaded output engine: jsonlog
+2025-04-10T09:12:30.272586Z [twisted.scripts._twistd_unix.UnixAppLogger#info] twistd 24.11.0 (/home/cowrie/cowrie/cowrie-env/bin/python3 3.12.3) starting up.
+2025-04-10T09:12:30.272702Z [twisted.scripts._twistd_unix.UnixAppLogger#info] reactor class: twisted.internet.epollreactor.EPollReactor.
+2025-04-10T09:12:30.282281Z [-] CowrieSSHFactory starting on 2222
+2025-04-10T09:12:30.283256Z [cowrie.ssh.factory.CowrieSSHFactory#info] Starting factory <cowrie.ssh.factory.CowrieSSHFactory object at 0x7c438e05e3f0>
+2025-04-10T09:12:30.356696Z [-] Ready to accept SSH connections
+2025-04-10T09:18:08.515886Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: my-ip-address:49838 (my-ip-address:2222) [session: 3fcd5e77623d]
+2025-04-10T09:18:08.528496Z [HoneyPotSSHTransport,my-ip-address] Remote SSH version: SSH-2.0-PuTTY_Release_0.83
+2025-04-10T09:18:08.541675Z [HoneyPotSSHTransport,my-ip-address] SSH client hassh fingerprint: 4a3e3c55af41b23589ff4c9d6aee4404
+2025-04-10T09:18:08.543818Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] kex alg=b'curve25519-sha256' key alg=b'ssh-ed25519'
+2025-04-10T09:18:08.544875Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] outgoing: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-04-10T09:18:08.545383Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] incoming: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-04-10T09:18:15.457957Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] NEW KEYS
+2025-04-10T09:18:15.458409Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] starting service b'ssh-userauth'
+2025-04-10T09:18:21.867916Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'ubuntu' trying auth b'none'
+2025-04-10T09:18:23.884222Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'ubuntu' trying auth b'password'
+2025-04-10T09:18:23.884679Z [HoneyPotSSHTransport,my-ip-address] Could not read etc/userdb.txt, default database activated
+2025-04-10T09:18:23.885105Z [HoneyPotSSHTransport,my-ip-address] login attempt [b'ubuntu'/b''] failed
+2025-04-10T09:18:24.886877Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'ubuntu' failed auth b'password'
+2025-04-10T09:18:24.887112Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] unauthorized login: ()
+2025-04-10T09:18:42.212612Z [HoneyPotSSHTransport,my-ip-address] Got remote error, code 13 reason: b'Unable to authenticate'
+2025-04-10T09:18:42.213129Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-04-10T09:18:42.213323Z [HoneyPotSSHTransport,my-ip-address] Connection lost after 33.7 seconds
+
+This log extract showcases that someone (me) attempted to access the Honeypot via SSH on port 2222, with user `ubuntu`. Cowrie can allow us to simulate a successful login however, which we need to define seperately. I will now go and showcase this so we can begin to capture more attacker behaviour.

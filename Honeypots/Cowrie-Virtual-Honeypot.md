@@ -64,8 +64,7 @@ Now that the EC2 instance was up and running, I connected for the first time fro
 
 ```
 sudo apt update
-```
-```
+
 sudo apt upgrade
 ```
 
@@ -75,7 +74,7 @@ Next, I installed system-wide support for Python virtual environments and other 
 sudo apt-get install git python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
 ```
 
-To continue with the Cowrie setup, I created a new user in our Linux machine. Creating a dedicated non-root user helps limits the potential damage an attacker could do if they manage to escape or exploit the honeypot—following the principle of least privilege for better security and containment.
+To continue with the Cowrie setup, I created a dedicated user account on the system. Creating a dedicated non-root user helps limits the potential damage an attacker could do if they manage to escape or exploit the honeypot—following the principle of least privilege for better security and containment.
 
 ```
 ubuntu@my-ip-address:~$ sudo adduser --disabled-password cowrie
@@ -149,9 +148,21 @@ total 84
 -rw-rw-r-- 1 cowrie cowrie 37839 Apr  9 18:44 cowrie.cfg.dist
 ```
 
-With that last step finished, I can now start Cowrie.
+With that last step finished, I can now start Cowrie (As a non-root user `cowrie`).
 
+```
+cowrie@my-ip-address:~/cowrie$ bin/cowrie start
+```
 
+In the below code, I confirmed that Cowrie is listening on port `2222`. I then went back to AWS and finished the Security Group rule to allow attackers access to our Honeypot. Port 22 is also open, however our Security Group rule allows only ssh access from my IP only.
 
+```
+sudo apt install net-tools
 
+ubuntu@my-ip-address:~$ sudo netstat -tulnp | grep LISTEN
+tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      1276/python3
+tcp6       0      0 :::22                   :::*                    LISTEN      1/init
+```
+
+## 3 – Log Verification
 

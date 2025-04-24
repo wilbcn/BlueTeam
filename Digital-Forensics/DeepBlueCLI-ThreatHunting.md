@@ -62,7 +62,68 @@ PS C:\Users\Administrator\Desktop\sysmon> .\Sysmon64.exe -accepteula -i "C:\User
 
 ![image](https://github.com/user-attachments/assets/b8e89b5e-0dd6-4219-b858-cafd3530310e)
 
+- I then ran the below to enable PowerShell & Command-Line Logging
 
+```
+# PowerShell Script Block Logging
+New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force
+Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1
+
+# PowerShell Transcription Logging (optional)
+New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription" -Force
+Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription" -Name "EnableTranscripting" -Value 1
+
+# Enable Command Line Process Auditing
+auditpol /set /subcategory:"Process Creation" /success:enable
+
+# Show command-line arguments in logs
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit" /v ProcessCreationIncludeCmdLine_Enabled /t REG_DWORD /d 1 /f
+
+# Apply all changes
+gpupdate /force
+```
+
+- Running an initial test
+
+```
+PS C:\Users\Administrator\Desktop\Tools> cd C:\Users\Administrator\DeepBlueCLI
+PS C:\Users\Administrator\DeepBlueCLI>  Get-WinEvent -LogName Security | .\DeepBlue.ps1
+
+
+Date    : 3/25/2025 11:13:45 AM
+Log     : Security
+EventID : 4732
+Message : User added to local Administrators group
+Results : Username: -
+          User SID: S-1-5-21-3939027288-1751461437-3338404962-1005
+
+Command :
+Decoded :
+
+Date    : 3/25/2025 11:13:36 AM
+Log     : Security
+EventID : 4720
+Message : New User Created
+Results : Username: test_user
+          User SID: S-1-5-21-3939027288-1751461437-3338404962-1005
+
+Command :
+Decoded :
+
+Date    : 3/24/2025 7:10:04 PM
+Log     : Security
+EventID : 4732
+Message : User added to local Administrators group
+Results : Username: -
+          User SID: S-1-5-21-3939027288-1751461437-3338404962-1004
+
+Command :
+Decoded :
+```
+
+- In the example output snippet, we can see that event logging is working, and DeepBlueCLI is parsing and flagging properly. We have example security events such as EventID: 4720 - New User Created - Username: test_user.
+
+## 2. Simulated Attacks.
 
 
 

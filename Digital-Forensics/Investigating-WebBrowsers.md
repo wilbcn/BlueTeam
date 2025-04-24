@@ -3,7 +3,7 @@
 ## 📖 Overview
 This document details the steps taken to gain hands-on experience with **Windows Browser History Capturer/Viewer** as part of a digital forensics investigation. In this project, we simulated a scenario where a test user, **Tom Smith**, engaged in web browsing activities using **Microsoft Edge**. As the system administrator, we conducted an analysis of their browsing history, capturing and examining the data using forensic tools to identify any suspicious activity.
 
-💡 **This project was inspired by my learning in the** [**Blue Team Level 1**](https://www.securityblue.team/blue-team-level-1) **course, reinforcing key digital forensics concepts in a controlled environment. By applying real-world investigative techniques within a secure VM, I am able to deepen my understanding of forensic methodologies while gaining practical experience with industry-standard tools and software.
+💡 **This project was inspired by my learning in the** [**Blue Team Level 1**](https://www.securityblue.team/blue-team-level-1) course, reinforcing key digital forensics concepts in a controlled environment. By applying real-world investigative techniques within a secure VM, I am able to deepen my understanding of forensic methodologies while gaining practical experience with industry-standard tools and software.
 
 You can find the setup of the secure VM in AWS here -> [EC2 VM](https://github.com/wilbcn/BlueTeam/blob/main/Digital-Forensics/EC2-HomeLab-Setup.md)
 

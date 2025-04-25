@@ -1,4 +1,4 @@
-# 🔍 # Threat Hunting in Windows: Practical Event Log Analysis with DeepBlueCLI
+# 🔍 Threat Hunting in Windows: Practical Event Log Analysis with DeepBlueCLI
 
 ## 📖 Overview
 This project outlines the steps taken to get hands-on experience with **DeepBlueCLI**, a PowerShell Module for Threat Hunting via Windows Event Logs. This project also serves as practice before I sit the **Blue Team Level 1 Exam**.

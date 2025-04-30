@@ -94,5 +94,6 @@ root@my-ip-address:/opt/splunk/etc/system# sudo /opt/splunk/bin/splunk restart
 ```
 4. I was then able to successfully access the Splunk Server via `https`.
 
-### 4. 
+### 4. Retrieving the BOTS v1 Dataset
+Before I begin investigating the dataset, the BOTSv1 repo advises installing various apps and add-ons to fully explore and analyse it. 
 

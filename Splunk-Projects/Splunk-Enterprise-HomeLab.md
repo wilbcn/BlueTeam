@@ -6,7 +6,8 @@ The objective of this project is to build a longer-term hands-on environment for
 Log sources include **BOTSv1**, **Suricata**, and **Sysmon** datasets.
 
 ## 🎯 Goals
-- **Deploy and configure Splunk Enterprise** on a standalone server (EC2 Linux instance).  
+- **Deploy and configure Splunk Enterprise** on a standalone server (EC2 Linux instance).
+- **Install Apps and Add-ons** from Splunkbase
 - **Manually ingest datasets** such as BOTSv1, Suricata logs, and Sysmon logs.  
 - **Develop scenario-based investigations** to simulate security incidents.  
 - **Integrate analysis with the MITRE ATT&CK Framework** for adversary behavior mapping.
@@ -103,6 +104,26 @@ Before I begin investigating the dataset, the BOTSv1 repo advises installing var
 
 - [Install Apps & Add-ons](https://docs.splunk.com/Documentation/AddOns/released/Overview/Singleserverinstall)
 - [Dataset](https://github.com/splunk/botsv1)
+
+#### Steps:
+1. I downloaded the below add-ons via their splunkbase link.
+
+![image](https://github.com/user-attachments/assets/cba57096-6de5-4e02-9ce0-dcd1590ddd07)
+
+2. To install these, I clicked the gear icon next to Apps -> Install app from file -> Browse
+
+![image](https://github.com/user-attachments/assets/82d50428-5309-4859-88cc-519fd92a2e00)
+
+3. I went ahead and repeated these steps for the remaining add-ons.
+4. Since the full BOTSv1 dataset exceeds 20 GB, I opted to use the smaller "attack-only" version instead. This still provides rich hands-on experience investigating malicious activity, while keeping the setup lightweight and manageable. To add the data manually, I went to settings -> add data. I selected the dataset, and created a new index called `botsv1`. 
+
+![image](https://github.com/user-attachments/assets/d86bd987-efdf-4be4-9714-ae6fec73af01)
+
+5. Once the dataset had completed processing, I ran a simple SPL query to verify our dataset was ingested correctly.
+
+
+
+### 5. Key-takeaways and Future work
 
 
 

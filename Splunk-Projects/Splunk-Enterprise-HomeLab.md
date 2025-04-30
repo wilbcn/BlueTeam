@@ -22,6 +22,8 @@ This section documents the step-by-step process followed to build the lab enviro
 ### 1. Launch a new instance for Splunk Enterprise
 Here I configured and launched a brand new EC2 instance to host our splunk enterprise server. 
 
+[Guide](https://navyadevops.hashnode.dev/step-by-step-guide-installing-splunk-server-on-aws-linux)
+
 #### Steps:
 1. Navigated to **EC2 → Instances → Launch Instance**
 2. Selected the below AMI:
@@ -85,6 +87,8 @@ splunk helpers are running (PIDs: 1544 1692 1697 1772 1822 2210 2342 2345).
 ### 3. Enabling HTTPS on the Splunk Server
 By default, Splunk Enterprise runs on `http`, which is an insecure protocol. For best security practices, before continuining with this setup, I made changes to the server to run on `https` instead, using Splunk’s built-in self-signed cert.
 
+[Guide](https://docs.splunk.com/Documentation/Splunk/9.4.1/Security/TurnonbasicencryptionwithSplunkWeb)
+
 #### Steps:
 1. On Splunk Web, I headed to **settings -> system -> server settings -> general settings
 2. Toggled the radio button to `Yes` for `Enable SSL (HTTPS) in Splunk Web?`, then clicked save.
@@ -95,5 +99,10 @@ root@my-ip-address:/opt/splunk/etc/system# sudo /opt/splunk/bin/splunk restart
 4. I was then able to successfully access the Splunk Server via `https`.
 
 ### 4. Retrieving the BOTS v1 Dataset
-Before I begin investigating the dataset, the BOTSv1 repo advises installing various apps and add-ons to fully explore and analyse it. 
+Before I begin investigating the dataset, the BOTSv1 repo advises installing various apps and add-ons to fully explore and analyse it. To do this, I followed the following resources
+
+- [Install Apps & Add-ons](https://docs.splunk.com/Documentation/AddOns/released/Overview/Singleserverinstall)
+- [Dataset](https://github.com/splunk/botsv1)
+
+
 

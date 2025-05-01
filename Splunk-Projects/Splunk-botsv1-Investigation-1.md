@@ -19,3 +19,10 @@ This project serves as a learning resource for myself, reinforcing core security
 ### 1. Investigating Sysmon
 Sysmon is a Windows utility that logs system activity, including process creation, file changes, network connections, and more. It's valuable for detecting attacker behavior at the host level. This is a great starting place for my first investigation into the attack dataset from botsv1. 
 
+#### Steps and code ran
+
+- This SPL query checks sysmon logs on EventID 7: Image Load, which logs when a module is loaded in a specific process. This is useful for finding potentially malicious executables and .DLL files (Dynamic Link Library)
+
+```
+index=botsv1 sourcetype="xmlwineventlog" "<EventID>7"
+```

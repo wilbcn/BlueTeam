@@ -8,9 +8,8 @@ Log sources include **BOTSv1**, **Suricata**, and **Sysmon** datasets.
 ## 🎯 Goals
 - **Deploy and configure Splunk Enterprise** on a standalone server (EC2 Linux instance).
 - **Install Apps and Add-ons** from Splunkbase
-- **Manually ingest datasets** such as BOTSv1, Suricata logs, and Sysmon logs.  
-- **Develop scenario-based investigations** to simulate security incidents.  
-- **Integrate analysis with the MITRE ATT&CK Framework** for adversary behavior mapping.
+- **Manually ingest datasets** such as BOTSv1 attack dataset
+- **Prepare the environment** for investigative follow up projects
 
 ### Learning & Practical Applications
 - Building a **medium-term Splunk lab** suitable for threat detection and log analysis.

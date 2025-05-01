@@ -16,9 +16,6 @@ Log sources include **BOTSv1**, **Suricata**, and **Sysmon** datasets.
 - Building a **medium-term Splunk lab** suitable for threat detection and log analysis.
 - Mastering **manual data ingestion techniques** into custom indexes.
 - Developing **SPL search queries** for security investigation.
-  
-## Project Walk-Through
-This section documents the step-by-step process followed to build the lab environment, including:
 
 ### 1. Launch a new instance for Splunk Enterprise
 Here I configured and launched a brand new EC2 instance to host our splunk enterprise server. 
@@ -154,6 +151,6 @@ With the BOTSv1 dataset now accessible, I can begin manually analyzing attacker 
 
 Additionally, the end-to-end deployment of this lab environment served as valuable operational experience — from cloud configuration and security hardening to data ingestion and Splunk indexing — all of which support my preparation for the BTL1 exam.
 
-➡️ Check out the first follow-up project, where I begin actively investigating the attack data: [Project](Insert link)
+➡️ Check out the first follow-up project, where I begin actively investigating the attack data: [Project](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv1-Investigation-1.md)
 
 

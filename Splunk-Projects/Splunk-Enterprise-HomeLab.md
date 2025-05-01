@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/c40ab12a-ca24-41ad-acb6-e544e0ab9216)# 🖥️ Splunk Enterprise: Manual Data Ingestion & Lab Setup for Security Analysis
+# 🖥️ Splunk Enterprise: Manual Data Ingestion & Lab Setup for Security Analysis
 
 ## 📖 Overview
 This documentation outlines the setup and configuration of a Splunk Enterprise standalone instance for manual data ingestion and security analysis.  

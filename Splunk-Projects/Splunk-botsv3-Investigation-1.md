@@ -118,3 +118,5 @@ This is a typical attacker post-exploitation move:
 Based on the analysis of the Windows event logs from the BOTS v3 dataset, it is highly likely that the AzureAD user `FyodorMalteskesko` was compromised. The account was used to create a backdoor user (`svcvnc`), assign it a password, and add it to the local Administrators group — performed PowerShell sessions. 
 
 This activity strongly suggests post-exploitation attacker behavior, consistent with credential misuse, privilege escalation, and persistence tactics outlined in the MITRE ATT&CK framework.
+
+In this follow up project, I now pivot onto other source types to look for malicious activity. Such as `stream:dns` information on suspicious domains, signs of DNS Tunneling, and Malware command & control (C2) domains. [Project](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-2.md)

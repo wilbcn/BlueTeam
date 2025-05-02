@@ -3,12 +3,12 @@
 ## 📖 Overview
 This documentation outlines the setup and configuration of a Splunk Enterprise standalone instance for manual data ingestion and security analysis.  
 The objective of this project is to build a longer-term hands-on environment for learning SPL (Search Processing Language), performing threat hunting, and preparing for the BTL1 certification.  
-Log sources include **BOTSv1**, **Suricata**, and **Sysmon** datasets.
+Log sources: **BOTSv3**
 
 ## 🎯 Goals
 - **Deploy and configure Splunk Enterprise** on a standalone server (EC2 Linux instance).
 - **Install Apps and Add-ons** from Splunkbase
-- **Manually ingest datasets** such as BOTSv1 attack dataset
+- **Manually ingest datasets** such as BOTSv3 attack dataset
 - **Prepare the environment** for investigative follow up projects
 
 ### Learning & Practical Applications
@@ -36,7 +36,7 @@ Here I configured and launched a brand new EC2 instance to host our splunk enter
    - TCP 22 (SSH)
    - TCP 8000 (Splunk Web)
 7. Configured instance storage:
-   - 20 GB, suitable for our lightweight Splunk Enterprise lab. We can increase this when necessary.
+   - 30 GB
 8. Launched the instance!
 
 ### 2. Installing Splunk Enterprise Server on our EC2 Instance
@@ -95,54 +95,27 @@ root@my-ip-address:/opt/splunk/etc/system# /opt/splunk/bin/splunk restart
 ```
 4. I was then able to successfully access the Splunk Server via `https`.
 
-### 4. Retrieving and mounting the BOTS v1 Dataset
-Before I begin investigating the dataset, the BOTSv1 repo advises installing various apps and add-ons to fully explore and analyse it. To do this, I followed the following resources
+### 4. Retrieving and mounting the BOTSv3 Dataset
+Before I begin investigating the dataset, the dataset repository advises installing various apps and add-ons to fully explore and analyse it. To do this, I followed the following resources
 
 - [Install Apps & Add-ons](https://docs.splunk.com/Documentation/AddOns/released/Overview/Singleserverinstall)
-- [Dataset](https://github.com/splunk/botsv1)
+- [Dataset](https://github.com/splunk/botsv3?tab=readme-ov-file)
 
 #### Steps:
 1. I downloaded the below add-ons via their splunkbase link.
 
-![image](https://github.com/user-attachments/assets/cba57096-6de5-4e02-9ce0-dcd1590ddd07)
+![image](https://github.com/user-attachments/assets/d92d5292-ca36-477f-abfb-045ef870c77b)
 
-2. To install these, I clicked the gear icon next to Apps -> Install app from file -> Browse
+![image](https://github.com/user-attachments/assets/f1c90ce7-b913-4765-91d7-637534c51457)
 
-![image](https://github.com/user-attachments/assets/82d50428-5309-4859-88cc-519fd92a2e00)
+2. Apps and add-ons go into `/opt/splunk/etc/apps/`. I then installed all the Splunk apps and add-ons in bulk via the CLI by copying them directly into this directory.
 
-3. I went ahead and repeated these steps for the remaining add-ons.
-4. Since the full BOTSv1 dataset exceeds 20 GB, I opted to use the smaller "attack-only" version instead, which provides rich hands-on experience investigating malicious activity.
-5. The dataset is not meant to be ingested manually like raw logs. Instead, it contains pre-indexed Splunk bucket data — data already parsed, indexed, and optimised.
-6. From powershell on my local machine, I uploaded the dataset via SSH to the EC2 instance and extracted it.
-7. I then extracted the dataset as the `root` user, and moved it to Splunks apps directory
-```
-tar -xvzf botsv1-attack-only.tgz
-```
-```
-mv botsv1_data_set /opt/splunk/etc/apps/
-```
-
-8. I then added an override in `system/local/indexes.conf` to force Splunk to use the app's data location. 
-```
-root@my-ip-address:/opt/splunk/etc/system/local# vi indexes.conf
-
-[botsv1]
-homePath   = $SPLUNK_HOME/etc/apps/botsv1_data_set/var/lib/splunk/botsv1/db
-coldPath   = $SPLUNK_HOME/etc/apps/botsv1_data_set/var/lib/splunk/botsv1/colddb
-thawedPath = $SPLUNK_HOME/etc/apps/botsv1_data_set/var/lib/splunk/botsv1/thaweddb
-```
-```
-sudo /opt/splunk/bin/splunk restart
-```
-
-9. I then ran an initial SPL query to confirm the dataset had been mounted properly. Success!
-
-![image](https://github.com/user-attachments/assets/30e2759f-7c18-4841-8612-131b7533933a)
+![image](https://github.com/user-attachments/assets/a1b09016-df00-43fa-aeb6-509c5f208815)
 
 ### 5. Key-Takeaways and Future expansions
-This project documented the setup of a secure EC2 instance, the installation and configuration of Splunk Enterprise, and the proper mounting of the Battle of the SOC (BOTSv1) dataset. It provides a solid baseline environment for practicing real-world threat investigations using Splunk.
+This project documented the setup of a secure EC2 instance, the installation and configuration of Splunk Enterprise, and the proper mounting of the Battle of the SOC (BOTSv3) dataset. It provides a solid baseline environment for practicing real-world threat investigations using Splunk.
 
-With the BOTSv1 dataset now accessible, I can begin manually analyzing attacker activity, gaining hands-on experience with:
+With the BOTSv3 dataset now accessible, I can begin manually analyzing attacker activity, gaining hands-on experience with:
 
 - Splunk Processing Language (SPL)
 - Log analysis

@@ -68,8 +68,46 @@ index=botsv3 sourcetype="wineventlog" EventCode=4728
 
 ![image](https://github.com/user-attachments/assets/f85f1d80-a0af-4709-9000-1547b7b2d673)
 
-- In the above screenshot, we have now confirmed that this new user was added to a security-enabled group (MITRE ATTACK Technique `T1098` - Account Manipulation). The time stamp also matches our first initial search `08/19/2018 22:08:17 PM`. I then further honed in on this new user `svcvnc`, looking for suspicious behaviour.
+- In the above screenshot, we have now confirmed that this new user was added to a security-enabled group (MITRE ATTACK Technique `T1098` - Account Manipulation). The time stamp also matches our first initial search `08/19/2018 22:08:17 PM`. I then further honed in on this new user `svcvnc`, to confirm the security group it was added to. The next event code search will be 4688: A new process has been created. 
 
+```
+index=botsv3 sourcetype="wineventlog" EventCode=4688 svcvnc
+```
 
+![image](https://github.com/user-attachments/assets/95b13684-5ddf-4fdb-b492-02f698fd40ed)
 
+![image](https://github.com/user-attachments/assets/02c9db7d-301a-4fd9-ad9b-094189402ee3)
 
+- Here we confirm that the identified user `AzureAD\FyodorMalteskesko` launched `net.exe` via `powershell.exe`, adding `svcvnc` account to the `Administrators group`. To investigate this user and any malicious activity, I ran the beloq SPL query.
+
+```
+index=botsv3 (Account_Name=svcvnc OR user=svcvnc)
+```
+
+- Excluding the already identified events, we now have additional logs to investigate. 
+
+- 4724: An attempt was made to reset an accounts password 
+![image](https://github.com/user-attachments/assets/d4f614f9-10ca-4500-83d6-04c6545abea6)
+
+- 4738(S): A user account was changed. Attacker disabled `Password Not Required` and left `Account Enabled`. 
+![image](https://github.com/user-attachments/assets/f12c7e97-ea68-463f-bda3-4e700e2588f8)
+
+- 4722(S): A user account was enabled. Confirms that `svcvnc` was activated after creation.
+![image](https://github.com/user-attachments/assets/bf032f43-7dc3-45dd-b51d-6dd0986de880)
+
+### 🧾 Timeline of Events
+
+| Time | Event ID | Description |
+|------|----------|-------------|
+| 08/19/18 22:08:17 | 4720 | `svcvnc` user account created |
+| 08/19/18 22:08:17 | 4722 | Account `svcvnc` enabled |
+| 08/19/18 22:08:17 | 4724 | Attempt to reset `svcvnc` password |
+| 08/19/18 22:08:17 | 4738 | User account `svcvnc` modified (UAC flags) |
+| 08/19/18 22:08:17 | 4728 | Added `svcvnc` to Administrators group |
+| 08/19/18 22:08:35 | 4688 | PowerShell used to run `net.exe` for group addition |
+
+### Security Implications
+This is a typical attacker post-exploitation move:
+- Create an new user account
+- Elevate privileges quietly
+- Use PowerShell and native tools to avoid detection

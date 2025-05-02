@@ -60,5 +60,16 @@ index=botsv3 sourcetype="wineventlog" EventCode=4720
     - **Password**: Password Not Required' - Enabled - Potential concern
     - **Account Expires**: never
 
-  
+- Paying close attention to the timestamp, and the extracted information from our previous query, I investigated this event further to see if this user had been added to a security-enabled group.
+
+```
+index=botsv3 sourcetype="wineventlog" EventCode=4728
+```
+
+![image](https://github.com/user-attachments/assets/f85f1d80-a0af-4709-9000-1547b7b2d673)
+
+- In the above screenshot, we have now confirmed that this new user was added to a security-enabled group (MITRE ATTACK Technique `T1098` - Account Manipulation). The time stamp also matches our first initial search `08/19/2018 22:08:17 PM`. I then further honed in on this new user `svcvnc`, looking for suspicious behaviour.
+
+
+
 

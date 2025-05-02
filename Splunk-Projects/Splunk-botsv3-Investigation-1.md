@@ -27,10 +27,6 @@ This sourcetype typically includes:
 - **Application logs** (software behavior, crashes)
 - **Setup and ForwardedEvents logs** (Windows updates, forwarded logs from other hosts)
 
-- Example Event Codes
-
-![image](https://github.com/user-attachments/assets/6c5e6f03-acdf-420b-8b8f-885cce4cca65)
-
 - By running `index=botsv3 sourcetype="wineventlog"`, we get an overview of the data for this source type.
 
 ![image](https://github.com/user-attachments/assets/50cc6136-bf07-4e41-a889-a85e4e60213a)
@@ -57,8 +53,8 @@ index=botsv3 sourcetype="wineventlog" EventCode=4720
     - **New Account**: `svcvnc`
     - **ComputerName**: `FYODOR-L.froth.ly`
     - **Timestamp**: `08/19/2018 22:08:17 PM`
-    - **Password**: Password Not Required' - Enabled - Potential concern
-    - **Account Expires**: never
+    - **Password**: `Password Not Required' - Enabled - Potential concern`
+    - **Account Expires**: `never`
 
 - Paying close attention to the timestamp, and the extracted information from our previous query, I investigated this event further to see if this user had been added to a security-enabled group.
 
@@ -116,3 +112,9 @@ This is a typical attacker post-exploitation move:
 - Create an new user account
 - Elevate privileges quietly
 - Use PowerShell and native tools to avoid detection
+
+## 🔚 Conclusion
+
+Based on the analysis of the Windows event logs from the BOTS v3 dataset, it is highly likely that the AzureAD user `FyodorMalteskesko` was compromised. The account was used to create a backdoor user (`svcvnc`), assign it a password, and add it to the local Administrators group — performed PowerShell sessions. 
+
+This activity strongly suggests post-exploitation attacker behavior, consistent with credential misuse, privilege escalation, and persistence tactics outlined in the MITRE ATT&CK framework.

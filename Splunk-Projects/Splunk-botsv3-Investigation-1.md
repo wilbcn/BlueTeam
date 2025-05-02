@@ -78,7 +78,10 @@ index=botsv3 sourcetype="wineventlog" EventCode=4688 svcvnc
 
 ![image](https://github.com/user-attachments/assets/02c9db7d-301a-4fd9-ad9b-094189402ee3)
 
-- Here we confirm that the identified user `AzureAD\FyodorMalteskesko` launched `net.exe` via `powershell.exe`, adding `svcvnc` account to the `Administrators group`. To investigate this user and any malicious activity, I ran the beloq SPL query.
+![image](https://github.com/user-attachments/assets/44c58781-e216-47d1-9e3a-7abdfdc2a9f7)
+
+
+- Here we confirm that the identified user `AzureAD\FyodorMalteskesko` launched `net.exe` via `powershell.exe`, adding `svcvnc` account to the `Administrators group`. The user then assigne a password to `svcvnc: Password123!`. To investigate this user and any malicious activity, I ran the beloq SPL query.
 
 ```
 index=botsv3 (Account_Name=svcvnc OR user=svcvnc)
@@ -97,14 +100,16 @@ index=botsv3 (Account_Name=svcvnc OR user=svcvnc)
 
 ### 🧾 Timeline of Events
 
-| Time | Event ID | Description |
-|------|----------|-------------|
-| 08/19/18 22:08:17 | 4720 | `svcvnc` user account created |
-| 08/19/18 22:08:17 | 4722 | Account `svcvnc` enabled |
-| 08/19/18 22:08:17 | 4724 | Attempt to reset `svcvnc` password |
-| 08/19/18 22:08:17 | 4738 | User account `svcvnc` modified (UAC flags) |
-| 08/19/18 22:08:17 | 4728 | Added `svcvnc` to Administrators group |
-| 08/19/18 22:08:35 | 4688 | PowerShell used to run `net.exe` for group addition |
+| Time               | Event ID | Description                                                                 |
+|--------------------|----------|-----------------------------------------------------------------------------|
+| 08/19/18 22:08:17  | 4720     | `svcvnc` user account was created                                           |
+| 08/19/18 22:08:17  | 4722     | Account `svcvnc` was enabled                                                |
+| 08/19/18 22:08:17  | 4724     | Password reset attempt for `svcvnc`                                         |
+| 08/19/18 22:08:17  | 4738     | User account `svcvnc` modified (UAC flags and password settings updated)    |
+| 08/19/18 22:08:17  | 4728     | `svcvnc` added to the Administrators group                                  |
+| 08/19/18 22:08:17  | 4688     | `net1.exe` used to create `svcvnc` with password `Password123!`            |
+| 08/19/18 22:08:35  | 4688     | `powershell.exe` used to run `net.exe` to add `svcvnc` to Administrators    |
+
 
 ### Security Implications
 This is a typical attacker post-exploitation move:

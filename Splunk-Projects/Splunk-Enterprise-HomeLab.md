@@ -26,7 +26,7 @@ Here I configured and launched a brand new EC2 instance to host our splunk enter
 2. Selected the below AMI:
    - Ubuntu 24.04 LTS (or Amazon Linux 2)
 3. Selected the below instance type:
-   - t3.medium
+   - t3.xlarge
 4. Created a new key pair for SSH access, and saved it to my desktop
 5. Configured the following network settings:
    - Isolated Homelab VPC and subnet (pre-configured with IGW etc)
@@ -112,6 +112,19 @@ Before I begin investigating the dataset, the dataset repository advises install
 
 ![image](https://github.com/user-attachments/assets/a1b09016-df00-43fa-aeb6-509c5f208815)
 
+3. Back on Splunk Web, we can see that these apps have been successfully loaded
+
+![image](https://github.com/user-attachments/assets/2ee05914-111a-4164-a655-0b5feb072014)
+
+4. Now I mounted the `BOTS V3 Dataset`. This is installed the same way as apps and add-ons, where it should be unpacked in the same directory `/opt/splunk/etc/apps/`.
+5. Once the dataset had been extracted, I ran an initial SPL query on the Splunk Server to verify we could now properly query the dataset. 
+
+```
+index=botsv3 earliest=0
+```
+
+![image](https://github.com/user-attachments/assets/34fb2028-2bd5-4eac-80cf-dc4e1793a90a)
+
 ### 5. Key-Takeaways and Future expansions
 This project documented the setup of a secure EC2 instance, the installation and configuration of Splunk Enterprise, and the proper mounting of the Battle of the SOC (BOTSv3) dataset. It provides a solid baseline environment for practicing real-world threat investigations using Splunk.
 
@@ -123,6 +136,6 @@ With the BOTSv3 dataset now accessible, I can begin manually analyzing attacker 
 
 Additionally, the end-to-end deployment of this lab environment served as valuable operational experience — from cloud configuration and security hardening to data ingestion and Splunk indexing — all of which support my preparation for the BTL1 exam.
 
-➡️ Check out the first follow-up project, where I begin actively investigating the attack data: [Project](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv1-Investigation-1.md)
+➡️ Check out the first follow-up project, where I begin actively investigating the attack data: [Project](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
 
 

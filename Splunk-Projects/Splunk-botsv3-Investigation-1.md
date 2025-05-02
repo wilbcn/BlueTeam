@@ -35,11 +35,13 @@ This sourcetype typically includes:
 
 ![image](https://github.com/user-attachments/assets/50cc6136-bf07-4e41-a889-a85e4e60213a)
 
-- For my first investigation, I decided to hone in on event code `4720`, which covers new user account creation. This should be investigated and monitored for 
+- For my first investigation, I decided to hone in on event code `4720`, which covers new user account creation. This should be investigated and monitored for:
     - Prevention of privilege abuse
     - Detection of potential malicious activity
     - Operational purposes like getting information on user activity like user attendance, peak logon times, etc.
     - Compliance mandates
+
+- This related to MITRE ATTACK Data Source code `DS0002`, which covers: A profile representing a user, device, service, or application used to authenticate and access resources.
 
 ```
 index=botsv3 sourcetype="wineventlog" EventCode=4720
@@ -49,5 +51,14 @@ index=botsv3 sourcetype="wineventlog" EventCode=4720
 
 ![image](https://github.com/user-attachments/assets/07484ab8-237b-4540-98df-acfbc1198c24)
 
-- 
+- From this, I extracted the following information to aid in our investigation
+    - **Source**: `WinEventLog:Security`
+    - **SecurityID/User**: `AzureAD\FyodorMalteskesko`
+    - **New Account**: `svcvnc`
+    - **ComputerName**: `FYODOR-L.froth.ly`
+    - **Timestamp**: `08/19/2018 22:08:17 PM`
+    - **Password**: Password Not Required' - Enabled - Potential concern
+    - **Account Expires**: never
+
+  
 

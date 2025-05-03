@@ -137,7 +137,7 @@ index="botsv3" sourcetype="aws:cloudtrail"
 
 ![image](https://github.com/user-attachments/assets/343fbf35-6c79-4013-b6cf-830f36b7a141)
 
-- Furthermore, and second Eventtype field provides us with more ways we can filter with our SPL queries.
+- Additionally the second Eventtype field provides us with more ways we can filter with our SPL queries.
 
 ![image](https://github.com/user-attachments/assets/e911c1a5-d0ff-4a69-bffb-8829f474b313)
 

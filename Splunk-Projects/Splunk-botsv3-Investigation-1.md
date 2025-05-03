@@ -117,6 +117,29 @@ This is a typical attacker post-exploitation move:
 
 Based on the analysis of the Windows event logs from the BOTS v3 dataset, it is highly likely that the AzureAD user `FyodorMalteskesko` was compromised. The account was used to create a backdoor user (`svcvnc`), assign it a password, and add it to the local Administrators group — performed PowerShell sessions. 
 
-This activity strongly suggests post-exploitation attacker behavior, consistent with credential misuse, privilege escalation, and persistence tactics outlined in the MITRE ATT&CK framework.
+This activity strongly suggests post-exploitation attacker behavior, consistent with credential misuse, privilege escalation, and persistence tactics outlined in the MITRE ATT&CK framework. I now wanted to pivot onto other source types to look for malicious activity.
 
-In this follow up project, I now pivot onto other source types to look for malicious activity. Such as `stream:dns` information on suspicious domains, signs of DNS Tunneling, and Malware command & control (C2) domains. [Project](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-2.md)
+### 2. Investigating AWS Source Types
+
+#### What is it?
+- **AWS CloudWatch**: Cloudwatch monitors the health and performance of AWS Applications and resources. Helps support threat detection with log metrics.
+- **CloudTrail**: Tracks all API activity, providing a detailed audit trail for security, compliance, and troubleshooting. Basically covers who did what, and is highly used in threat detection and incident response.
+
+- I decided to investigate first **CloudTrail**, by running the below SPL query.
+
+```
+index="botsv3" sourcetype="aws:cloudtrail"
+```
+
+![image](https://github.com/user-attachments/assets/a63b6a89-e22d-4ba9-8b9d-7eec30b2677f)
+
+- Taking a deeper look at some of the `interesting fields` we get with this search, there are two different event types: `AwsApiCall`, and `AwsConsoleSignIn`.
+
+![image](https://github.com/user-attachments/assets/343fbf35-6c79-4013-b6cf-830f36b7a141)
+
+- Furthermore, and second Eventtype field provides us with more ways we can filter with our SPL queries.
+
+![image](https://github.com/user-attachments/assets/e911c1a5-d0ff-4a69-bffb-8829f474b313)
+
+- By clicking on `AwsConsoleSignIn`, I added it to our search, which now gave us 4 events. 
+

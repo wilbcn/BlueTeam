@@ -141,5 +141,28 @@ index="botsv3" sourcetype="aws:cloudtrail"
 
 ![image](https://github.com/user-attachments/assets/e911c1a5-d0ff-4a69-bffb-8829f474b313)
 
-- By clicking on `AwsConsoleSignIn`, I added it to our search, which now gave us 4 events. 
+- By clicking on `AwsConsoleSignIn`, I added it to our search, which now gave us 4 events.
+
+![image](https://github.com/user-attachments/assets/682565f6-8eea-4e55-8f3c-fab1c4e72873)
+
+- Out of these 4 events, I spotted an anomaly address potentially worth investigating further: `157.97.121.132`. Lets investigate activity from this IP address. New query: `index="botsv3" sourcetype="aws:cloudtrail" src_ip="157.97.121.132"`. This gives us 19 events.
+
+![aa47ca11-d6c6-47cd-a4d4-3e401ad47954](https://github.com/user-attachments/assets/3a258ba1-d2b0-4aae-a2f0-698d341fa199)
+
+- By checking the `eventName` field, we can interpret the API Calls from the Suspicious IP. This is suspicious behaviour, and is perhaps a compromised user doing reconnaissance.
+    - **ListAccessKeys x3**: Identifying credentials
+    - **ListAccountAliases**: Potentially used in reconnaissance
+    - **GetAccountPasswordPolicy**: Checking for weak password policies
+    - **GetAccountSummary**: Recon for account-level security
+    - **ListUsers**: Recon for IAM users
+    - **GetUser**: Targeting a specific IAM user
+    - **ListAttachedUserPolicies**: Lists IAM policies, scouting for privilege abuse
+    - **ListGroups,ListSSHKeys**: Enumerate groups and SSH keys, more recon and perhaps more specific targeting
+
+- This looks like a reconnaissance phase of an AWS compromise. The attacker is probing IAM structures, and looking for paths to escalate and exfiltrate credentials. All these events and actions were performed by the same recipient account.
+
+![image](https://github.com/user-attachments/assets/80900d10-32c4-4663-ab88-f219c59dffd4)
+
+
+
 

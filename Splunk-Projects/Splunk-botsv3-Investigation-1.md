@@ -236,7 +236,7 @@ index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109" http_method=GET
 | 2018-08-20T14:55:24Z    | Recon (repeat) | `PROPFIND`   | Second WebDAV probe to the same Apache server |
 
 In concluson, our timeline suggests a probing attack on an apache web server, starting with direct access attempts via `GET`, followed by WebDAV probing, then a large amount of `POST` requests likely in an attempt to
-upload or interact with the web shells. The overall aim was most likely persistence, such as a backdoor.
+upload or interact with the web shells. The overall aim appears to be persistence — specifically, attempting to upload or interact with web shells (a common form of backdoor) to maintain access to the compromised server.
 
 ### 4. Key-takeaways and Lessons Learned
 This project documented my first investigation into the BOTSv3 dataset, which includes a wide variety of attacker data to explore and analyze. I focused on three source types: Windows Event Logs, AWS CloudTrail logs, and captured HTTP traffic. For each, I was able to identify and investigate a security incident, digging deeper to understand what actually happened.

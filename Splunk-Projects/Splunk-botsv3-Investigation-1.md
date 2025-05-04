@@ -206,7 +206,7 @@ index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109"
 index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109" http_method=POST
 ```
 
-- Interestingly, the only 2 IP addresses under this query match what we found before for `PROPFIND`: `45.7.231.174, 61.75.35.114`.
+- Interestingly, the only sender 2 IP addresses under this query match what we found before for `PROPFIND`: `45.7.231.174, 61.75.35.114`.
 - All 94 events have `HTTP/1.1 404 Not Found`, suggesting a scanning or exploitation attempt
 - Coupled with suspicious `uris`, this is potentially an automated web shell scanner
 - First log entry `2018-08-20T14:41:33.698020Z`.

@@ -77,7 +77,7 @@ index=botsv3 sourcetype="wineventlog" EventCode=4688 svcvnc
 ![image](https://github.com/user-attachments/assets/44c58781-e216-47d1-9e3a-7abdfdc2a9f7)
 
 
-- Here we confirm that the identified user `AzureAD\FyodorMalteskesko` launched `net.exe` via `powershell.exe`, adding `svcvnc` account to the `Administrators group`. The user then assigne a password to `svcvnc: Password123!`. To investigate this user and any malicious activity, I ran the beloq SPL query.
+- Here we confirm that the identified user `AzureAD\FyodorMalteskesko` launched `net.exe` via `powershell.exe`, adding `svcvnc` account to the `Administrators group`. The user then assigned a password to `svcvnc: Password123!`. To investigate this user and any malicious activity, I ran the beloq SPL query.
 
 ```
 index=botsv3 (Account_Name=svcvnc OR user=svcvnc)
@@ -244,3 +244,11 @@ This project documented my first investigation into the BOTSv3 dataset, which in
 This was a fantastic learning experience — especially as I hadn’t worked with AWS sources before. I also came across PROPFIND, a completely new HTTP method to me, and took the time to understand what it does and how it can be abused during web-based attacks.
 
 Overall, this investigation gave me hands-on experience that supports my preparation for the BTL1 exam, and builds a strong foundation as I continue working toward further certifications and expanding my skillset.
+
+### 🧩 MITRE ATT&CK Techniques Observed
+
+| Technique ID | Name                          | Observed In                  |
+|--------------|-------------------------------|------------------------------|
+| T1098        | Account Manipulation          | Windows Event Log (svcvnc)   |
+| T1087        | Account Discovery             | AWS IAM Recon                |
+| T1190        | Exploit Public-Facing App     | HTTP Web Shell Targeting     |

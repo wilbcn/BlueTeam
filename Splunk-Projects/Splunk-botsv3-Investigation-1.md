@@ -168,5 +168,79 @@ This looks like a reconnaissance phase of an AWS compromise. The attacker is pro
 ### 3. Investigating http traffic
 
 #### What is it?
+HTTP (Hypertext Transfer Protocol) refers to the data exchanged between a web client, such as a browser, and a server. Port 80 is the default port for HTTP, and attackers exploit HTTP protocols through various methods like:
+- HTTP flood DDoS attacks
+- HTTP request smuggling
+- HTTP host header attacks.
 
+These attacks can disrupt services, steal information, or gain unauthorized access to systems
 
+- Initial SPL query ran
+
+```
+index="botsv3" sourcetype="stream:http"
+```
+
+- For the `http_method` field, we can see the methods used and their count for http traffic. Straight away I am interested in investigating `PROPFIND`, witrh just `0.02%` of http traffic.
+
+![image](https://github.com/user-attachments/assets/89ba56b5-36f4-485a-93a4-b2a814c189f7)
+
+- This gives us just 2 events, with the below interesting fields
+    - **dest_ip**: `172.16.0.109`
+    - **src_ip**: `45.7.231.174, 61.75.35.114`
+    - **http_comment**: `HTTP/1.1 503 Service Temporarily Unavailable`
+    - **server**: `Apache/2.2.34 (Amazon)`
+    - **timestamps**: `2018-08-20T14:55:24.603778Z,  2018-08-20T14:41:32.692841Z`
+
+- The `PROPFIND` method is part of WebDAV, an extension of HTTP. It’s used by clients (like WebDAV-enabled applications or scripts) to ask a web server for information about files or directories — kind of like saying, “Show me what’s here.” This might be used by attackers to scan for accessible directories, list files, or check if WebDAV is enabled
+- The destination `172.16.0.109` is an internal Apache web server
+- The `503` responses suggest the server rejected the requests
+- These 2 events suggest an attacker was likely probing the internal web server to identify accessible directories or check for WebDAV support, using a rare HTTP method (PROPFIND) that is commonly leveraged during reconnaissance phases of web exploitation.
+
+- I then added the identified destination IP of the apache web server to our SPL query, investigating both `GET` and `POST` requests to this IP address.
+
+```
+index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109"
+```
+```
+index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109" http_method=POST
+```
+
+- Interestingly, the only 2 IP addresses under this query match what we found before for `PROPFIND`: `45.7.231.174, 61.75.35.114`.
+- All 94 events have `HTTP/1.1 404 Not Found`, suggesting a scanning or exploitation attempt
+- Coupled with suspicious `uris`, this is potentially an automated web shell scanner
+- First log entry `2018-08-20T14:41:33.698020Z`.
+
+![image](https://github.com/user-attachments/assets/e67192ee-1114-497c-bc4c-1afe28f691f7)
+
+```
+index="botsv3" sourcetype="stream:http" dest_ip="172.16.0.109" http_method=GET
+```
+
+![image](https://github.com/user-attachments/assets/2f96f65a-7da4-4e29-90a1-42065716ad93)
+
+- Above we have a summary of the targeted paths. Which suggest the attacker is specifically looking for misconfigured MySQL/phpMyAdmin portals, Default admin interfaces, and Web shells like /cmd.php. First log entry `2018-08-20T11:19:58.723681Z`, which is before the 2 `PROPFIND` events.
+
+![image](https://github.com/user-attachments/assets/6cd95206-966b-47d7-a860-72a804ab0387)
+
+- Furthermore, the above `http status codes` tell us nothign was actually successfully accessed, however the attacker was definately probing, and represents hostile behaviour.
+- By paying close attention to the timestamps in these log entries, we are able to gather a timeline of http events, and a better understanding of what happened during this security incident.
+
+### Timeline of HTTP Events
+
+| Time                    | Event Type | HTTP Method | Details |
+|-------------------------|------------|-------------|---------|
+| 2018-08-20T11:19:58Z    | Initial Access | `GET`        | Attempted access to admin portals and known shell paths (e.g., `/cmd.php`, `/phpmyadmin/index.php`) |
+| 2018-08-20T14:41:32Z    | Recon        | `PROPFIND`   | WebDAV probe to Apache server at `172.16.0.109` |
+| 2018-08-20T14:41:33Z    | Exploitation Attempt | `POST`       | POST requests to common shell filenames (e.g., `/ak47.php`, `/xx.php`) — 94 events total |
+| 2018-08-20T14:55:24Z    | Recon (repeat) | `PROPFIND`   | Second WebDAV probe to the same Apache server |
+
+In concluson, our timeline suggests a probing attack on an apache web server, starting with direct access attempts via `GET`, followed by WebDAV probing, then a large amount of `POST` requests likely in an attempt to
+upload or interact with the web shells. The overall aim was most likely persistence, such as a backdoor.
+
+### 4. Key-takeaways and Lessons Learned
+This project documented my first investigation into the BOTSv3 dataset, which includes a wide variety of attacker data to explore and analyze. I focused on three source types: Windows Event Logs, AWS CloudTrail logs, and captured HTTP traffic. For each, I was able to identify and investigate a security incident, digging deeper to understand what actually happened.
+
+This was a fantastic learning experience — especially as I hadn’t worked with AWS sources before. I also came across PROPFIND, a completely new HTTP method to me, and took the time to understand what it does and how it can be abused during web-based attacks.
+
+Overall, this investigation gave me hands-on experience that supports my preparation for the BTL1 exam, and builds a strong foundation as I continue working toward further certifications and expanding my skillset.

@@ -113,7 +113,7 @@ This is a typical attacker post-exploitation move:
 - Elevate privileges quietly
 - Use PowerShell and native tools to avoid detection
 
-## 🔚 Conclusion
+## Conclusion
 
 Based on the analysis of the Windows event logs from the BOTS v3 dataset, it is highly likely that the AzureAD user `FyodorMalteskesko` was compromised. The account was used to create a backdoor user (`svcvnc`), assign it a password, and add it to the local Administrators group — performed PowerShell sessions. 
 
@@ -159,10 +159,14 @@ index="botsv3" sourcetype="aws:cloudtrail"
     - **ListAttachedUserPolicies**: Lists IAM policies, scouting for privilege abuse
     - **ListGroups,ListSSHKeys**: Enumerate groups and SSH keys, more recon and perhaps more specific targeting
 
-- This looks like a reconnaissance phase of an AWS compromise. The attacker is probing IAM structures, and looking for paths to escalate and exfiltrate credentials. All these events and actions were performed by the same recipient account.
 
 ![image](https://github.com/user-attachments/assets/80900d10-32c4-4663-ab88-f219c59dffd4)
 
+## Conclusion
+This looks like a reconnaissance phase of an AWS compromise. The attacker is probing IAM structures, and looking for paths to escalate and exfiltrate credentials. All these events and actions were performed by the same recipient account.
 
+### 3. Investigating http traffic
+
+#### What is it?
 
 

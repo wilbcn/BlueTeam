@@ -1,4 +1,4 @@
-# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs
+# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs (AWS Source!)
 
 ## 📖 Overview  
 Since configuring my Splunk Enterprise server on AWS and my initial analysis of the attack dataset, I was kindly provided with the dataset ctf questions and answers. This project documents my thought process on how I was able to answer the outlined questions. This document serves more of a learning resource for myself, but equally showcases my on going dedication improving my analytical skills and investigation skills using Splunk.
@@ -6,7 +6,7 @@ Since configuring my Splunk Enterprise server on AWS and my initial analysis of 
 Setup of this Splunk Server can be found here [Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Enterprise-HomeLab.md)
 A pre-investigation without access to the CTF q/a's can be found here [Link](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
 
-This document covers the first 20 questions of the BOTSv3 dataset. Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer.
+This document covers the first 20 questions of the BOTSv3 dataset. Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer. 
 
 ## 🎯 Goals
 - Answer a wide variety of CTF question and answers from the BOTSv3 attack dataset
@@ -154,3 +154,95 @@ Convert to MB:
 **Answer**: `2.935 MB`
 
 ### Question 8: A Frothly endpoint exhibits signs of coin mining activity. What is the name of the first process to reach 100 percent CPU processor utilization time from this activity on this endpoint?
+For this question, I referred to the hints from the spreadsheet, as I wasn't sure on the sourcetype to begin with. I then ran an initial query:
+
+```
+index="botsv3" sourcetype="perfmonmk:process"
+```
+
+- Fortunately, we immediately have this interesting field `process_cpu_used_percent` which matches the question. I selected 100 for 100% and ran a new filter.
+
+![image](https://github.com/user-attachments/assets/82770621-ef15-4453-a9fb-bc15697ea0d7)
+
+```
+index="botsv3" sourcetype="perfmonmk:process" process_cpu_used_percent=100
+```
+
+- Under the `instance` field we have our 4 contenders for the answer.
+
+![image](https://github.com/user-attachments/assets/26e1152f-3c97-4577-829f-0d7ff4ab0098)
+
+- I then ran the below query, which displays processes at 100% in a table, with their time stamp in ascending order (earliest first).
+```
+index="botsv3" sourcetype="perfmonmk:process" process_cpu_used_percent=100 | table _time | sort + _time
+```
+
+- By clicking on the earliest result at: `2018-08-20 09:36:26` We have our answer.
+
+**Answer**: `MicrosoftEdgeCP#2`
+**Comment**: The actual answer `chrome#5` at `2018-08-20 13:37:50` is therefore incorrect!!
+
+
+### Question 9: When a Frothly web server EC2 instance is launched via auto scaling, it performs automated configuration tasks after the instance starts. How many packages and dependent packages are installed by the cloud initialization script?
+As this question revolves around the launching, or initialisation of an EC2 instance. The appropriate source type log might be `cloud-init-output`. I had to look this up, but cloud-init is the tool that handles initialization and configuration of cloud instances at boot time. Initial query ran:
+
+```
+index="botsv3" sourcetype="cloud-init-output"
+```
+
+![image](https://github.com/user-attachments/assets/8f2cdeb9-e291-4ca4-9fb5-2861b3664656)
+
+- This returned 23 events. I then simply added keyword "packages" to the query:
+
+```
+index="botsv3" sourcetype="cloud-init-output" packages
+```
+
+- Which revealed our answers.
+
+![image](https://github.com/user-attachments/assets/64a0a527-3e45-4229-a8cd-29822e14f61c)
+
+**Answer**: `7,13`
+
+### Question 10: What is the short hostname of the only Frothly endpoint to actually mine Monero cryptocurrency?
+This was a simply one. We'd already found out the endpoint related to crypto mining: `MicrosoftEdgeCP#2`. So I ran:
+
+```
+`index="botsv3" MicrosoftEdgeCP#2`
+```
+
+- By looking at the field `host`, we have our answer
+
+**Answer**: `BSTOLL-L`
+
+### Question 11: How many cryptocurrency mining destinations are visited by Frothly endpoints?
+To find these destinations, I looked up events from DNS sources
+
+```
+`index="botsv3" source="stream:dns"` 
+```
+
+- This returned 175,094 events, so I added some keywords to our search to hopefully narrow this down.
+
+```
+index="botsv3" source="stream:dns" *monero* OR *coin* OR *crypto*
+```
+
+- Giving us 14 events. Under `query`, I appear to have found our first destination.
+
+![image](https://github.com/user-attachments/assets/96279f72-7756-435f-ac3e-c89dfca24df8)
+
+- Checking on VirusTotal
+
+![image](https://github.com/user-attachments/assets/4f75c5a4-45b9-414b-88ae-338c70f6fa86)
+
+![image](https://github.com/user-attachments/assets/19ebe5d1-4e2a-4ab8-b109-ba5ef4e80e4b)
+
+```
+index="botsv3" source="stream:dns" *monero* OR *coin* OR *crypto* | dedup query{} | table query{}
+```
+
+![image](https://github.com/user-attachments/assets/d49a598f-bf0d-4802-8383-5fbeb82fd043)
+
+**Answer**: 6
+

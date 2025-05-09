@@ -47,3 +47,26 @@ index="botsv3" sourcetype="aws:cloudtrail"
 
 **Answer**: `userIdentity.sessionContext.attributes.mfaAuthenticated`
 
+### Question 3: What is the processor number used on the web servers?
+I was a bit stuck on this one. I initially searched through http events for web traffic,  hoping this might be in the metadata somewhere. Going back to the BOTSv3 documentation on source types, I noticed we have `hardware`.
+
+```
+index="botsv3" sourcetype="hardware"
+```
+
+![image](https://github.com/user-attachments/assets/af25117c-105c-4ae3-8e8f-576f47ecffad)
+
+**Answer**: `E5-2676`
+
+### Question 4: Bud accidentally makes an S3 bucket publicly accessible. What is the event ID of the API call that enabled public access?
+More API related questions. I can again focus on cloud trail as a basic. 
+
+```
+index="botsv3" sourcetype="aws:cloudtrail"
+```
+
+
+
+
+
+

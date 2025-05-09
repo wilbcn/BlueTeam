@@ -6,7 +6,7 @@ Since configuring my Splunk Enterprise server on AWS and my initial analysis of 
 Setup of this Splunk Server can be found here [Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Enterprise-HomeLab.md)
 A pre-investigation without access to the CTF q/a's can be found here [Link](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
 
-Below I will outline each question individually, and any steps or thought processes taken in order to successfully locate the answer.
+This document covers the first 20 questions of the BOTSv3 dataset. Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer.
 
 ## 🎯 Goals
 - Answer a wide variety of CTF question and answers from the BOTSv3 attack dataset
@@ -112,3 +112,12 @@ index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com"  event
 - The `eventID` within this event data gives us the answer.
 
 **Answer**: ab45689d-69cd-41e7-8705-5350402cf7ac
+
+### Question 5: What is the name of the S3 bucket that was made publicly accessible?
+We already had the answer to this from the previous question. In the raw data we have:
+
+![image](https://github.com/user-attachments/assets/a5812cbd-3e71-445e-aeaf-30bd6b52db1a)
+
+**Answer**: `frothlywebcode`
+
+### Question 6: What is the name of the text file that was successfully uploaded into the S3 bucket while it was publicly accessible?

@@ -84,7 +84,7 @@ index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com"
 
 ![image](https://github.com/user-attachments/assets/3a6fa9fd-c826-4ff0-a69d-b0a3247a8a5a)
 
-- I then ran an updated SPL query to take a closer look at this.
+- I then ran an updated SPL query to take a closer look at this. Here I uniquely filter on the eventName field, and display it in a table.
 
 ```
 index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com" | dedup eventName | table eventName

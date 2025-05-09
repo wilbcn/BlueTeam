@@ -14,3 +14,36 @@ Below I will outline each question individually, and any steps or thought proces
 - Prepare myself for the BTL1 exam !
 
 ### Question 1: List out the IAM users that accessed an AWS service (successfully or unsuccessfully) in Frothly's AWS environment?
+To answer this question, I ran an initial query focusing on AWS cloud trail, which covers API calls made from AWS users.
+
+```
+index="botsv3" sourcetype="aws:cloudtrail"
+```
+
+- From here, I spotted interesting field: `user`, which I honed in on.
+
+```
+index="botsv3" sourcetype="aws:cloudtrail" | dedup user | table user
+```
+
+![image](https://github.com/user-attachments/assets/38da1542-f389-4c8d-b6f6-121e9da59dc5)
+
+- By looking back at the original question, here we are looking at AWS IAM Users, not services or anything else. This way, we can pick out the answers quite easily.
+
+**Answers**: `bstoll, btun, splunk_access, web_admin`
+
+### Question 2: What field would you use to alert that AWS API activity have occurred without MFA (multi-factor authentication)?
+This question still revolves around API calls, so I will stick to focusing on the previous source type for cloud trail.
+
+```
+index="botsv3" sourcetype="aws:cloudtrail"
+```
+
+- After running this query, I browsed through the list of interesting fields, and could not initially see anything related to MFA. I noticed we had 348 more fields (extra interesting fields) that can add and filter through to aid our search. Here I searched for `multi` and `mfa` and came accross:
+
+![image](https://github.com/user-attachments/assets/10d55657-9d54-49e5-8a08-d5bae540f470)
+
+![image](https://github.com/user-attachments/assets/ee79e0f9-454b-4d5f-bd3a-b83b98cee900)
+
+**Answer**: `userIdentity.sessionContext.attributes.mfaAuthenticated`
+

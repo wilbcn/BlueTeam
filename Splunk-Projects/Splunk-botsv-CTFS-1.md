@@ -121,3 +121,36 @@ We already had the answer to this from the previous question. In the raw data we
 **Answer**: `frothlywebcode`
 
 ### Question 6: What is the name of the text file that was successfully uploaded into the S3 bucket while it was publicly accessible?
+Now that we know the name of the bucket that was made publicly accessible, we can use this in our search. We are looking for a text file, which we could also add to the search.
+
+```
+index="botsv3" frothlywebcode *.txt
+```
+
+- The `uri` fields reveal the answer.
+
+![image](https://github.com/user-attachments/assets/269b3e31-2ceb-4d96-8ae3-6df765f0a4a0)
+
+**Answer**: `OPEN_BUCKET_PLEASE_FIX.txt`
+
+
+### Question 7: What is the size (in megabytes) of the .tar.gz file that was successfully uploaded into the S3 bucket while it was publicly accessible?
+Similar approach as the previous question, by adding the file extension to our SPL query we are able to hone in on the answer.
+
+```
+index="botsv3" frothlywebcode *.tar.gz
+```
+
+- In the extra fields, I added a bunch I thought migtht be helpful, such as `object_size` and `bytes`.
+
+![image](https://github.com/user-attachments/assets/922ce5c4-a1ac-4c7e-9cb9-1e1c3d13686e)
+
+Convert to KB:
+3,076,532 bytes ÷ 1,024 = 3,004.34 KB
+
+Convert to MB:
+3,076,532 bytes ÷ 1,048,576 = 2.935 MB
+
+**Answer**: `2.935 MB`
+
+### Question 8: A Frothly endpoint exhibits signs of coin mining activity. What is the name of the first process to reach 100 percent CPU processor utilization time from this activity on this endpoint?

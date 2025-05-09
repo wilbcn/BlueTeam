@@ -30,6 +30,15 @@ index="botsv3" sourcetype="aws:cloudtrail" | dedup user | table user
 
 - By looking back at the original question, here we are looking at AWS IAM Users, not services or anything else. This way, we can pick out the answers quite easily.
 
+```
+index="botsv3" sourcetype="aws:cloudtrail" IAM eventSource="iam.amazonaws.com"
+```
+
+- By adding the event source to our search, we confirm the IAM users.
+
+![image](https://github.com/user-attachments/assets/0fc0590d-8ed4-4304-b9ab-70ca1f499407)
+
+
 **Answers**: `bstoll, btun, splunk_access, web_admin`
 
 ### Question 2: What field would you use to alert that AWS API activity have occurred without MFA (multi-factor authentication)?
@@ -65,8 +74,41 @@ More API related questions. I can again focus on cloud trail as a basic.
 index="botsv3" sourcetype="aws:cloudtrail"
 ```
 
+- From here, I filtered down on `interesting fields`, choosing `eventSource - s3.amazonaws.com`.
 
+```
+index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com"
+```
 
+- By looking at `eventName`, I get an initial understanding on the API calls made in relation to S3 buckets.
 
+![image](https://github.com/user-attachments/assets/3a6fa9fd-c826-4ff0-a69d-b0a3247a8a5a)
 
+- I then ran an updated SPL query to take a closer look at this.
 
+```
+index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com" | dedup eventName | table eventName
+```
+
+- Out of the 15 events, one stood out initially. In AWS - PUT operations modify or set configurations.
+
+![image](https://github.com/user-attachments/assets/14711345-e8c6-497c-bc8e-4fc3fccdda2c)
+
+- I then referred to the official AWS documentation on this API call to confirm my suspicions. [Link](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketAcl.html)
+- Back to the question, we need to find the eventID of this API call. 
+
+```
+index="botsv3" sourcetype="aws:cloudtrail" eventSource="s3.amazonaws.com"  eventName=PutBucketAcl
+```
+
+- We now just have 2 events to investigate to find out answer.
+
+![image](https://github.com/user-attachments/assets/f03b22cd-1893-44a2-b876-86a89f4e21d9)
+
+- By examining the raw text of these two events, we find the uri `http://acs.amazonaws.com/groups/global/AllUsers` and permission `FULL_CONTROL`.
+
+![image](https://github.com/user-attachments/assets/24d70cee-5552-4e2d-8135-5d888ec220d0)
+
+- The `eventID` within this event data gives us the answer.
+
+**Answer**: ab45689d-69cd-41e7-8705-5350402cf7ac

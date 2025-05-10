@@ -19,7 +19,7 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 
 ## Investigation
 ### 1. PCAP Overview
-To begin the investigation, I will perform an initial overview of the PCAP, identifying bits of information which will assist in the overall investigation of the malware PCAP.
+Pre-investigation, I performed an initial overview of the PCAP, identifying bits of information which will assist in the overall investigation of the malware PCAP. 
 
 - **Capture File Properties**
 ![image](https://github.com/user-attachments/assets/415bd1c8-28a8-4e53-a823-5a4de8678b44)
@@ -35,7 +35,11 @@ To begin the investigation, I will perform an initial overview of the PCAP, iden
 
 #### Key Info
 - **Majority of packets are IPv4 traffic**: `94.2%`
-- **A large amount of packets sent with TLS encrpytion**: `82.9%`
-- 
+- **A large amount of traffic is sent with TLS encrpytion**: `82.9%` - Could hide C2 and data exfiltration.
+- **HTTP Traffic**: `2.2%` `114 packets` - HTTP web traffic is unencrypted, could reveal URLS or malicious payloads.
+- **Kerberos, DHCP, NetBios**: Useful for who logged in, which devices were given IPs, and hostname information.
+- **Domain Name System (DNS)**: `3.4%` `173 packets` - Could be DNS Tunnelling (Attackers hiding extra data inside DNS queries)
+
+
 
 

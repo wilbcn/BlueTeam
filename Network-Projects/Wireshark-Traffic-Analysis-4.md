@@ -41,5 +41,17 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 - **Domain Name System (DNS)**: `3.4%` `173 packets` - Check for DNS Tunnelling (Attackers hiding extra data inside DNS queries)
 - **Address Resolution Protocol**: `5.8%` `294 packets` - Check for ARP Poisoning / MITM attacks. 
 
+- **Capture File Properties**
+![image](https://github.com/user-attachments/assets/25bbd600-e5eb-48b1-a4bf-d60b92a83e08)
+
+#### Key Info
+- **Victims endpoint**: `DESKTOP-RNVO9AT.bepositive.com`
+- **Address with most packets**: `win-ctl9xbq9y19.bepositive.com` - 321kB total - 1308 packets (699 A→B, 609 B→A)
+- **Top Data Receiver**: `ns170.seeoux.com` → 782 packets, 720 kB total, more inbound data ((278 A→B, 504 B→A))
+- **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total
+- **Cloud/C2 Services Contacted**: Multiple `*.azure.com`, `cloudapp.azure.com`, `akamai`, `trafficmanager.net`
+
+### 2. Investigating HTTP and DNS Traffic (Application-Layer)
+
 
 

@@ -1,4 +1,4 @@
-# 📡 Wireshark Project 4: 
+# 📡 Wireshark Project 4: ON-GOING
 
 ## Overview
 Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 
@@ -99,7 +99,7 @@ http && ip.addr == 172.17.0.99
 ![image](https://github.com/user-attachments/assets/59788a8c-8a10-400b-86eb-309dd7e6da93)
 
 - We can quite clearly now see the GET and POST requests of the C2 communication. `GET /index.php?id=&subid=qIOuKk7U HTTP/1.1` from the malicious IP. The C2 response `HckDcK0czXjaq48jVHNn|qIOuKk7U|http://79.124.78.197/index.php`, and the POST binary payload.
-- I exported the HTTP objects `index.php` to my desktop and generated the MD5 hashes of them to check in VirusTotal.
+- I exported the HTTP objects `index.php` to my desktop and generated the MD5 hashes.
 
 ```
 md5sum index.php
@@ -111,11 +111,13 @@ md5sum index2.php
 8b3b8573ed4e48aca7ffba6ae817cc6b  index2.php
 ```
 
+- I then viewed these files, solidifying our thoughts on this event. index.php is the POST Payload Binary and index2.php	is the GET Response we already identified.
 
+![image](https://github.com/user-attachments/assets/0741f6a8-f10a-46e3-bea2-0df9601ad10b)
 
+![image](https://github.com/user-attachments/assets/891cc716-f0a8-4dbd-891d-c4ba770f247f)
 
-
-
+- Although both hashes came up clean in VT, this does not necessarily mean they are harmless. As we already know they are involved in malicious C2 activity.
 
 ### 3. DNS Traffic
 - I then pivoted to looking at DNS. I initially ran `dns.qry.name.len > 15 and !mdns`, revealing lots of packets with info `The queried domain does not exist`.

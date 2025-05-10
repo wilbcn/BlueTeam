@@ -1,4 +1,4 @@
-# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs (AWS Source!)
+# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs
 
 ## 📖 Overview  
 Since configuring my Splunk Enterprise server on AWS and my initial analysis of the attack dataset, I was kindly provided with the dataset ctf questions and answers. This project documents my thought process on how I was able to answer the outlined questions. This document serves more of a learning resource for myself, but equally showcases my on going dedication improving my analytical skills and investigation skills using Splunk.

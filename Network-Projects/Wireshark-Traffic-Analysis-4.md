@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d928242c-1548-4388-9eec-7a23d9b23415)![image](https://github.com/user-attachments/assets/151d50cd-d9ff-4c13-b852-aecf0de88b2f)# 📡 Wireshark Project 4: 
+# 📡 Wireshark Project 4: 
 
 ## Overview
 Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 

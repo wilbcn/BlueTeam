@@ -371,5 +371,26 @@ index=botsv3 sourcetype="stream:smtp" | spath sender_email | search sender_email
 **Answer**: `Splunk Chart`
 
 ### Question 18: What IAM user access key generates the most distinct errors when attempting to access IAM resources?
+Going back to question 1, I came accross `eventSource="iam.amazonaws.com`, which I re-used to begin searching for the answer.
 
+```
+index=botsv3 sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com"
+```
 
+- In the interesting fields, we have `user_access_key`.
+
+![image](https://github.com/user-attachments/assets/d23133e8-a812-47db-9bd5-0074e5df6bd2)
+
+- So the answer will be one of these user access keys. By filtering on unique `errorMessage`, I was able to locate the answer.
+
+```
+index=botsv3 sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com" | dedup errorMessage | stats count by user_access_key, errorMessage | table user_access_key, errorMessage, count
+```
+
+![image](https://github.com/user-attachments/assets/73018d2f-f2f3-45e8-a99a-ed08f27bcc1a)
+
+- `AKIAJOGCDXJ5NW5PXUPA` user access key has 5 unique errors.
+
+**Answer**: `AKIAJOGCDXJ5NW5PXUPA`
+
+### Question 19: 

@@ -294,13 +294,55 @@ index="botsv3" sourcetype="symantec:ep:security:file" "blocked"
 **Answer**: `BTUN-L`
 
 ### Question 15: What is the FQDN of the endpoint that is running a different Windows operating system edition than the others?
-FQDN (Fully-Qualified-Domain-Name)
+FQDN stands for Fully Qualified Domain Name. To work out the answer to this, I began key-word searching with common operating systems.
 
+```
+index="botsv3" "Windows 10"
+```
 
+- Knowing about these sources such as `operatingsystem` and `cisconvmsysdata` will be useful for future related investigations. 
 
+![image](https://github.com/user-attachments/assets/bee77407-ede6-49c3-9ca0-53c58087da9b)
 
+- I then changed my search to filter on this new source.
 
+```
+index="botsv3" source="operatingsystem"
+```
 
+- Under the `OS` field, we now have two options. 
 
+![image](https://github.com/user-attachments/assets/c569f2e4-a1b3-4011-a8d1-4f3ef12a37e7)
+
+- I then ran some transforming commands to get a better idea of what endpoints were running which OS. This filters for unique endpoints and displays a table their related OS.
+
+```
+index="botsv3" source="operatingsystem" | dedup host | table host OS
+```
+
+![image](https://github.com/user-attachments/assets/74080182-f073-4605-b8ed-61ba22f5013d)
+
+**Answer**: `BSTOLL-L.froth.ly`
+
+### Question 16: According to the Cisco NVM flow logs, for how many seconds does the endpoint generate Monero cryptocurrency?
+Going back to the previous question, I came accross the source `cisconvmsysdata`. Cisco NVM stands for Network Visibility Module, basically log records of network activity from endpoints. I started my investigation on this question leveraging this source.
+
+```
+index="botsv3" source="cisconvmsysdata"
+```
+
+- Returning just 11 events to investigate.
+
+![image](https://github.com/user-attachments/assets/0861ec23-a1dc-4266-8a1e-54fa04346848)
+
+- Going back to **Question 10**, we identified that the endpoint successful in mining cryptocurrency was `BSTOLL-L.froth.ly`. In the `vsn` field from our latest search, we can now filter directly onto this endpoint.
+
+![image](https://github.com/user-attachments/assets/856fc2cf-165c-40cf-b64a-285ac577de6e)
+
+```
+index="botsv3" source="cisconvmsysdata" vsn="BSTOLL-L.froth.ly"
+```
+
+- Now I have just two events. 
 
 

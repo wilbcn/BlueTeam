@@ -51,7 +51,7 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 - **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total
 - **Cloud/C2 Services Contacted**: Multiple `*.azure.com`, `cloudapp.azure.com`, `akamai`, `trafficmanager.net`
 
-### 2. Investigating HTTP and DNS Traffic (Application-Layer)
+### 2. Investigating HTTP 
 To begin the investigation, I began looking at http traffic. By searching `http`, and then checking **Statistics→Endpoints** to see which IPs were most involved with http:
 
 - `DESKTOP-RNVO9AT.bepositive.com (172.17.0.99)`
@@ -85,5 +85,49 @@ http && ip.addr == 172.17.0.99
 ![image](https://github.com/user-attachments/assets/4e3b7e53-8b4b-4635-994b-c4f131b59f9c)
 
 - So we have HTTP 200 responses from the malicious IP to our victim, and from victim to the malicious ip frequent post methods of `/foots.php`. With the patterned timing, unusual endpoint `79.124.78.197`, spoofed user agent field, encoded binaries, and consistent 200 responses, this is definately C2 communication. The malware sending binary POSTs to /foots.php.
+
+- By following the TCP stream between the infected host (172.17.0.99) and the known malicious IP (79.124.78.197), I identified multiple HTTP POST requests made to the URI /foots.php. Each POST contained a binary or encoded payload, with content resembling a custom C2 protocol. Though decoding these payloads gave me non readable content.
+
+![image](https://github.com/user-attachments/assets/c639860d-05fe-4bf0-bc57-5e16f6e5cac8)
+
+- I also ran a check on VT for this identified IP address, which supports our findings that this is a malicious address.
+
+![image](https://github.com/user-attachments/assets/4470b997-668a-4b59-91e5-206d485960b4)
+
+- By searching `ip.addr == 79.124.78.197`, I get the full view of traffic related to this address. Immediately I spotted a GET method for `/index.php`. TCP Stream:
+
+![image](https://github.com/user-attachments/assets/59788a8c-8a10-400b-86eb-309dd7e6da93)
+
+- We can quite clearly now see the GET and POST requests of the C2 communication. `GET /index.php?id=&subid=qIOuKk7U HTTP/1.1` from the malicious IP. The C2 response `HckDcK0czXjaq48jVHNn|qIOuKk7U|http://79.124.78.197/index.php`, and the POST binary payload.
+- I exported the HTTP objects `index.php` to my desktop and generated the MD5 hashes of them to check in VirusTotal.
+
+```
+md5sum index.php
+5280f800cb74712cf68bfda2546e1ea5  index.php
+```
+```
+mv 'index.php%3fid=&subid=qIOuKk7U' index2.php
+md5sum index2.php 
+8b3b8573ed4e48aca7ffba6ae817cc6b  index2.php
+```
+
+
+
+
+
+
+
+### 3. DNS Traffic
+- I then pivoted to looking at DNS. I initially ran `dns.qry.name.len > 15 and !mdns`, revealing lots of packets with info `The queried domain does not exist`.
+- I then ran an updated query `dns.flags.rcode == 3 && !mdns`, showing:
+
+![image](https://github.com/user-attachments/assets/d7f72c29-16bd-4040-bf37-b046d3415950)
+
+#### Key Info
+- `win-ctl9xbq9y19.bepositive.com (172.17.0.17)` appears to be the domain controller
+- The victim `172.17.0.99` is making repeated DNS queries that were rejected by the internal DNS server.
+- This is likely the malware attempting to resolve internal domains.
+
+
 
 

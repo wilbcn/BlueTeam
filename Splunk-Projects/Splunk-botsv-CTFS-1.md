@@ -3,8 +3,8 @@
 ## 📖 Overview  
 Since configuring my Splunk Enterprise server on AWS and my initial analysis of the attack dataset, I was kindly provided with the dataset ctf questions and answers. This project documents my thought process on how I was able to answer the outlined questions. This document serves more of a learning resource for myself, but equally showcases my on going dedication improving my analytical skills and investigation skills using Splunk.
 
-Setup of this Splunk Server can be found here [Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Enterprise-HomeLab.md)
-A pre-investigation without access to the CTF q/a's can be found here [Link](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
+- Setup of this Splunk Server can be found here [Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Enterprise-HomeLab.md)
+- A pre-investigation without access to the CTF q/a's can be found here [Link](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
 
 This document covers the first 20 questions of the BOTSv3 dataset. Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer. 
 
@@ -343,6 +343,33 @@ index="botsv3" source="cisconvmsysdata"
 index="botsv3" source="cisconvmsysdata" vsn="BSTOLL-L.froth.ly"
 ```
 
-- Now I have just two events. 
+- Now I have just two events. Although this turned out to be a dead end to answer the question directly. I had to look up online the SPL search in order to calculate the difference. Bit of an odd question, but good to start using new source types like `cisconvmsysdata`. 
+
+```
+index=botsv3 source=cisconvmflowdata *coinhive* | stats max(_time) as maxtime min(_time) as mintime | eval difference=maxtime-mintime
+```
+
+**Answer**: `1652` seconds
+
+### Question 17: What kind of Splunk visualization was in the first file attachment that Bud emails to Frothly employees to illustrate the coin miner issue?
+The question explicitly mentions emails, so I began searching for `smtp` events. I ran the below query including Buds email address, giving us 11 events.
+
+```
+index=botsv3 sourcetype="stream:smtp" | spath sender_email | search sender_email="bstoll@froth.ly"
+```
+
+- The field `content{}` most likely has what we are after, so i further refined our search:
+
+![image](https://github.com/user-attachments/assets/1b22f5a1-13cc-440c-be68-697aab4574da)
+
+```
+index=botsv3 sourcetype="stream:smtp" | spath sender_email | search sender_email="bstoll@froth.ly" | dedup content{} | table content{}
+```
+
+![image](https://github.com/user-attachments/assets/416fc0dd-6a6d-47b8-8363-fc95f5bbc477)
+
+**Answer**: `Splunk Chart`
+
+### Question 18: What IAM user access key generates the most distinct errors when attempting to access IAM resources?
 
 

@@ -45,13 +45,22 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 ![image](https://github.com/user-attachments/assets/25bbd600-e5eb-48b1-a4bf-d60b92a83e08)
 
 #### Key Info
-- **Victims endpoint**: `DESKTOP-RNVO9AT.bepositive.com`
-- **Address with most packets**: `win-ctl9xbq9y19.bepositive.com` - 321kB total - 1308 packets (699 A→B, 609 B→A)
-- **Top Data Receiver**: `ns170.seeoux.com` → 782 packets, 720 kB total, more inbound data ((278 A→B, 504 B→A))
+- **Victims endpoint**: `DESKTOP-RNVO9AT.bepositive.com (172.17.0.99)`
+- **Address with most packets**: `win-ctl9xbq9y19.bepositive.com (172.17.0.17)` - 321kB total - 1308 packets (699 A→B, 609 B→A) 
+- **Top Data Receiver**: `ns170.seeoux.com (46.254.34.201)` → 782 packets, 720 kB total, more inbound data ((278 A→B, 504 B→A))
 - **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total
 - **Cloud/C2 Services Contacted**: Multiple `*.azure.com`, `cloudapp.azure.com`, `akamai`, `trafficmanager.net`
 
 ### 2. Investigating HTTP and DNS Traffic (Application-Layer)
+To begin the investigation, I began looking at http traffic. By searching `http`, and then checking **Statistics→Endpoints** to see which IPs were most involved with http:
+
+- `DESKTOP-RNVO9AT.bepositive.com1`
+- `79.124.78.197`
+
+![image](https://github.com/user-attachments/assets/abe5a3a8-6e6b-4e21-ad0f-5cf7a57f621a)
+
+- I then ran a new filter to investigate further the identified addresses.
+
 
 
 

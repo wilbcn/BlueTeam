@@ -84,4 +84,6 @@ http && ip.addr == 172.17.0.99
 
 ![image](https://github.com/user-attachments/assets/4e3b7e53-8b4b-4635-994b-c4f131b59f9c)
 
-- So we have HTTP 200 responses from the malicious IP to our victim, and from victim to the malicious ip frequent post methods of `/foots.php`. With the patterned timing, unusual endpoint `79.124.78.197`, spoofed user agent field, encoded binaries, and consistent 200 responses, this is definately C2 communication. 
+- So we have HTTP 200 responses from the malicious IP to our victim, and from victim to the malicious ip frequent post methods of `/foots.php`. With the patterned timing, unusual endpoint `79.124.78.197`, spoofed user agent field, encoded binaries, and consistent 200 responses, this is definately C2 communication. The malware sending binary POSTs to /foots.php.
+
+

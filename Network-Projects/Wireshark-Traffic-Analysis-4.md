@@ -17,6 +17,9 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 
 <include any tools here i.e. VT>
 
+## IOC's
+<table></table>
+
 ## Investigation
 ### 1. PCAP Overview
 Pre-investigation, I performed an initial overview of the PCAP, identifying bits of information which will assist in the overall investigation of the malware PCAP. 

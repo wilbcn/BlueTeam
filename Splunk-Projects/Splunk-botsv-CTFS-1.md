@@ -389,8 +389,31 @@ index=botsv3 sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com" | dedup
 
 ![image](https://github.com/user-attachments/assets/73018d2f-f2f3-45e8-a99a-ed08f27bcc1a)
 
-- `AKIAJOGCDXJ5NW5PXUPA` user access key has 5 unique errors.
+- `AKIAJOGCDXJ5NW5PXUPA` user access key has 5 unique errors related to access attempts to IAM resources.
 
 **Answer**: `AKIAJOGCDXJ5NW5PXUPA`
 
-### Question 19: 
+### Question 19: Bud accidentally commits AWS access keys to an external code repository. Shortly after, he receives a notification from AWS that the account had been compromised. What is the support case ID that Amazon opens on his behalf?
+I found the answer to this question quickly, leveraging previous information I have already gathered about Bud. We know his email address already, and we can assume this notification came from an Amazon email address. The below query revealed the answer.
+
+```
+index=botsv3 sourcetype="stream:smtp" bstoll@froth.ly | spath sender_email | search sender_email="*amazon*"
+```
+
+- In the Event info: `subject: Amazon Web Services: New Support case: 5244329601`
+
+**Answer**: `5244329601`
+
+### Question 20: AWS access keys consist of two parts: an access key ID (e.g., AKIAIOSFODNN7EXAMPLE) and a secret access key (e.g., wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY). What is the secret access key of the key that was leaked to the external code repository?
+In the body of the previous event, we came accross the following information that amazon sent via email to Bud.
+
+`We have become aware that the AWS Access Key AKIAJOGCDXJ5NW5PXUPA (belonging to IAM user \"web_admin\") along with the corresponding Secret Key is publicly available online at https://github.com/FrothlyBeers/BrewingIOT/blob/e4a98cc997de12bb7a59f18aea207a28bcec566c/MyDocuments/aws_credentials.bak.\r\n\r\nThis poses a security risk to your account and other users, could lead to excessive charges from unauthorized activity or abuse, and violates the AWS Customer Agreement.\r\n\r\nPlease delete the exposed credentials from your AWS account by using the instructions below and take steps to prevent any new credentials from being published in this manner again.`
+
+- As previously identified, we know we are looking for further events in regards to access key `AKIAJOGCDXJ5NW5PXUPA`.
+
+```
+
+```
+
+
+

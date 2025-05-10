@@ -1,4 +1,4 @@
-# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs (AWS Source!)
+![image](https://github.com/user-attachments/assets/cc8eac47-3962-4458-af55-df406e8eb3fb)# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs (AWS Source!)
 
 ## 📖 Overview  
 Since configuring my Splunk Enterprise server on AWS and my initial analysis of the attack dataset, I was kindly provided with the dataset ctf questions and answers. This project documents my thought process on how I was able to answer the outlined questions. This document serves more of a learning resource for myself, but equally showcases my on going dedication improving my analytical skills and investigation skills using Splunk.
@@ -245,4 +245,62 @@ index="botsv3" source="stream:dns" *monero* OR *coin* OR *crypto* | dedup query{
 ![image](https://github.com/user-attachments/assets/d49a598f-bf0d-4802-8383-5fbeb82fd043)
 
 **Answer**: 6
+
+### Question 12: Using Splunk's event order functions, what is the first seen signature ID of the coin miner threat according to Frothly's Symantec Endpoint Protection (SEP) data?
+Taking a look at the BOTSv3 documentation, we have multiple sources for data that come under `symantec`. Symantec endpoint logs in Splunk provide visibility into endpoint-level events like malware detections, file quarantines, policy enforcement, process activity, IPS/Firewall blocks, and system scans. Initial query ran:
+
+```
+index="botsv3" sourcetype="symantec:ep:security:file"
+```
+
+- This gave me just 46 events to filter through. Linking back to the question, we are interested in the `signature_id` field, which has just two options.
+
+![image](https://github.com/user-attachments/assets/83c90d49-c085-4af0-b35e-a396c68f7f89)
+
+- I then ran another query, filtering on `signature_id` to find the earliest instance.
+
+```
+index="botsv3" sourcetype="symantec:ep:security:file" | table signature_id _time | sort + _time
+```
+
+![image](https://github.com/user-attachments/assets/40c2f8fd-fe7d-4bb3-a78b-855c82792abc)
+
+- Strange question when both results have the exact same time stamp. 
+
+![image](https://github.com/user-attachments/assets/55f4b7b0-8146-4891-bc27-9a7eabe2cbd0)
+
+**Answer**: `30358`
+
+### Question 13: According to Symantec's website, what is the severity of this specific coin miner threat?
+Here I searched on Google `symantec signature ID 30358`.
+
+![image](https://github.com/user-attachments/assets/124c9238-ed20-49a5-a9e2-43476d508b7b)
+
+**Answer**: `Medium`
+
+### Question 14: What is the short hostname of the only Frothly endpoint to show evidence of defeating the cryptocurrency threat?
+This question leads me to think something has been blocked or whitelisted. As previously mentioned, we now know that symantec events include `IPS/Firewall blocks`, so this is a potentially good place to start.
+
+```
+index="botsv3" sourcetype="symantec:ep:security:file" "blocked"
+```
+
+- With this query, I expanded the returned events and it was now clear a block action had taken place under signature: `Web Attack: JSCoinminer Download 8`
+
+![image](https://github.com/user-attachments/assets/f0b031cc-5009-48a1-bde9-840b51dd4f57)
+
+- The `Host_Name` field reveals the answer.
+
+**Answer**: `BTUN-L`
+
+### Question 15: What is the FQDN of the endpoint that is running a different Windows operating system edition than the others?
+FQDN (Fully-Qualified-Domain-Name)
+
+
+
+
+
+
+
+
 

@@ -38,8 +38,8 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 - **A large amount of traffic is sent with TLS encrpytion**: `82.9%` - Could hide C2 and data exfiltration.
 - **HTTP Traffic**: `2.2%` `114 packets` - HTTP web traffic is unencrypted, could reveal URLS or malicious payloads.
 - **Kerberos, DHCP, NetBios**: Useful for who logged in, which devices were given IPs, and hostname information.
-- **Domain Name System (DNS)**: `3.4%` `173 packets` - Could be DNS Tunnelling (Attackers hiding extra data inside DNS queries)
-
+- **Domain Name System (DNS)**: `3.4%` `173 packets` - Check for DNS Tunnelling (Attackers hiding extra data inside DNS queries)
+- **Address Resolution Protocol**: `5.8%` `294 packets` - Check for ARP Poisoning / MITM attacks. 
 
 
 

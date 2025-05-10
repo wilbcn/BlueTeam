@@ -6,7 +6,7 @@ Since configuring my Splunk Enterprise server on AWS and my initial analysis of 
 - Setup of this Splunk Server can be found here [Setup](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-Enterprise-HomeLab.md)
 - A pre-investigation without access to the CTF q/a's can be found here [Link](https://github.com/wilbcn/BlueTeam/blob/main/Splunk-Projects/Splunk-botsv3-Investigation-1.md)
 
-This document covers the first 20 questions of the BOTSv3 dataset. Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer. 
+Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer. This has been fantastic hands-on practice, leveraging a variety of transforming commands, practice with SPL syntax, using the Splunk UI, and learning about new sources/sourcetypes specifically those tied to AWS.
 
 ## 🎯 Goals
 - Answer a wide variety of CTF question and answers from the BOTSv3 attack dataset
@@ -405,15 +405,12 @@ index=botsv3 sourcetype="stream:smtp" bstoll@froth.ly | spath sender_email | sea
 **Answer**: `5244329601`
 
 ### Question 20: AWS access keys consist of two parts: an access key ID (e.g., AKIAIOSFODNN7EXAMPLE) and a secret access key (e.g., wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY). What is the secret access key of the key that was leaked to the external code repository?
-In the body of the previous event, we came accross the following information that amazon sent via email to Bud.
+The actual secret key will not be in the splunk logs. For security reasons, this is not logged. In the body of the previous event, we came accross the following information that amazon sent via email to Bud.
 
 `We have become aware that the AWS Access Key AKIAJOGCDXJ5NW5PXUPA (belonging to IAM user \"web_admin\") along with the corresponding Secret Key is publicly available online at https://github.com/FrothlyBeers/BrewingIOT/blob/e4a98cc997de12bb7a59f18aea207a28bcec566c/MyDocuments/aws_credentials.bak.\r\n\r\nThis poses a security risk to your account and other users, could lead to excessive charges from unauthorized activity or abuse, and violates the AWS Customer Agreement.\r\n\r\nPlease delete the exposed credentials from your AWS account by using the instructions below and take steps to prevent any new credentials from being published in this manner again.`
 
-- As previously identified, we know we are looking for further events in regards to access key `AKIAJOGCDXJ5NW5PXUPA`.
+- Here we can pick out the address: `https://github.com/FrothlyBeers/BrewingIOT/blob/e4a98cc997de12bb7a59f18aea207a28bcec566c/MyDocuments/aws_credentials.bak` which reveals the answer to this question by visiting the page.
 
-```
+![image](https://github.com/user-attachments/assets/8f5b91cc-612c-41c4-b706-07babc926e9d)
 
-```
-
-
-
+**Answer**: `Bx8/gTsYC98T0oWiFhpmdROqhELPtXJSR9vFPNGk`

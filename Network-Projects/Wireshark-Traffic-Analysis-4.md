@@ -54,13 +54,34 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 ### 2. Investigating HTTP and DNS Traffic (Application-Layer)
 To begin the investigation, I began looking at http traffic. By searching `http`, and then checking **Statistics→Endpoints** to see which IPs were most involved with http:
 
-- `DESKTOP-RNVO9AT.bepositive.com1`
+- `DESKTOP-RNVO9AT.bepositive.com (172.17.0.99)`
 - `79.124.78.197`
 
 ![image](https://github.com/user-attachments/assets/abe5a3a8-6e6b-4e21-ad0f-5cf7a57f621a)
 
-- I then ran a new filter to investigate further the identified addresses.
+- I then ran some queries to investigate these two addresses:
 
+```
+http && ip.dst == 172.17.0.99
+```
 
+![image](https://github.com/user-attachments/assets/6e90531c-25a5-4014-826f-e459ed6e8fee)
 
+#### Key Info
+- **All packets are 200 OK responses**: Something is clearly pulling data from the attacker.
+- **Consistent packet sizes**: The vast majority of packets are 222 bytes. This suggests some kind of automation or perhaps beaconing activity.
+- **Content Types**: text/html might be payloads or commands delivered in plain formats.
 
+- I then filtered on all http traffic for this address.
+
+```
+http && ip.addr == 172.17.0.99
+```
+
+- The first interaction from our victim to the suspicious ip `79.124.78.197` is at `2024-09-04 18:35:07`. Its a POST http method on `/foots.php`, which Wireshark has marked in yellow as content-encoded entity body (binary) 94 bytes. By following the stream we can see that there are consecutive POSTS, Binary payloads (`content-encoding: binary`), and that the user-agent field has been tampered with. This is typical with obfuscation / evasion tactics from attackers to help bypass detection. 
+
+![image](https://github.com/user-attachments/assets/32aece99-3c38-4fc6-9a42-31d403aa44a1)
+
+![image](https://github.com/user-attachments/assets/4e3b7e53-8b4b-4635-994b-c4f131b59f9c)
+
+- So we have HTTP 200 responses from the malicious IP to our victim, and from victim to the malicious ip frequent post methods of `/foots.php`. With the patterned timing, unusual endpoint `79.124.78.197`, spoofed user agent field, encoded binaries, and consistent 200 responses, this is definately C2 communication. 

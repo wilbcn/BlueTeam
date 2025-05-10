@@ -411,6 +411,6 @@ The actual secret key will not be in the splunk logs. For security reasons, this
 
 - Here we can pick out the address: `https://github.com/FrothlyBeers/BrewingIOT/blob/e4a98cc997de12bb7a59f18aea207a28bcec566c/MyDocuments/aws_credentials.bak` which reveals the answer to this question by visiting the page.
 
-![image](https://github.com/user-attachments/assets/8f5b91cc-612c-41c4-b706-07babc926e9d)
+![image](https://github.com/user-attachments/assets/36111894-5912-46b1-8306-22f495c36e10)
 
 **Answer**: `Bx8/gTsYC98T0oWiFhpmdROqhELPtXJSR9vFPNGk`

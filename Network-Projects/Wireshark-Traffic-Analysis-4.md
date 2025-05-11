@@ -242,6 +242,11 @@ This surfaced multiple TCP issues, including:
 
 - This unclean web traffic confirms that `ns170.seeoux.com (46.254.34.201)` was part of the initial staging or command infrastructure.
 
+## 📋 Executive Summary
+On September 4th, 2024, a Windows workstation `DESKTOP-RNVO9AT.bepositive.com` (IP: 172.17.0.99) was observed engaging in suspicious SMBv1 authentication attempts and communicating with multiple malicious endpoints. Early traffic showed potential lateral movement activity via legacy protocols such as NetBIOS, SMB, and NTLM, followed by HTTP POST requests to a known C2 endpoint (`79.124.78.197`) and encrypted TLS connections to a suspicious server (`46.254.34.201`).
+
+The malware used binary-encoded POST requests and received C2 commands via HTTP 200 OK responses. Investigation revealed connections to known malware infrastructure associated with the Koi Loader family. DNS queries, tampered user-agent headers, and TLS SNI mismatches further support the conclusion of active post-compromise communication and staging.
+
 
 
 

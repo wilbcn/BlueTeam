@@ -12,11 +12,11 @@ An additional Wireshark hands-on lab, investigating a malware pcap called "Big F
 - Prepare myself for the BTL1 exam, and gain experience with report writing during investigations.
 
 ## Tools & Resources
-[Malware PCAP](https://www.malware-traffic-analysis.net/2024/09/04/index.html)
-[Virtual Machine](https://www.virtualbox.org/)
-[Operating System](https://www.kali.org/get-kali/)
-[Joes Sand Box](https://www.joesandbox.com/analysis/1501791/0/html)
-[VirusTotal](https://www.virustotal.com/gui/home/upload)
+- [Malware PCAP](https://www.malware-traffic-analysis.net/2024/09/04/index.html)
+- [Virtual Machine](https://www.virtualbox.org/)
+- [Operating System](https://www.kali.org/get-kali/)
+- [Joes Sand Box](https://www.joesandbox.com/analysis/1501791/0/html)
+- [VirusTotal](https://www.virustotal.com/gui/home/upload)
 
 ## 🧾 Indicators of Compromise (IOCs)
 | Type           | Value                                   | Description / Context                                      |

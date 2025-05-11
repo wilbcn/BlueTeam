@@ -14,6 +14,8 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 [Malware PCAP](https://www.malware-traffic-analysis.net/2024/09/04/index.html)
 [Virtual Machine](https://www.virtualbox.org/)
 [Operating System](https://www.kali.org/get-kali/)
+[Joes Sand Box](https://www.joesandbox.com/analysis/1501791/0/html)
+[VirusTotal](https://www.virustotal.com/gui/home/upload)
 
 <include any tools here i.e. VT>
 
@@ -159,7 +161,11 @@ tls.handshake.extensions_server_name && ip.addr == 46.254.34.201
 ```
 
 - This revealed SNI `www.bellantonicioccolato.it`, which does not match the identified destination `ns170.seeoux.com`. This is highly suspicious, in normal traffic the SNI should match the domain the user intended to visit.
-- Next query ran which matches any packet Wireshark has marked with analysis flags.
+- I then google searched this domain followed by "Malware", which confirms that this domain is malicious.
+
+![image](https://github.com/user-attachments/assets/6f249bdc-2866-4718-9c7f-629b12d4d525)
+
+- Next query ran matches any packet Wireshark has marked with analysis flags.
 
 ```
 tcp.analysis.flags && ip.addr == 46.254.34.201

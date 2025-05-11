@@ -159,6 +159,24 @@ tls.handshake.extensions_server_name && ip.addr == 46.254.34.201
 ```
 
 - This revealed SNI `www.bellantonicioccolato.it`, which does not match the identified destination `ns170.seeoux.com`. This is highly suspicious, in normal traffic the SNI should match the domain the user intended to visit.
-- 
+- Next query ran which matches any packet Wireshark has marked with analysis flags.
+
+```
+tcp.analysis.flags && ip.addr == 46.254.34.201
+```
+
+![image](https://github.com/user-attachments/assets/318128dd-4193-4f0e-987f-a7506df964a3)
+
+#### Key notes
+This surfaced multiple TCP issues, including:
+- TCP Dup ACK
+- TCP Fast Retransmission
+- TCP Out-Of-Order
+- TCP Previous segment not captured
+- TCP Spurious Retransmission
+
+- This unclean web traffic confirms that `ns170.seeoux.com (46.254.34.201)` was part of the initial staging or command infrastructure.
+
+
 
 

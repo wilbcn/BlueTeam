@@ -8,6 +8,7 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 - Victim Details: Correlate and share the details of the victim (hostname, IP address, MAC address, Windows user account name etc)
 - Indentify the IOC's: IP addresses, domains, and urls, associated with the attacker activity. Hashes of any malware from the pcap.
 - Apply a logical analysis to the PCAP, leveraring the knowledge I have gained from independant study (Blue Team Level 1), and TryHackMe CTF style Labs.
+- Analyse the alerts file/image and proceed with a logical investigation to discover what happened.
 - Prepare myself for the BTL1 exam, and gain experience with report writing during investigations.
 
 ## Tools & Resources
@@ -16,8 +17,6 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 [Operating System](https://www.kali.org/get-kali/)
 [Joes Sand Box](https://www.joesandbox.com/analysis/1501791/0/html)
 [VirusTotal](https://www.virustotal.com/gui/home/upload)
-
-<include any tools here i.e. VT>
 
 ## IOC's
 <table></table>
@@ -28,10 +27,12 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 #### Key Notes
 - ETPRO TROJAN Win32/Koi Stealer CnC Checkin (POST) from victim 172.17.0.99 to 79.124.78.197.
 - Suspicious POST Activity
+- NetBIOS/SMB-based Exploitation
+- Kerberos Principal Overflow
 
 ## Investigation
 ### 1. PCAP Overview
-Pre-investigation, I performed an initial overview of the PCAP, identifying bits of information which will assist in the overall investigation of the malware PCAP. 
+Pre-investigation, I performed an initial overview of the PCAP, leveraging Wiresharks Statistics. 
 
 - **Capture File Properties**
 ![image](https://github.com/user-attachments/assets/415bd1c8-28a8-4e53-a823-5a4de8678b44)
@@ -49,7 +50,7 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 - **Majority of packets are IPv4 traffic**: `94.2%`
 - **A large amount of traffic is sent with TLS encrpytion**: `82.9%` - Could hide C2 and data exfiltration.
 - **HTTP Traffic**: `2.2%` `114 packets` - HTTP web traffic is unencrypted, could reveal URLS or malicious payloads.
-- **Kerberos, DHCP, NetBios**: Useful for who logged in, which devices were given IPs, and hostname information.
+- **Kerberos, DHCP, NetBios**: Useful for who logged in, which devices were given IPs, and hostname information. As already gathered from the analysis file handed to us (The SOC analyst), we should definately investigate this activity.
 - **Domain Name System (DNS)**: `3.4%` `173 packets` - Check for DNS Tunnelling (Attackers hiding extra data inside DNS queries)
 - **Address Resolution Protocol**: `5.8%` `294 packets` - Check for ARP Poisoning / MITM attacks. 
 
@@ -63,7 +64,14 @@ Pre-investigation, I performed an initial overview of the PCAP, identifying bits
 - **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total
 - **Cloud/C2 Services Contacted**: Multiple `*.azure.com`, `cloudapp.azure.com`, `akamai`, `trafficmanager.net`
 
-### 2. Investigating HTTP 
+### 2. Investigating Authentication
+As gathered from the analysis and the overview I performed on the PCAP, a good place to start for this investigation would be looking at the authentication:  Kerberos, NetBIOS, SMB
+
+
+
+
+
+### 3. Investigating HTTP 
 To begin the investigation, I began looking at http traffic. By searching `http`, and then checking **Statistics→Endpoints** to see which IPs were most involved with http:
 
 - `DESKTOP-RNVO9AT.bepositive.com (172.17.0.99)`
@@ -137,7 +145,7 @@ md5sum index2.php
 - Though the `GET` is *outbound*, the actual **command comes in the 200 OK** response.
 - This behavior matches known malware C2 patterns: **check-in → receive task → execute → send result**.
   
-### 3. DNS Traffic
+### 4. DNS Traffic
 - I then pivoted to looking at DNS. I initially ran `dns.qry.name.len > 15 and !mdns`, revealing lots of packets with info `The queried domain does not exist`.
 - I then ran an updated query `dns.flags.rcode == 3 && !mdns`, showing:
 
@@ -148,7 +156,7 @@ md5sum index2.php
 - The victim `172.17.0.99` is making repeated DNS queries that were rejected by the internal DNS server.
 - This is likely the malware attempting to resolve internal domains.
 
-### 4. Investigating TLS
+### 5. Investigating TLS
 To begin looking at TLS traffic, I ran `tls` and looked at the top endpoints. This address `ns170.seeoux.com (46.254.34.201)` is the next step in my investigation. 
 
 ![image](https://github.com/user-attachments/assets/a24693da-1df3-468c-b1b6-72a3530179a4)

@@ -22,6 +22,13 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 ## IOC's
 <table></table>
 
+## Provided Alerts
+![image](https://github.com/user-attachments/assets/36229774-30f7-4235-82dc-8719fca2001f)
+
+#### Key Notes
+- ETPRO TROJAN Win32/Koi Stealer CnC Checkin (POST) from victim 172.17.0.99 to 79.124.78.197.
+- Suspicious POST Activity
+
 ## Investigation
 ### 1. PCAP Overview
 Pre-investigation, I performed an initial overview of the PCAP, identifying bits of information which will assist in the overall investigation of the malware PCAP. 
@@ -161,7 +168,7 @@ tls.handshake.extensions_server_name && ip.addr == 46.254.34.201
 ```
 
 - This revealed SNI `www.bellantonicioccolato.it`, which does not match the identified destination `ns170.seeoux.com`. This is highly suspicious, in normal traffic the SNI should match the domain the user intended to visit.
-- I then google searched this domain followed by "Malware", which confirms that this domain is malicious.
+- I then google searched this domain followed by "Malware", which confirms that this domain is malicious, and is related to the malware `Koi Loader`. This is probably what is inside our payload `/index.php`.
 
 ![image](https://github.com/user-attachments/assets/6f249bdc-2866-4718-9c7f-629b12d4d525)
 

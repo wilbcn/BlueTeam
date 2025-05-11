@@ -1,7 +1,7 @@
 # 📡 Wireshark Project 4: ON-GOING
 
 ## Overview
-Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 
+An additional Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 
 
 ## Goals
 - Executive Summary: State in simple terms what happened (who, what, when)
@@ -21,8 +21,16 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 ## IOC's
 <table></table>
 
-## Provided Alerts
+## Provided Alerts & Scenario details
 ![image](https://github.com/user-attachments/assets/36229774-30f7-4235-82dc-8719fca2001f)
+
+- LAN segment range:  172.17.0[.]0/24 (172.17.0[.]0 through 172.17.0[.]255)
+- Domain:  bepositive[.]com
+- Active Directory (AD) domain controller:  172.17.0[.]17 - WIN-CTL9XBQ9Y19
+- AD environment name:  BEPOSITIVE
+- LAN segment gateway:  172.17.0[.]1
+- LAN segment broadcast address:  172.17.0[.]255
+
 
 #### Key Notes
 - ETPRO TROJAN Win32/Koi Stealer CnC Checkin (POST) from victim 172.17.0.99 to 79.124.78.197.
@@ -34,7 +42,7 @@ Another Wireshark hands-on lab, investigating a malware pcap called "Big Fish in
 ### 1. PCAP Overview
 Pre-investigation, I performed an initial overview of the PCAP, leveraging Wiresharks Statistics. 
 
-- **Capture File Properties**
+##### **Capture File Properties**
 ![image](https://github.com/user-attachments/assets/415bd1c8-28a8-4e53-a823-5a4de8678b44)
 
 #### Key Info
@@ -43,29 +51,36 @@ Pre-investigation, I performed an initial overview of the PCAP, leveraging Wires
 - **Last Packet**: `2024-09-04 19:32:07`
 - **Total Packets**: `5091`
 
-- **Protocol Hierarchy**
+##### **Protocol Hierarchy**
 ![image](https://github.com/user-attachments/assets/43032c7d-4b71-48de-88ab-575854eb27b4)
 
 #### Key Info
 - **Majority of packets are IPv4 traffic**: `94.2%`
 - **A large amount of traffic is sent with TLS encrpytion**: `82.9%` - Could hide C2 and data exfiltration.
 - **HTTP Traffic**: `2.2%` `114 packets` - HTTP web traffic is unencrypted, could reveal URLS or malicious payloads.
+- **SMB Traffic**: Potentially abused - older version of SMBv2/3
+- **Lanman traffic**: `150 packets` - LANMAN is a legacy protocol and is often abused for enumeration.
 - **Kerberos, DHCP, NetBios**: Useful for who logged in, which devices were given IPs, and hostname information. As already gathered from the analysis file handed to us (The SOC analyst), we should definately investigate this activity.
 - **Domain Name System (DNS)**: `3.4%` `173 packets` - Check for DNS Tunnelling (Attackers hiding extra data inside DNS queries)
 - **Address Resolution Protocol**: `5.8%` `294 packets` - Check for ARP Poisoning / MITM attacks. 
 
-- **Capture File Properties**
+##### **Conversations**
 ![image](https://github.com/user-attachments/assets/25bbd600-e5eb-48b1-a4bf-d60b92a83e08)
 
 #### Key Info
 - **Victims endpoint**: `DESKTOP-RNVO9AT.bepositive.com (172.17.0.99)`
-- **Address with most packets**: `win-ctl9xbq9y19.bepositive.com (172.17.0.17)` - 321kB total - 1308 packets (699 A→B, 609 B→A) 
-- **Top Data Receiver**: `ns170.seeoux.com (46.254.34.201)` → 782 packets, 720 kB total, more inbound data ((278 A→B, 504 B→A))
-- **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total
+- **Address with most packets**: `win-ctl9xbq9y19.bepositive.com (172.17.0.17)` - 321kB total - 1308 packets (699 A→B, 609 B→A) Part of the /24 lan segment.
+- **Top Data Receiver**: `ns170.seeoux.com (46.254.34.201)` → 782 packets, 720 kB total, more inbound data than outbound ((278 A→B, 504 B→A))
+- **Unresolved IP**: `79.124.78.197` - 591 packets - 64kB total - Suspicious
 - **Cloud/C2 Services Contacted**: Multiple `*.azure.com`, `cloudapp.azure.com`, `akamai`, `trafficmanager.net`
 
+##### **Statistics: HTTP Requests**
+Here we can clearly see some suspicious packets from the identified unresolved ip address `79.124.78.197`
+
+![image](https://github.com/user-attachments/assets/0fee9095-b260-4344-add9-88cb2dca2b70)
+
 ### 2. Investigating Authentication
-As gathered from the analysis and the overview I performed on the PCAP, a good place to start for this investigation would be looking at the authentication:  Kerberos, NetBIOS, SMB
+As gathered from the analysis and the overview I performed on the PCAP, a good place to start for this investigation would be looking at authentication:  Kerberos, NetBIOS, SMB
 
 
 

@@ -97,7 +97,8 @@ http && ip.addr == 172.17.0.99
 
 ![image](https://github.com/user-attachments/assets/4470b997-668a-4b59-91e5-206d485960b4)
 
-- By searching `ip.addr == 79.124.78.197`, I get the full view of traffic related to this address. Immediately I spotted a GET method for `/index.php`. TCP Stream:
+- By searching `ip.addr == 79.124.78.197`, I get the full view of traffic related to this address. Immediately I spotted a GET method for `/index.php` at `2024-09-04 18:35:11`.
+- TCP Stream:
 
 ![image](https://github.com/user-attachments/assets/59788a8c-8a10-400b-86eb-309dd7e6da93)
 
@@ -122,6 +123,11 @@ md5sum index2.php
 
 - Although both hashes came up clean in VT, this does not necessarily mean they are harmless. As we already know they are involved in malicious C2 activity.
 
+- The first `POST` (18:35:07) from the victim is the **initial beacon**, reporting in or sending system info.
+- The following `GET` (18:35:11) is the victim asking the C2 for instructions.
+- Though the `GET` is *outbound*, the actual **command comes in the 200 OK** response.
+- This behavior matches known malware C2 patterns: **check-in → receive task → execute → send result**.
+  
 ### 3. DNS Traffic
 - I then pivoted to looking at DNS. I initially ran `dns.qry.name.len > 15 and !mdns`, revealing lots of packets with info `The queried domain does not exist`.
 - I then ran an updated query `dns.flags.rcode == 3 && !mdns`, showing:
@@ -133,6 +139,26 @@ md5sum index2.php
 - The victim `172.17.0.99` is making repeated DNS queries that were rejected by the internal DNS server.
 - This is likely the malware attempting to resolve internal domains.
 
+### 4. Investigating TLS
+To begin looking at TLS traffic, I ran `tls` and looked at the top endpoints. This address `ns170.seeoux.com (46.254.34.201)` is the next step in my investigation. 
 
+![image](https://github.com/user-attachments/assets/a24693da-1df3-468c-b1b6-72a3530179a4)
+
+- Next query ran: `tls.handshake.type == 1 && ip.addr == 46.254.34.201`
+
+![image](https://github.com/user-attachments/assets/0d39bbd3-cd90-4ed2-b5d8-ca0d26f32d6e)
+
+- Here I filtered on the ClientHello, which is the client initiating the TLS handshake. We can see the first packet was at `2024-09-04 18:35:04`, which is before our first POST from the victim. I then directly filtered on this IP.
+
+![image](https://github.com/user-attachments/assets/8713d703-c3e0-4b14-9bc5-eba4c7fdb6d5)
+
+- Here we can see the first interaction is the TCP 3 way handshake (SYN→SYN ACK→ACK), confirming first contact was at `2024-09-04 18:35:04`. I then ran another query to check the SNI response to see where the encrypted traffic is actually going. 
+
+```
+tls.handshake.extensions_server_name && ip.addr == 46.254.34.201
+```
+
+- This revealed SNI `www.bellantonicioccolato.it`, which does not match the identified destination `ns170.seeoux.com`. This is highly suspicious, in normal traffic the SNI should match the domain the user intended to visit.
+- 
 
 

@@ -1,4 +1,4 @@
-# 📡 Wireshark Project 4: ON-GOING
+# 📡 Wireshark Project 4:  TRAFFIC ANALYSIS EXERCISE: BIG FISH IN A LITTLE POND
 
 ## Overview
 An additional Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 
@@ -18,8 +18,30 @@ An additional Wireshark hands-on lab, investigating a malware pcap called "Big F
 [Joes Sand Box](https://www.joesandbox.com/analysis/1501791/0/html)
 [VirusTotal](https://www.virustotal.com/gui/home/upload)
 
-## IOC's
-<table></table>
+## 🧾 Indicators of Compromise (IOCs)
+| Type           | Value                                   | Description / Context                                      |
+|----------------|------------------------------------------|-------------------------------------------------------------|
+| IP Address     | 79.124.78.197                            | C2 server - `/foots.php` POSTs, `/index.php` GETs          |
+| IP Address     | 46.254.34.201                            | TLS traffic - SNI mismatch, early connection, C2 staging   |
+| Domain         | ns170.seeoux.com                         | Maps to 46.254.34.201 - suspected staging server            |
+| Domain         | www.bellantonicioccolato.it              | Suspicious SNI - not matching actual destination            |
+| Domain         | bepositive.com                           | Internal domain name of victim network                      |
+| Hostname       | DESKTOP-RNVO9AT                          | Infected workstation                                        |
+| Hostname       | win-ctl9xbq9y19.bepositive.com           | Domain Controller                                           |
+| URL            | http://79.124.78.197/foots.php           | Malicious POST endpoint                                     |
+| URL            | http://79.124.78.197/index.php           | Malicious GET endpoint (returns C2 commands)                |
+| File Hash (MD5)| `5280f800cb74712cf68bfda2546e1ea5`       | `index.php` - POST payload binary                           |
+| File Hash (MD5)| `8b3b8573ed4e48aca7ffba6ae817cc6b`       | `index2.php` - GET response (C2 command)                    |
+| Protocol       | SMBv1 / IPC$                             | NTLM Auth and IPC$ share access observed                    |
+| Protocol       | TLS with SNI mismatch                    | SNI points to `.it` domain not matching resolved hostname   |
+| Alert Signature| ETPRO TROJAN Win32/Koi Stealer CnC Checkin| Confirmed from IDS alerts                                   |
+| Alert Signature| ET INFO Suspicious POST with Fake Browser| Spoofed User-Agent in malicious beaconing                   |
+
+## Victims Details
+- **Mac Address**: `18:3d:a2:b6:8d:c4`
+- **Victims IP**: `172.17.0.99`
+- **Host Name**: DESKTOP-RNVO9AT
+- **Windows Account Name**: `afletcher` (query: `kerberos.CNameString`)
 
 ## Provided Alerts & Scenario details
 ![image](https://github.com/user-attachments/assets/36229774-30f7-4235-82dc-8719fca2001f)
@@ -80,11 +102,18 @@ Here we can clearly see some suspicious packets from the identified unresolved i
 ![image](https://github.com/user-attachments/assets/0fee9095-b260-4344-add9-88cb2dca2b70)
 
 ### 2. Investigating Authentication
-As gathered from the analysis and the overview I performed on the PCAP, a good place to start for this investigation would be looking at authentication:  Kerberos, NetBIOS, SMB
+As gathered from the analysis and the overview I performed on the PCAP, a good place to start for this investigation would be looking at authentication. SMBv1 is an outdated protocol with known vulnerabilities (e.g. EternalBlue). Its presence is inherently suspicious in modern environments and can indicate weak or legacy systems.
+- Query ran:
 
+```
+smb || lanman
+```
 
+![image](https://github.com/user-attachments/assets/0e14c179-5eb6-4220-b590-0d087ad7dc39)
 
-
+#### Key Info
+- Access to IPC$ share: Seen in a Tree Connect AndX Request. Possible remote execution. 
+- NTLMSSP Authentication over SMB - Includes Negotiate, Challenge, and Auth messages.
 
 ### 3. Investigating HTTP 
 To begin the investigation, I began looking at http traffic. By searching `http`, and then checking **Statistics→Endpoints** to see which IPs were most involved with http:

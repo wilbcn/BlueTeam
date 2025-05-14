@@ -34,7 +34,7 @@ This project is part of my on going Wireshark series, where I gain hands-on expe
 
 
 ## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
-### 1. Baseline file analysis.
+### 1. 🔎 Baseline file analysis.
 To start any PCAP investigation, I always go through the **statistics** tabs of Wireshark. Here we can find key details regarding the most active addresses and most used protocols.
 
 #### Capture File Properties
@@ -74,4 +74,14 @@ From the intitial look at the protocol hierarchy, we know that there is some SMT
 
 ![image](https://github.com/user-attachments/assets/7e1575d9-2261-409f-9568-72402c2ef579)
 
-- 
+- The two suspicious domains identified (so far) don't appear to be involved with SMTP traffic. I will however investigate this further to see what exactly went on over SMTP. I repeated this for HTTP traffic.
+
+![image](https://github.com/user-attachments/assets/701b6dc7-49cc-49de-959a-d70cd2a3b20b)
+
+- It is clear now that the two identified addresses were involved with HTTP traffic. Knowing which addresses were involved in which protocol makes searching much more logical and easier during the investigation.
+
+### 2. 🔎 Investigating SMTP traffic
+
+
+### 3. 🔎 Investigating HTTP traffic
+

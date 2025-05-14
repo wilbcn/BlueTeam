@@ -74,7 +74,7 @@ From the intitial look at the protocol hierarchy, we know that there is some SMT
 
 ![image](https://github.com/user-attachments/assets/7e1575d9-2261-409f-9568-72402c2ef579)
 
-- The two suspicious domains identified (so far) don't appear to be involved with SMTP traffic. I will however investigate this further to see what exactly went on over SMTP. I repeated this for HTTP traffic.
+- The two suspicious domains identified (so far) don't appear to be involved with SMTP traffic. I will however investigate this further to see what exactly went on over SMTP. I repeated these steps for HTTP traffic.
 
 ![image](https://github.com/user-attachments/assets/701b6dc7-49cc-49de-959a-d70cd2a3b20b)
 

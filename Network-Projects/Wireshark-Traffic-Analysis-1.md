@@ -150,3 +150,29 @@ http
 #### Key values
 - We have multiple get requests, which include long strings with identifyable words such as "blackmail".
 - In packet `106` in the HTTP 200 OK response, we have `(application/x-shockwave-flash)`, and also `(application/x-msdownload)`. These are highly suspicious and require object exports to analyse further.
+- I then followed packet `6` to begin inspecting.
+
+![image](https://github.com/user-attachments/assets/18e96ebf-f07b-4115-9601-32778da67ad9)
+
+- After the TCP handshake, we have a GET request to the suspicious domain `makemoneyeasywith.me`.
+
+#### Key values
+- Timestamp: `Date: Mon, 24 Jun 2019 16:14:18 GMT`
+- We have a HTTP Response: 302 Redirect -> Target: `hxxp[://]188[.]225[.]26[.]48/`
+- The redirect target is the underlying IP address of the other suspicious domain -> `1158715-cy17485.tw1.ru`.
+- It sets cookies that look base64-like and are suspiciously long
+- As highlighted already, the domain itself is highly suspicious by name `makemoneyeasywith.me`.
+
+- I then followed the stream for the packet containing `(application/x-shockwave-flash)`
+
+![image](https://github.com/user-attachments/assets/74cf0c7a-a294-409e-a436-3536ec11b7e0)
+
+##### Key values
+- Timestamp: `Date: Mon, 24 Jun 2019 16:14:19 GMT`
+- `Host: 188.225.26.48`
+- `Content-Type: application/x-shockwave-flash`
+- Malicious encoded payload
+- Second GET request below payload for `GET /favicon.ico HTTP/1.1`.
+
+- Then at `Date: Mon, 24 Jun 2019 16:14:22 GMT`, we have the other mentioned malicious payload `Content-Type: application/x-msdownload`, which is also encoded.
+

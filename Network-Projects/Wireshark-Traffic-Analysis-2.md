@@ -16,6 +16,51 @@ This follow-up Wireshark project dives into another real-world malware PCAP, thi
 - [AbuseIPDB](https://www.abuseipdb.com/)
 - [Cisco Talos](https://talosintelligence.com/)
 
+## 🕑 Timeline of Events
+| **Time (UTC)**               | **Event**                                                                                         | **IOC / Notes**                                                                 |
+|------------------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| 2025-01-22 19:44:56          | PCAP capture begins                                                                                |                                                                                  |
+| 2025-01-22 19:45:01          | Legitimate connectivity check to Microsoft via `connecttest.txt`                                  | Red herring; not malicious                                                       |
+| 2025-01-22 19:45:33          | TLS handshake initiated with `authenticatoor.org`                                                 | Fake Google Authenticator domain                                                |
+| 2025-01-22 19:45:56          | PowerShell `.ps1` file downloaded via HTTP from `hosted-by.csrp.host`                             | File: `29842.ps1`, IP: `5.252.153.241`                                          |
+| 2025-01-22 19:46:11+         | Additional payloads downloaded: `pas.ps1`, `TeamViewer`, `TV`, etc.                               | Saved to: `C:\ProgramData\huo`                                                  |
+| 2025-01-22 19:46:20+         | Beaconing begins to `freedomlovestyle.life` over TCP/2917                                         | IP: `45.125.66.32`, likely C2                                                    |
+| 2025-01-22 19:46:21+         | Execution status and success callbacks sent to attacker                                           | `GET /1517096937?k=message=%20startup%20status=success`                         |
+| 2025-01-22 20:38:18          | PCAP capture ends                                                                                 |                                                                                  |
+
+## Indicators of Compromise (IOCs)
+| **Item** | **Description** | **Comment** |
+|----------|-----------------|-------------|
+| `10.1.17.215` | IP address | Infected Windows client |
+| `00:d0:b7:26:4a:74` | MAC address | MAC of infected client |
+| `DESKTOP-L8C5GSJ.bluemoontuesday.com` | Hostname | Windows machine hostname |
+| `authenticatoor.org` | Domain | Fake Google Authenticator domain |
+| `hosted-by.csrp.host` | Domain | Payload delivery server |
+| `freedomlovestyle.life` | Domain | Likely C2 server |
+| `srv-45-125-66-252.serveroffer.net` | Domain | Secondary C2 node in same /24 subnet |
+| `5.252.153.241` | IP address | Host for `.ps1` payloads |
+| `45.125.66.32` | IP address | C2 traffic, high volume, port 2917 |
+| `45.125.66.252` | IP address | Suspicious HTTPS traffic, C2 behavior |
+| `29842.ps1` | Filename | Obfuscated PowerShell payload |
+| `pas.ps1` | Filename | Additional PowerShell payload |
+| `TeamViewer`, `TV`, `Teamviewer_Resource_fr` | Filenames | Dropped payloads; some benign, some malicious |
+| `TV` SHA256: `3448DA03808F24568E6181011F8521C0713EA6160EFD05BFF20C43B091FF59F7` | Hash | 47/73 VT Score |
+| `29842.ps1` SHA256: `B8CE40900788EA26B9E4C9AF7EFAB533E8D39ED1370DA09B93FCF72A16750DED` | Hash | 27/62 VT Score |
+| `pas.ps1` SHA256: `A833F27C2BB4CAD31344E70386C44B5C221F031D7CD2F2A6B8601919E790161E` | Hash | 25/62 VT Score |
+
+## ✍🏽 Executive Summary
+This investigation focused on a malware infection delivered via a fake software site. The infected machine (`10.1.17.215`) first communicated with `authenticatoor.org`, a typosquatted domain designed to mimic Google Authenticator. This social engineering lure likely tricked the user into initiating a download.
+
+Shortly afterward, the system performed an HTTP GET request to `hosted-by.csrp.host` (`5.252.153.241`), retrieving a PowerShell script (`29842.ps1`) that was obfuscated and flagged by threat intel as malicious. Further downloads followed, including `pas.ps1`, and several binaries stored under `C:\ProgramData\huo`.
+
+Persistence was achieved by creating shortcuts to the downloaded files in the startup directory. The malware also sent success confirmation messages back to the attacker’s server.
+
+Within seconds of payload delivery, beaconing activity began over non-standard port `2917` to `freedomlovestyle.life` (`45.125.66.32`). This traffic displayed all the hallmarks of a Command & Control (C2) channel: repetitive, consistent packet sizes, use of TLS, and no legitimate application behavior.
+
+Further analysis revealed all domains and IPs involved were malicious, and some were part of the same /24 subnet — suggesting a coordinated infrastructure. Threat intelligence confirmed malicious ratings across multiple engines, verifying the malicious lifecycle from user interaction through to payload execution and C2 communication.
+
+This case highlights how quickly modern malware executes, establishes persistence, and phones home — all within 30 seconds of the first observed download.
+
 ## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
 This section breaks down the steps and thought process I followed while working through this PCAP. 
 

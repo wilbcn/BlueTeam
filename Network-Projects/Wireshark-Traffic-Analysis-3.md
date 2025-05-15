@@ -1,4 +1,4 @@
-# 📡 Wireshark Project 3: Network Analysis & Incident report writing
+# 📡 Wireshark Investigation 3: Network Analysis & Incident report writing
 
 This follow-up Wireshark project dives into another real-world malware PCAP. This time focusing on writing an incident report based on malicious network activity from the pcap and from the alerts.
 

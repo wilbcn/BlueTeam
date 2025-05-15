@@ -14,53 +14,46 @@ This project is part of my on going Wireshark series, where I gain hands-on expe
 - [PCAP Analysed](https://www.malware-traffic-analysis.net/2019/06/24/index.html)
 - [CyberChef](https://gchq.github.io/CyberChef/)
 - [VirusTotal](https://www.virustotal.com/gui/)
-- [WHOIS](https://whois.domaintools.com/)
-- [AbuseIPDB](https://www.abuseipdb.com/)
-- [urlscan.io](https://urlscan.io/result/0196005a-b8b1-724a-b146-be02d738fddb/)
-- [httpstatus.io](https://httpstatus.io/)
 - [Hybrid-Analysis](https://www.hybrid-analysis.com/)
 
 - Wireshark
 - VirtualBox (running kali linux)
 
-## 🕑 Timeline of Events
-| **Time (UTC)**        | **Event**                                                                                          | **IOC / Notes**                                                                 |
-|-----------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| 2019-06-24 14:52:50   | Malspam email sent to victim containing a Google Drive link                                         | `From: k-tsuchida@matsump.co.jp` → `elina.vuorenmaa@elisanet.fi`               |
-| 2019-06-24 14:53:50   | Another malspam email sent to a different victim, with a different malicious Drive link             | `From: tgeorge@alum.rpi.edu` → `innocent.nshizirungu@edu.janakkala.fi`         |
-| 2019-06-24 16:14:10   | Packet capture begins                                                                               | Wireshark shows capture start                                                   |
-| 2019-06-24 16:14:18   | Victim machine makes HTTP GET request to `makemoneyeasywith.me`                                     | Suspicious User-Agent: IE11; domain used for redirection                        |
-| 2019-06-24 16:14:18   | HTTP 302 Redirect to `http://188.225.26.48/`                                                        | Underlying IP of `1158715-cy17485.tw1.ru`; redirect sets suspicious cookies     |
-| 2019-06-24 16:14:19   | HTTP GET to `188.225.26.48`, receives `application/x-shockwave-flash`                               | Likely Flash-based exploit (CVE-2018-4878)                                      |
-| 2019-06-24 16:14:20   | HTTP GET request for `/favicon.ico` from same IP                                                    | Likely part of redirection or stager mechanism                                  |
-| 2019-06-24 16:14:22   | HTTP response returns `application/x-msdownload` from `188.225.26.48`                              | Final malware payload downloaded (dropper/loader)                               |
-| 2019-06-24 16:16:51   | Packet capture ends                     
+## 🕑 Timeline of events
+| **Time (UTC)**               | **Event**                                                                                          | **IOC / Notes**                                                                 |
+|------------------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| 2019-06-24 17:14:10          | Packet capture begins                                                                               | Capture start                                                                  |
+| 2019-06-24 17:14:13.1960278  | HTTP GET request initiated to `makemoneyeasywith.me`                                                | Suspicious domain used for redirection                                         |
+| 2019-06-24 17:14:13          | HTTP 302 Redirect issued from `makemoneyeasywith.me` to `1158715-cy17485.tw1.ru` (`188.255.26.48`)   | Redirect sets long, base64-like cookies                                        |
+| 2019-06-24 17:14:14          | Flash exploit payload (`application/x-shockwave-flash`) received                                     | Exploit tied to CVE-2018-4878 (Adobe Flash)                                    |
+| 2019-06-24 17:14:15          | Additional GET request for `/favicon.ico`                                                           | Likely decoy or secondary resource                                             |
+| 2019-06-24 17:14:22          | HTTP response with `application/x-msdownload` received; malware dropper/loader delivered              | Final payload download                                                          |
+| 2019-06-24 17:16:38.400736   | SMTP traffic begins; outbound spam emails are sent from the compromised host                        | SMTP emails with subject "Erectile Meds" and malicious Google Drive links       |
 
-## Indicators of compromise
+## Indicators of Compromise (IOCs)
 | **Item** | **Description** | **Comment** |
 |----------|-----------------|-------------|
-| `10.6.24.101` | IP address | Infected host machine | 
-| `1158715-cy17485.tw1.ru` `188.255.26.48` | Domain and IP | Malicious Activity over HTTP |
-| `makemoneyeasywith.me` `185.254.190.200` | Domain and IP | Malicious Activity over HTTP | 
-| `k-tsuchida@matsump.co.jp` | Email address | Comrpomised account | 
-| `tgeorge@alum.rpi.edu` | Email address | Compromised account |
-| `innocent.nshizirungu@edu.janakkala.fi ` | Email address | Victims account |
-| `elina.vuorenmaa@elisanet.fi` | Email address | Victims account |
-| `f8d568a1a76ecc5382a7e4bada5ce5241d0ddc0cdcea1a494925cbd89a2c2b63` | Hash Value | Malicious Trojan |
-| `9c569f5e6dc2dd3cf1618588f8937513669b967f52b3c19993237c4aa4ac58ea` | Hash Value | CVE-2018-4878 - arbitrary code execution vulnerability in Adobe Flash Player before 28.0.0.161 |
-| `d0a066225444fa1f571781ff4982880def633dce816d9540aaa8bb3ac685895f` | Hash Value | Trojan dropper or loader | 
-| `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ` | Google drive link | Malicious link for payload download |
+| `10.6.24.101` | IP address | Infected host machine |
+| `1158715-cy17485.tw1.ru` `188.255.26.48` | Domain and IP | Malicious activity over HTTP (redirect target) |
+| `makemoneyeasywith.me` `185.254.190.200` | Domain and IP | Initial redirection point; suspicious domain |
+| `k-tsuchida@matsump.co.jp` | Email address | Appears in SMTP "MAIL FROM:" header (spoofed sender) |
+| `tgeorge@alum.rpi.edu` | Email address | SMTP traffic; malicious sender |
+| `innocent.nshizirungu@edu.janakkala.fi` | Email address | SMTP traffic; recipient account |
+| `elina.vuorenmaa@elisanet.fi` | Email address | SMTP traffic; recipient account |
+| `f8d568a1a76ecc5382a7e4bada5ce5241d0ddc0cdcea1a494925cbd89a2c2b63` | Hash Value | Malicious Trojan contained in HTML object (embedded JS) |
+| `9c569f5e6dc2dd3cf1618588f8937513669b967f52b3c19993237c4aa4ac58ea` | Hash Value | Flash exploit payload associated with CVE-2018-4878 |
+| `d0a066225444fa1f571781ff4982880def633dce816d9540aaa8bb3ac685895f` | Hash Value | Trojan dropper/loader (undetected by VT) |
+| `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ` | Google Drive link | Malicious link for initial payload download |
 
 ## ✍🏽 Executive Summary
-In this security event, the victim machine `10.6.24.101` was compromised after the user interacted with a **malicious Google Drive link** delivered via a **malspam email**. The emails followed a clear spam pattern, using pharmaceutical bait ("Erectile Meds") and spoofed sender information to appear credible. 
+In this security event, the victim machine `10.6.24.101` was compromised after a user interaction with the malicious domain `makemoneyeasywith.me` on 24th of June 2019, at 17:14:13. This domain redirected to another malicious, russian based domain `1158715-cy17485.tw1.ru` (`188.255.26.48`) where a flash exploit payload was downloaded onto the victims machine. Post system compromise, starting at 17:16:38 on the same day, there was evidence of post infection malspam sent to multiple addresses, containing a malicious google drive link. 
 
-Upon clicking the link, the victim was redirected through the domain `makemoneyeasywith.me` (`185.254.190.200`), which issued a 302 HTTP redirect to `1158715-cy17485.tw1.ru` (`188.225.26.48`). From there, the victim received a sequence of suspicious payloads, including a Flash file (`application/x-shockwave-flash`) tied to CVE-2018-4878, a critical arbitrary code execution vulnerability in Adobe Flash Player (versions prior to 28.0.0.161).
-
-Shortly after, a second object (`application/x-msdownload`) was delivered — likely acting as a trojan dropper or loader. The domain and IP infrastructure used in this attack strongly suggests it was part of a malspam campaign leveraging exploit kits to deliver malware via browser vulnerabilities.
-
-All malicious activity occurred over HTTP, and legitimate services like Google Drive were abused to deliver the initial lure. The payloads were exported and analyzed, with the Flash and HTML files flagged as malicious across multiple platforms, while the executable remained undetected — indicating possible evasion techniques.
-
-This event highlights the ongoing threat of social engineering, combined with legacy exploit delivery, and underscores the importance of patching end-user software and disabling outdated technologies like Flash.
+## 🛡️ Mitigation & Recommendations
+- Patch outdated software to avoid known exploits like CVE-2018-4878.
+- Implement email filtering and sandboxing to prevent malspam payloads from endpoint users.
+- Block suspicious domains such as `makemoneyeasywith.me` and any direct IP access in outbound HTTP requests.
+- Monitor for anomalous SMTP traffic from endpoints to detect post-compromise spam activity.
+- Educate users about phishing and malspam tactics, especially when legitimate platforms such as Google Drive are abused.
 
 ## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
 ### 1. 🔎 Baseline file analysis.
@@ -111,56 +104,7 @@ From the intitial look at the protocol hierarchy, we know that there is some SMT
 
 - It is clear now that the two identified addresses were involved with HTTP traffic. Knowing which addresses were involved in which protocol simplifies my searches during the investigation.
 
-### 2. 🔎 Investigating SMTP traffic
-
-Wireshark query:
-
-```
-smtp
-```
-
-![image](https://github.com/user-attachments/assets/d9702279-2188-4413-a161-03267e893a8f)
-
-- By searching `smtp`, I am able to see the entirety of smtp traffic. After a brief scan, I came accross packets `1157` and `1268`, which have a suspicious subject "Erectile Meds". I then ran an updated query to hone in on this.
-
-```
-smtp && frame contains "Subject: Erectile Meds"
-```
-
-![image](https://github.com/user-attachments/assets/a4c5c3a6-194c-4f4b-ab04-81b448ef1e76)
-
-- I then followed the TCP stream for one of these packets.
-
-![image](https://github.com/user-attachments/assets/da8e7452-1226-49fc-9bb2-b443dbd9c67d)
-
-#### Key values
-- Mismatch in sender headers:
-    - `MAIL From:<k-tsuchida@matsump.co.jp>`
-    - `From: "elina.vuorenmaa@elisanet.fi" <k-tsuchida@matsump.co.jp>`
-    - `To: <elina.vuorenmaa@elisanet.fi>`
-- `Date: 24 Jun 2019 14:52:50 -0100`
-- Suspicious and most likely malicious google drive link
-    - `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ`
- 
-- The other packets contained similar information. There is again another sender mismatch, with the same subject, and another malicious google drive link.
-
-![image](https://github.com/user-attachments/assets/7e6f67bf-de87-4eda-a0bf-d958c967e267)
-
-![image](https://github.com/user-attachments/assets/228d4d94-705a-4878-9971-5aeda385cb3d)
-
-- In the provided screen shots, we can now conclude this is definately "mal-spam". Abusing legitimate services like google drive, and mass distrubuting a malicious payload. To be sure I had the first instance of this, I ran one more query, followed the TCP stream, and noted down the IOCs.
-
-```
-frame contains "drive.google"
-```
-
-- `From: "innocent.nshizirungu@edu.janakkala.fi" <tgeorge@alum.rpi.edu>`
-- `To: <innocent.nshizirungu@edu.janakkala.fi>`
-- `Subject: Erectile Meds`
-- `Date: 24 Jun 2019 14:53:50 -0100`
-- `https://drive.google.com/file/d/1HmG7RisNCYVkO4aer_eV1nUF4qDp7jLm`
-
-### 3. 🔎 Investigating HTTP traffic
+### 2. 🔎 Investigating HTTP traffic
 Now that we know how our victim was most likely infected, I investigated further to find out what exactly happened post-compromise. We also gathered two suspicious addresses earlier, which will come in handy now as we diagnose HTTP traffic.
 - `1158715-cy17485.tw1.ru` `188.255.26.48`
 - `makemoneyeasywith.me` `185.254.190.200`
@@ -203,6 +147,56 @@ http
 - Second GET request below payload for `GET /favicon.ico HTTP/1.1`.
 
 - Then at `Date: Mon, 24 Jun 2019 16:14:22 GMT`, we have the other mentioned malicious payload `Content-Type: application/x-msdownload`, which is also encoded.
+
+#### HTTP Summary
+- First packet `2019-06-24 17:14:13.1960278`
+- HTTP redirect from `makemoneyeasywithme` to `1158715-cy17485.tw1.ru` `188.255.26.48`
+- Contains multiple malicious GET requests including the Rig landing page/redirect, a flash exploit, and the encrypted payload.
+
+### 3. 🔎 Investigating SMTP traffic
+
+Wireshark query:
+
+```
+smtp
+```
+
+![image](https://github.com/user-attachments/assets/d9702279-2188-4413-a161-03267e893a8f)
+
+- By searching `smtp`, I am able to see the entirety of smtp traffic. After a brief scan, I came accross packets `1157` and `1268`, which have a suspicious subject "Erectile Meds". I then ran an updated query to hone in on this.
+
+```
+smtp && frame contains "Subject: Erectile Meds"
+```
+
+![image](https://github.com/user-attachments/assets/a4c5c3a6-194c-4f4b-ab04-81b448ef1e76)
+
+- I then followed the TCP stream for one of these packets.
+
+![image](https://github.com/user-attachments/assets/da8e7452-1226-49fc-9bb2-b443dbd9c67d)
+
+#### Key values
+- Mismatch in sender headers:
+    - `MAIL From:<k-tsuchida@matsump.co.jp>`
+    - `From: "elina.vuorenmaa@elisanet.fi" <k-tsuchida@matsump.co.jp>`
+    - `To: <elina.vuorenmaa@elisanet.fi>`
+- `Date: 24 Jun 2019 14:52:50 -0100`
+- Suspicious and most likely malicious google drive link
+    - `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ`
+ 
+- The other packets contained similar information. There is again another sender mismatch, with the same subject, and another malicious google drive link.
+
+![image](https://github.com/user-attachments/assets/7e6f67bf-de87-4eda-a0bf-d958c967e267)
+
+![image](https://github.com/user-attachments/assets/228d4d94-705a-4878-9971-5aeda385cb3d)
+
+- In the provided screen shots, we can now conclude this is definately "mal-spam". Abusing legitimate services like google drive, and mass distrubuting a malicious payload. Under IMF exports, we can see the spam sent from the infected host.
+
+![image](https://github.com/user-attachments/assets/8cfdc674-72f3-4f2c-a34d-99033583f986)
+
+#### SMTP Summary
+- First packet: `2019-06-24 17:16:38.400736`
+- Post compromise activity - malspam sent after victim downloaded malicous flash exploit.
 
 ### 4. ⬇️ Exporting HTTP Objects
 In Wireshark, by going to **File** -> **Export Objects** -> **HTTP**, I am able to export the identified suspicious files for further analysis. I did this and saved them to my desktop. As these files are likely malicious, this investigation is carried out in a kali-linux based virtual machine.

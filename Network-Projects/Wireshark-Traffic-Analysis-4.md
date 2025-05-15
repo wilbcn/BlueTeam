@@ -1,4 +1,4 @@
-# 📡 Wireshark Project 4:  TRAFFIC ANALYSIS EXERCISE: BIG FISH IN A LITTLE POND
+# 📡 Wireshark Investigation 4:  Traffic Analysis Exercise: BIG FISH IN A LITTLE POND
 
 ## Overview
 An additional Wireshark hands-on lab, investigating a malware pcap called "Big Fish in a Little Pong". This investigation was carried out on my own virtual homelab, created on VirtualBox, with a Kali linux distro. 

@@ -24,7 +24,8 @@ This project is part of my on going Wireshark series, where I gain hands-on expe
 - VirtualBox (running kali linux)
 
 ## 🕑 Timeline of events
-
+| **Time** | **Comment** | **IOC** |
+|----------|-------------|---------|
 
 
 
@@ -76,12 +77,76 @@ From the intitial look at the protocol hierarchy, we know that there is some SMT
 
 - The two suspicious domains identified (so far) don't appear to be involved with SMTP traffic. I will however investigate this further to see what exactly went on over SMTP. I repeated these steps for HTTP traffic.
 
+#### Conversations & HTTP filter
+
 ![image](https://github.com/user-attachments/assets/701b6dc7-49cc-49de-959a-d70cd2a3b20b)
 
-- It is clear now that the two identified addresses were involved with HTTP traffic. Knowing which addresses were involved in which protocol makes searching much more logical and easier during the investigation.
+- It is clear now that the two identified addresses were involved with HTTP traffic. Knowing which addresses were involved in which protocol simplifies my searches during the investigation.
 
 ### 2. 🔎 Investigating SMTP traffic
 
+Wireshark query:
+
+```
+smtp
+```
+
+![image](https://github.com/user-attachments/assets/d9702279-2188-4413-a161-03267e893a8f)
+
+- By searching `smtp`, I am able to see the entirety of smtp traffic. After a brief scan, I came accross packets `1157` and `1268`, which have a suspicious subject "Erectile Meds". I then ran an updated query to hone in on this.
+
+```
+smtp && frame contains "Subject: Erectile Meds"
+```
+
+![image](https://github.com/user-attachments/assets/a4c5c3a6-194c-4f4b-ab04-81b448ef1e76)
+
+- I then followed the TCP stream for one of these packets.
+
+![image](https://github.com/user-attachments/assets/da8e7452-1226-49fc-9bb2-b443dbd9c67d)
+
+#### Key values
+- Mismatch in sender headers:
+    - `MAIL From:<k-tsuchida@matsump.co.jp>`
+    - `From: "elina.vuorenmaa@elisanet.fi" <k-tsuchida@matsump.co.jp>`
+    - `To: <elina.vuorenmaa@elisanet.fi>`
+- `Date: 24 Jun 2019 14:52:50 -0100`
+- Suspicious and most likely malicious google drive link
+    - `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ`
+ 
+- The other packets contained similar information. There is again another sender mismatch, with the same subject, and another malicious google drive link.
+
+![image](https://github.com/user-attachments/assets/7e6f67bf-de87-4eda-a0bf-d958c967e267)
+
+![image](https://github.com/user-attachments/assets/228d4d94-705a-4878-9971-5aeda385cb3d)
+
+- In the provided screen shots, we can now conclude this is definately "mal-spam". Abusing legitimate services like google drive, and mass distrubuting a malicious payload. To be sure I had the first instance of this, I ran one more query, followed the TCP stream, and noted down the IOCs.
+
+```
+frame contains "drive.google"
+```
+
+- `From: "innocent.nshizirungu@edu.janakkala.fi" <tgeorge@alum.rpi.edu>`
+- `To: <innocent.nshizirungu@edu.janakkala.fi>`
+- `Subject: Erectile Meds`
+- `Date: 24 Jun 2019 14:53:50 -0100`
+- `https://drive.google.com/file/d/1HmG7RisNCYVkO4aer_eV1nUF4qDp7jLm`
 
 ### 3. 🔎 Investigating HTTP traffic
+Now that we know how our victim was most likely infected, I investigated further to find out what exactly happened post-compromise. We also gathered two suspicious addresses earlier, which will come in handy now as we diagnose HTTP traffic.
+- `1158715-cy17485.tw1.ru` `188.255.26.48`
+- `makemoneyeasywith.me` `185.254.190.200`
 
+Wireshark Query:
+
+```
+http
+```
+
+![image](https://github.com/user-attachments/assets/225c8e75-d385-4625-a20f-f485849e90c0)
+
+- Immediately, we are able to spot suspicious activity related to these two addresses.
+
+#### Key values
+- We have multiple get requests, which include long strings with identifyable words such as "blackmail".
+- In packet `106` in the HTTP 200 OK response, we have `(application/x-shockwave-flash)`, and also `(application/x-msdownload)`. These are highly suspicious and require object exports to analyse further.

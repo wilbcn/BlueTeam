@@ -1,4 +1,4 @@
-# 📡 Wireshark Project 2: Download From Fake Software Site
+# 📡 Wireshark Investigation 2: Download From Fake Software Site
 
 This follow-up Wireshark project dives into another real-world malware PCAP, this time focusing on a file downloaded from a fake software site. It’s part of my ongoing series exploring malicious traffic and network behavior. These projects reflect my commitment to building practical skills with industry tools like Wireshark, while strengthening my understanding of networking and threat analysis.
 

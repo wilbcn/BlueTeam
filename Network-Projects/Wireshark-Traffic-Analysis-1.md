@@ -23,16 +23,44 @@ This project is part of my on going Wireshark series, where I gain hands-on expe
 - Wireshark
 - VirtualBox (running kali linux)
 
-## 🕑 Timeline of events
-| **Time** | **Comment** | **IOC** |
-|----------|-------------|---------|
+## 🕑 Timeline of Events
+| **Time (UTC)**        | **Event**                                                                                          | **IOC / Notes**                                                                 |
+|-----------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| 2019-06-24 14:52:50   | Malspam email sent to victim containing a Google Drive link                                         | `From: k-tsuchida@matsump.co.jp` → `elina.vuorenmaa@elisanet.fi`               |
+| 2019-06-24 14:53:50   | Another malspam email sent to a different victim, with a different malicious Drive link             | `From: tgeorge@alum.rpi.edu` → `innocent.nshizirungu@edu.janakkala.fi`         |
+| 2019-06-24 16:14:10   | Packet capture begins                                                                               | Wireshark shows capture start                                                   |
+| 2019-06-24 16:14:18   | Victim machine makes HTTP GET request to `makemoneyeasywith.me`                                     | Suspicious User-Agent: IE11; domain used for redirection                        |
+| 2019-06-24 16:14:18   | HTTP 302 Redirect to `http://188.225.26.48/`                                                        | Underlying IP of `1158715-cy17485.tw1.ru`; redirect sets suspicious cookies     |
+| 2019-06-24 16:14:19   | HTTP GET to `188.225.26.48`, receives `application/x-shockwave-flash`                               | Likely Flash-based exploit (CVE-2018-4878)                                      |
+| 2019-06-24 16:14:20   | HTTP GET request for `/favicon.ico` from same IP                                                    | Likely part of redirection or stager mechanism                                  |
+| 2019-06-24 16:14:22   | HTTP response returns `application/x-msdownload` from `188.225.26.48`                              | Final malware payload downloaded (dropper/loader)                               |
+| 2019-06-24 16:16:51   | Packet capture ends                     
 
-
+## Indicators of compromise
+| **Item** | **Description** | **Comment** |
+|----------|-----------------|-------------|
+| `10.6.24.101` | IP address | Infected host machine | 
+| `1158715-cy17485.tw1.ru` `188.255.26.48` | Domain and IP | Malicious Activity over HTTP |
+| `makemoneyeasywith.me` `185.254.190.200` | Domain and IP | Malicious Activity over HTTP | 
+| `k-tsuchida@matsump.co.jp` | Email address | Comrpomised account | 
+| `tgeorge@alum.rpi.edu` | Email address | Compromised account |
+| `innocent.nshizirungu@edu.janakkala.fi ` | Email address | Victims account |
+| `elina.vuorenmaa@elisanet.fi` | Email address | Victims account |
+| `f8d568a1a76ecc5382a7e4bada5ce5241d0ddc0cdcea1a494925cbd89a2c2b63` | Hash Value | Malicious Trojan |
+| `9c569f5e6dc2dd3cf1618588f8937513669b967f52b3c19993237c4aa4ac58ea` | Hash Value | CVE-2018-4878 - arbitrary code execution vulnerability in Adobe Flash Player before 28.0.0.161 |
+| `d0a066225444fa1f571781ff4982880def633dce816d9540aaa8bb3ac685895f` | Hash Value | Trojan dropper or loader | 
+| `https://drive.google.com/file/d/1cfQkpmVt8X04_ILlkRpD-m0jQUVvUQjZ` | Google drive link | Malicious link for payload download |
 
 ## ✍🏽 Executive Summary
+In this security event, the victim machine `10.6.24.101` was compromised after the user interacted with a **malicious Google Drive link** delivered via a **malspam email**. The emails followed a clear spam pattern, using pharmaceutical bait ("Erectile Meds") and spoofed sender information to appear credible. 
 
+Upon clicking the link, the victim was redirected through the domain `makemoneyeasywith.me` (`185.254.190.200`), which issued a 302 HTTP redirect to `1158715-cy17485.tw1.ru` (`188.225.26.48`). From there, the victim received a sequence of suspicious payloads, including a Flash file (`application/x-shockwave-flash`) tied to CVE-2018-4878, a critical arbitrary code execution vulnerability in Adobe Flash Player (versions prior to 28.0.0.161).
 
+Shortly after, a second object (`application/x-msdownload`) was delivered — likely acting as a trojan dropper or loader. The domain and IP infrastructure used in this attack strongly suggests it was part of a malspam campaign leveraging exploit kits to deliver malware via browser vulnerabilities.
 
+All malicious activity occurred over HTTP, and legitimate services like Google Drive were abused to deliver the initial lure. The payloads were exported and analyzed, with the Flash and HTML files flagged as malicious across multiple platforms, while the executable remained undetected — indicating possible evasion techniques.
+
+This event highlights the ongoing threat of social engineering, combined with legacy exploit delivery, and underscores the importance of patching end-user software and disabling outdated technologies like Flash.
 
 ## 📖 Project Walkthrough: Analysing a Real-World PCAP in Wireshark
 ### 1. 🔎 Baseline file analysis.
@@ -170,9 +198,46 @@ http
 ##### Key values
 - Timestamp: `Date: Mon, 24 Jun 2019 16:14:19 GMT`
 - `Host: 188.225.26.48`
-- `Content-Type: application/x-shockwave-flash`
+- `Content-Type: application/x-shockwave-flash` - The victim receives a suspicious flash object.
 - Malicious encoded payload
 - Second GET request below payload for `GET /favicon.ico HTTP/1.1`.
 
 - Then at `Date: Mon, 24 Jun 2019 16:14:22 GMT`, we have the other mentioned malicious payload `Content-Type: application/x-msdownload`, which is also encoded.
 
+### 4. ⬇️ Exporting HTTP Objects
+In Wireshark, by going to **File** -> **Export Objects** -> **HTTP**, I am able to export the identified suspicious files for further analysis. I did this and saved them to my desktop. As these files are likely malicious, this investigation is carried out in a kali-linux based virtual machine.
+
+![image](https://github.com/user-attachments/assets/dc5f21cf-754e-4f81-846b-b42debd5812c)
+
+- To simplify analysis and demonstrating the next steps, I have renamed the exports logically from their long strings.
+
+![image](https://github.com/user-attachments/assets/d79a7679-50e0-4438-bf95-cdb2c974ebeb)
+
+#### Checking Hash Values
+The first step of analysing these payloads was to generate hash values for each of them, and then check them in malware analysis tools such as VirusTotal.
+
+Example command ran:
+
+```
+┌──(jake㉿jake-kali)-[~/Desktop/wireshark_exports]
+└─$ sha256sum ms_download 
+d0a066225444fa1f571781ff4982880def633dce816d9540aaa8bb3ac685895f  ms_download
+```
+
+| **File** | **SHA256 Hash** | Result|
+|----------|-----------------|-------|
+|text/html| f8d568a1a76ecc5382a7e4bada5ce5241d0ddc0cdcea1a494925cbd89a2c2b63 | Highly malicious trojan. contains-embedded-js |
+|shockwave-flash | 9c569f5e6dc2dd3cf1618588f8937513669b967f52b3c19993237c4aa4ac58ea | Highly malicious, associated with CVE-2018-4878, an arbitrary code execution vulnerability in Adobe Flash Player before 28.0.0.161 |
+| ms-download | d0a066225444fa1f571781ff4982880def633dce816d9540aaa8bb3ac685895f | Undetected payload in VT |
+
+I also checked these files using `hybrid-analysis`, further confirming our findings.
+
+- `text/html`
+  
+![image](https://github.com/user-attachments/assets/72d332f2-767e-4e93-9327-1a385adad4ca)
+
+- `shockwave-flash`
+  
+![image](https://github.com/user-attachments/assets/950db6e5-c9ee-4f7a-801d-0ad4da6dc3d1)
+
+- `ms-download` -> Undetected. Its very likely this file is simply to download or unpack the malware identified in the other two files.

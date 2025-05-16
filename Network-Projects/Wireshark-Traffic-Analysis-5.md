@@ -158,4 +158,20 @@ To verify this malicious activity, I utilised various online tools to scan this 
 - This article outlines this Trojan as malspam, containing a malicious attachment. Emails can deliver a variety of malware, including Trojans and cryptocurrency miners.
 
 
+#### 4. Victim info
 
+```
+kerberos.CNameString
+```
+
+![image](https://github.com/user-attachments/assets/2c58ac32-cf22-4e67-a704-73d850250275)
+
+- Username: `ccollier`
+
+```
+ldap.AttributeDescription == "givenName"
+```
+
+![image](https://github.com/user-attachments/assets/0fa900d4-59a6-4713-aa50-c4c7655be85b)
+
+- Users full name: `Clark Collier`

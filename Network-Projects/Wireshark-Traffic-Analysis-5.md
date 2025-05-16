@@ -55,7 +55,7 @@ To start any PCAP investigation, I always go through the **statistics** tabs of 
 
 - TLS accounts for majority of traffic, `1344` packets. Most communication is therefore encrypted.
 - NetBIOS Session Service packets `365`: 
-- SMBv2 and SMB over NetBIOS are present: SMB compared to v2/3 is outdated and worth investigating
+- SMBv2 and SMB over NetBIOS are present: SMB compared to v2/3 is outdated and worth investigating. Check for potential SMB traffic to external destinations. 
 - Lanman remote API protocol is also considered a legacy protocol and is outdated.
 - DCE/RPC & Kerberos Activity: Protocols like DCE/RPC, LDAP, and Kerberos are present. Investigate potential domain login attempts.
 - SDP, NetBIOS, and mDNS Activity: This is expected on LANS, but worth checking to see if any external parties show up.
@@ -68,4 +68,27 @@ To start any PCAP investigation, I always go through the **statistics** tabs of 
 - Host machine identified `DESKTOP-SKBR25F.wiresharkworkshop.online` `172.16.1.66` - Part of lan segment 172.16.1[.]0/24
 - Most traffic sent to `dualstack.sonatype.map.fastly.net` `199.232.196.209` - 455 packets A->B, 6085 packets B->A. A lot of return traffic!
 - Second most active address `objects.githubusercontent.com` `195.199.110.133` - Again more inbound traffic than outbound
-- 
+- 411 packets sent to unresolved IP address 141.98.0.79 - This very likely requires further investigation
+
+
+### 2. 🔎 Investigating SMB
+To begin checking SMB traffic, I filtered with `smb` and re checked conversations.
+
+![image](https://github.com/user-attachments/assets/9f9c5c9b-e160-441a-8b1c-ae40d8b439c3)
+
+- We can see the only two addresses are the domain controller, and `172.16.1.255`, which is the broadcast address of the LAN segment range. I then checked http exports -> SMB.
+
+![image](https://github.com/user-attachments/assets/400e5da6-1bc0-4851-8290-674f07d4b364)
+
+- There for now, I can summarise that no indication of external access, data exfil, or unauthorised occured. 
+
+### 3. 🔎 Investigating HTTP
+For HTTP traffic, I ran `http` and looked at the top conversations and file exports. This revealed no indication of suspicious activity.
+
+![image](https://github.com/user-attachments/assets/c07b9f6b-147c-4d9e-93df-a6a11a0e5ec3)
+
+![image](https://github.com/user-attachments/assets/3f7f9081-b784-45d2-84eb-65c80053103b)
+
+### 4. Checking IP 199.232.196.209 (most traffic)
+To begin, I ran `ip.addr == 199.232.196.209`. First packet date time: `2024-07-30 03:39:56`. 
+

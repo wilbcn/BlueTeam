@@ -47,7 +47,7 @@ Firstly I logged into my AWS account, and navigated to `EC2`. From here, I selec
 
 ### 1.2 - Network settings
 
-- **VPC**: A new VPC was created to ensure full isolation of the honeypot from any other cloud resources. An Internet Gateway was attached to allow inbound and outbound traffic. IGW was also added to VPC route table.
+- **VPC**: A new VPC was created to ensure full isolation of the honeypot from any other cloud resources. An Internet Gateway was attached to the VPC and added to VPC route table.
 - **Subnet**: A new Subnet was created within eu-north-1a for logical separation.
 - **Auto-assign public IP**: This is required so the honeypot can be accessed by external attackers. Without a public IP, no unsolicited traffic can reach the system.
 

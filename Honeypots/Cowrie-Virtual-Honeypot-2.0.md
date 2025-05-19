@@ -201,3 +201,8 @@ Cowrie is now configured and running on port 2222 (default) and ready to accept 
 
 ### 3. - Swapping ports
 
+
+![image](https://github.com/user-attachments/assets/b8938445-35c9-40c5-a249-444832d36ee1)
+
+![image](https://github.com/user-attachments/assets/22185c7d-a734-4d02-b1f3-ab45f34fab5c)
+

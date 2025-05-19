@@ -28,7 +28,7 @@ This follow up project is an adaptation and refinement of my original Cowrie hon
 
 ---
 
-## 📦 1 – Cloud Setup
+## 📦 1. – Cloud Setup
 In this follow up project, I create a brand new ec2 instance with similar configurations as the original deployment. This time, leveraging the hardened AMI from AWS marketplace. I also deployed the instance with instance type `t3.medium`, as this is currently what I intend to use during my research project implementation. 
 
 - Public IP redacted for security reasons
@@ -50,4 +50,26 @@ I then created a new key pair for secure admin access. We use SSH keys to access
 
 ![image](https://github.com/user-attachments/assets/f090f1a7-882d-448d-a501-4eab90ada4ac)
 
+I then created a brand new VPC and subnet in `eu-north-1a` (not shown), and enabled auto-assign public IP.
+
+![image](https://github.com/user-attachments/assets/62569a11-dd8c-4176-9e27-59cc9f0e75d2)
+
+Next, I needed a new Security Group to allow remote Admin access. For this deployment, I allowed inbound Custom TP connections from my IP only, on port 22222. This is because later we will add an additional rule to allow public access on standard ssh port 22.
+
+For storage, I chose `30 GB of EBS General Purpose (SSD)`
+
+#### Honeypot summary
+| Attribute              | Value                                                                 |
+|------------------------|-----------------------------------------------------------------------|
+| Instance Name          | `Cowrie-Trial-01`                                                    |
+| Instance Type          | `t3.medium` (2 vCPUs, 4 GB RAM)                                      |
+| AMI Used               | CIS Hardened Ubuntu 24.04 LTS (AWS Marketplace)                      |
+| Storage                | 30 GB EBS (General Purpose SSD)                                      |
+| Admin SSH Access       | Port `22222`, restricted to admin IP only                            |
+| Attacker SSH Port      | Port `22` (planned to be opened publicly later on)                   |
+| Key Pair Auth          | Key-based authentication for admin access                            |
+| Region / Subnet        | `eu-north-1a`, custom VPC with auto-assigned public IP               |
+| Purpose                | Trial phase setup to validate Cowrie configuration and EC2 settings  |
+
+### 2. - Honeypot Installation
 

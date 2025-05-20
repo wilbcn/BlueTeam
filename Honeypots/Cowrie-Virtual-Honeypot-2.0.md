@@ -34,7 +34,7 @@ In this follow up project, I create a brand new ec2 instance with similar config
 - Public IP redacted for security reasons
 
 ### 1.1 - Honeypot Overview
-Once inside my AWS account, I navigated to EC2 and selected launch instance. I named it `01-Cowrie-Trial`, and selected `Ubuntu Server 24.04 LTS`.
+Once inside my AWS account, I navigated to EC2 and selected launch instance. I named it `Cowrie-Trial-01`, and selected `Ubuntu Server 24.04 LTS`.
 
 With the AMI successfully selected, I then chose our instance type `t3.medium`. I aim to deploy two contrasting honeypots for a comparative analysis, and therefore predict that this instance type will be a cost effective yet appropriate solution for my project.
 
@@ -66,10 +66,13 @@ For storage, I chose `30 GB of EBS General Purpose (SSD)`
 | Purpose                | Trial phase setup to validate Cowrie configuration and EC2 settings  |
 
 ### 2. - Honeypot Installation
-To connect to the brand new EC2 instance, I used `MobaXTerm`, a free SSH client. The first step taken was to restrict the .pem permissions via powershell, necessary for SSH private keys.
+To connect to the brand new EC2 instance, I used `MobaXTerm`, a free SSH client. The first step taken was to restrict the .pem permissions via ssh terminal.
 
 ```
-icacls "cowrie-trial-01.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
+chmod 400 cowrie-trial-01.pem
+ls -l
+total 8
+-r--------@ 1 user  staff  1674 20 May 17:09 cowrie-trial-01.pem
 ```
 
 On the SSH client, I then successfully logged into the ec2 instance for the first time. To begin with, I ran some commands to refresh the system’s package list and apply the latest updates. The following segment mirrors the steps taken in the original deployment linked at the top of this project.

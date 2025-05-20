@@ -274,18 +274,50 @@ TriggeredBy: ● ssh.socket
              └─1188 "sshd: /usr/sbin/sshd -D -o AuthorizedKeysCommand /usr/share/ec2-instance-connect/eic_run_authorized_keys %u %f -o AuthorizedKeysCommandUser ec2-instance-connect [listener] 0 of 10-10>
 
 May 20 18:12:32 my-ip systemd[1]: Starting ssh.service - OpenBSD Secure Shell server...
-May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22222.
-May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22.
+May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22222. #  admin access
+May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22. # later to be publicly accessible
 May 20 18:12:32 my-ip systemd[1]: Started ssh.service - OpenBSD Secure Shell server.
 ```
 
 As you can see, we are now listening on both port `22222` and port `22`, for admin access. After opening a new SSH client session and testing ssh login (success), I can safely remove the security group rule in AWS for Admin SSH access on this port. Furthemore, I can remove the line from `/etc/ssh/sshd_config`. 
+
+Bouncing sshd after changes:
+
+```
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl restart ssh.service
+```
+
+Listening on `22222` only:
+
+```
+sudo systemctl status ssh.socket
+● ssh.socket - OpenBSD Secure Shell server socket
+     Loaded: loaded (/usr/lib/systemd/system/ssh.socket; enabled; preset: enabled)
+    Drop-In: /run/systemd/generator/ssh.socket.d
+             └─addresses.conf
+     Active: active (running) since Tue 2025-05-20 17:58:13 UTC; 32min ago
+   Triggers: ● ssh.service
+     Listen: [::]:22222 (Stream)
+      Tasks: 0 (limit: 4584)
+     Memory: 8.0K (peak: 264.0K)
+        CPU: 1ms
+     CGroup: /system.slice/ssh.socket
+
+May 20 17:58:13 my-ip systemd[1]: Listening on ssh.socket - OpenBSD Secure Shell server socket.
+
+ubuntu@my-ip:~$ sudo ss -tulnp | grep 22
+tcp   LISTEN 0      4096               *:22222            *:*    users:(("sshd",pid=1556,fd=3),("systemd",pid=1,fd=220))
+```
+
+Testing login on new port:
 
 ```
 ssh -i cowrie-trial-01.pem -p 22222 ubuntu@ec2-ip
 Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1029-aws x86_64)
 ```
 
-
+Back in AWS, I updated the rule on port 22 to be publicly accessible.
 
 

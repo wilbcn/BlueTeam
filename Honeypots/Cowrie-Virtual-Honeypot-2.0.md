@@ -193,10 +193,99 @@ cowrie@my-ip-address:~/cowrie/var/log/cowrie$ tail -f cowrie.log
 
 Cowrie is now configured and running on port 2222 (default) and ready to accept SSH connections. 
 
-### 3. - Swapping ports
-By default Cowrie will run on port 2222/2223. To run the honeypot on port 22, I need to move the real SSH service to a new port. To avoid lock-outs during this trial phase, I will leave Admin access open on port 22 until non-standard port 22222 is correctly working for Admin access.
+### 3. - Changing Honeypot access to port 22
+By default Cowrie will run on port 2222/2223. To run the honeypot on port 22, I need to move the real SSH service to a new port. To avoid lock-outs during this trial phase, I will leave Admin access open on port 22 until non-standard port 22222 is correctly working for Admin access. Seting up the administrative port:
 
-![image](https://github.com/user-attachments/assets/b8938445-35c9-40c5-a249-444832d36ee1)
+```
+sudo vi /etc/ssh/sshd_config
+```
 
-![image](https://github.com/user-attachments/assets/22185c7d-a734-4d02-b1f3-ab45f34fab5c)
+<img width="855" alt="image" src="https://github.com/user-attachments/assets/5abdb542-8e24-4650-9d20-e445e6515e3e" />
+
+I then elevated sudo privileges to user `cowrie` temporarily. This is so cowrie user can successfully configure authbind, which will allow
+
+```
+visudo /etc/sudoers
+Add under root:
+cowrie ALL=(ALL) NOPASSWD: ALL
+Change %sudo:
+%sudo ALL=(ALL) NOPASSWD: ALL
+```
+
+As cowrie user:
+
+```
+sudo touch /etc/authbind/byport/22
+sudo chown cowrie:cowrie /etc/authbind/byport/22
+sudo chmod 770 /etc/authbind/byport/22
+```
+
+Exit cowrie back to root user and:
+
+```
+Exit back to root
+visudo /etc/sudoers
+Revert settings to
+cowrie ALL=(ALL:ALL) ALL
+%sudo ALL=(ALL:ALL) ALL
+```
+
+I then added the following line `export AUTHBIND_ENABLED=yes` to `bash_profile`. This
+
+Earlier we created a copy of `cowrie.cfg.dist` as `cowrie.cfg`. Next I edited this copy file, changing the endpoint SSH options to: `listen_endpoints = tcp:22:interface=0.0.0.0`.
+
+```
+diff cowrie.cfg cowrie.cfg.dist
+
+211c211
+< listen_endpoints = tcp:22:interface=0.0.0.0 # new file
+---
+> listen_endpoints = tcp:6415:interface=127.0.0.1
+599a600,601
+> listen_endpoints = tcp:2222:interface=0.0.0.0
+>
+677a680,681
+>
+> listen_endpoints = tcp:2223:interface=0.0.0.0
+```
+
+Then I restarted the SSH daemon.
+
+```
+sudo systemctl restart ssh.service
+```
+
+```
+sudo systemctl status ssh.service
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+    Drop-In: /usr/lib/systemd/system/ssh.service.d
+             └─ec2-instance-connect.conf
+     Active: active (running) since Tue 2025-05-20 18:12:32 UTC; 6s ago
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1186 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1188 (sshd)
+      Tasks: 1 (limit: 4584)
+     Memory: 1.2M (peak: 1.4M)
+        CPU: 19ms
+     CGroup: /system.slice/ssh.service
+             └─1188 "sshd: /usr/sbin/sshd -D -o AuthorizedKeysCommand /usr/share/ec2-instance-connect/eic_run_authorized_keys %u %f -o AuthorizedKeysCommandUser ec2-instance-connect [listener] 0 of 10-10>
+
+May 20 18:12:32 my-ip systemd[1]: Starting ssh.service - OpenBSD Secure Shell server...
+May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22222.
+May 20 18:12:32 my-ip sshd[1188]: Server listening on :: port 22.
+May 20 18:12:32 my-ip systemd[1]: Started ssh.service - OpenBSD Secure Shell server.
+```
+
+As you can see, we are now listening on both port `22222` and port `22`, for admin access. After opening a new SSH client session and testing ssh login (success), I can safely remove the security group rule in AWS for Admin SSH access on this port. Furthemore, I can remove the line from `/etc/ssh/sshd_config`. 
+
+```
+ssh -i cowrie-trial-01.pem -p 22222 ubuntu@ec2-ip
+Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1029-aws x86_64)
+```
+
+
+
 

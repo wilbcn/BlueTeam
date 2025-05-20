@@ -55,7 +55,7 @@ I then created a brand new VPC and subnet in `eu-north-1a` (not shown), and enab
 
 ![image](https://github.com/user-attachments/assets/62569a11-dd8c-4176-9e27-59cc9f0e75d2)
 
-Next, I needed a new Security Group to allow remote Admin access. For this deployment, I allowed inbound SSH connections from my IP only on port 22. However later this will be changed so that admin access is via port 22222, and public access over port 22.
+Next, I needed a new Security Group to allow remote Admin access. For this deployment, I allowed inbound SSH connections from my IP only on port 22 and port 22222. However later this will be changed so that admin logons are only accessible on port 22222, and public access over port 22.
 
 For storage, I chose `30 GB of EBS General Purpose (SSD)`
 
@@ -66,7 +66,7 @@ For storage, I chose `30 GB of EBS General Purpose (SSD)`
 | Instance Type          | `t3.medium` (2 vCPUs, 4 GB RAM)                                      |
 | AMI Used               | CIS Hardened Ubuntu 24.04 LTS (AWS Marketplace)                      |
 | Storage                | 30 GB EBS (General Purpose SSD)                                      |
-| Admin SSH Access       | Port `22`, restricted to admin IP only                               |
+| Admin SSH Access       | Port `22` and `22222`, restricted to admin IP only                   |
 | Attacker SSH Port      | Not yet configured                                                   |
 | Key Pair Auth          | Key-based authentication for admin access                            |
 | Region / Subnet        | `eu-north-1a`, custom VPC with auto-assigned public IP               |
@@ -200,7 +200,7 @@ cowrie@my-ip-address:~/cowrie/var/log/cowrie$ tail -f cowrie.log
 Cowrie is now configured and running on port 2222 (default) and ready to accept SSH connections. 
 
 ### 3. - Swapping ports
-
+By default Cowrie will run on port 2222/2223. To run the honeypot on port 22, I need to move the real SSH service to a new port. To avoid lock-outs during this trial phase, I will leave Admin access open on port 22 until non-standard port 22222 is correctly working for Admin access.
 
 ![image](https://github.com/user-attachments/assets/b8938445-35c9-40c5-a249-444832d36ee1)
 

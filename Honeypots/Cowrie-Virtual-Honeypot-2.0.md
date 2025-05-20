@@ -38,8 +38,6 @@ Once inside my AWS account, I navigated to EC2 and selected launch instance. I n
 
 With the AMI successfully selected, I then chose our instance type `t3.medium`. I aim to deploy two contrasting honeypots for a comparative analysis, and therefore predict that this instance type will be a cost effective yet appropriate solution for my project.
 
-![image](https://github.com/user-attachments/assets/a35c94ad-2985-4ea3-a1e8-6081bc6e20bb)
-
 I then created a new key pair for secure admin access. We use SSH keys to access the system securely, while cowrie as a honeypot simulates password logins for the attacker. Attackers interact with Cowries fake shell, not the real system.
 
 ![image](https://github.com/user-attachments/assets/f090f1a7-882d-448d-a501-4eab90ada4ac)

@@ -12,6 +12,7 @@ This follow up project is an adaptation and refinement of my original Cowrie hon
 - Log attacker behavior and extract useful insights
 - Allow brute force attempts after a defined number - Edit the config file
 - Lay the foundation for the next trial phase, of Splunk integration for log aggregation and analysis
+- Begin the trial phase of my ssh honeypot research in cowrie
 
 ---
 

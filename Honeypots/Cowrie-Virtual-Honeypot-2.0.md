@@ -439,11 +439,38 @@ Approximately 5 minutes later, this ip repeatedly connected via numerous differe
 2025-05-21T15:02:39.792149Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 211.101.246.5:44846 (10.0.0.5:22) [session: c5c1808e131f]
 ```
 
-This address also began attempting to brute force the SSH server. At this point, I switched off the server, and began collecting attacker metrics from the cowrie log file.
+This address also began attempting to brute force the SSH server. At this point, I switched off the server, and began collecting the attacker metrics we have so far from the cowrie log file.
+
+#### Full Summary
+
+| **Metric** | **Count** |
+|------------|-----------|
+| Unique IPs  | 1 |
+| Successful Logins | 0 |
+| Failed Logins | 6 |
+| Auth attempts logged | 26 |
+
+| **Usernames** | **Passwords** |
+|---------------|---------------|
+| root | none, password (!Q2w3e4r)|
+| pi | none, password (raspberry)| 
+| hive | none |
+| nginx | none, password (nginx)|
+| mongo | none |
+| apache | none, password (apache123) |
+| git | none |
+| wang | none |
+| gpadmin | none |
+| hadoop | none, password (hadoop) |
+| test | none, password (1234qwer) |
+| flash | none |
+| lighthouse | none |
+| sonar | none |
 
 
 
 
 
-### 6. - Key takeaways and future expansions
+
+### 7. - Key takeaways and future expansions
 

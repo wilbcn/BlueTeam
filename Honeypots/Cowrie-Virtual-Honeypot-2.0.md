@@ -317,7 +317,7 @@ bin/cowrie stop
 authbind --deep bin/cowrie start
 ```
 
-Back in AWS, I updated the rule on port 22 to be publicly accessible via SSH. Afterwards I tested root access into the cowrie system on port 22 (ips redacted)
+Back in AWS, I updated the rule on port 22 to be publicly accessible via SSH. Afterwards I tested root access into the cowrie system on port 22 (ips redacted). Success!
 
 ```
 ssh root@my-ip
@@ -328,5 +328,24 @@ root@svr04:~# pwd
 /root
 root@svr04:~#
 ```
+
+This was successfully logged in cowries log file:
+
+```
+root@my-ip:/home/cowrie/cowrie/etc# sudo su - cowrie
+cowrie@my-ip:~$ tail -f ~/cowrie/var/log/cowrie/cowrie.log
+2025-05-21T10:52:29.484214Z [HoneyPotSSHTransport,0,my-ip] Command found: exit
+2025-05-21T10:52:29.484439Z [twisted.conch.ssh.session#info] exitCode: 0
+2025-05-21T10:52:29.484597Z [cowrie.ssh.connection.CowrieSSHConnection#debug] sending request b'exit-status'
+2025-05-21T10:52:29.484886Z [HoneyPotSSHTransport,0,my-ip] Closing TTY Log: var/lib/cowrie/tty/6b601548f8d080e2f46f599077711d48b9f35c3b22f2ebcb48d848dfec533e1c after 20.2 seconds
+2025-05-21T10:52:29.485310Z [cowrie.ssh.connection.CowrieSSHConnection#info] sending close 0
+2025-05-21T10:52:29.525576Z [cowrie.ssh.session.HoneyPotSSHSession#info] remote close
+2025-05-21T10:52:29.525836Z [HoneyPotSSHTransport,0,my-ip] Got remote error, code 11 reason: b'disconnected by user'
+2025-05-21T10:52:29.526113Z [HoneyPotSSHTransport,0,my-ip] avatar root logging out
+2025-05-21T10:52:29.526217Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-05-21T10:52:29.526279Z [HoneyPotSSHTransport,0,my-ip] Connection lost after 27.3 seconds
+```
+
+### 4. - Modifying cowrie login credentials
 
 

@@ -347,5 +347,26 @@ cowrie@my-ip:~$ tail -f ~/cowrie/var/log/cowrie/cowrie.log
 ```
 
 ### 4. - Modifying cowrie login credentials
+Cowrie uses etc/userdb.txt to define what login combinations are accepted or rejected. By changing this file I can:
+
+- Simulate real-looking credentials
+- Make the honeypot appear more realistic
+- Observe attacker behavior when they succeed in logging in
+
+By default, we have the following configuration:
+
+![image](https://github.com/user-attachments/assets/847250f6-5045-4cf7-aef6-9db91a7090b2)
+
+The rules in this document follow the syntax `<username>:<unused>:<password or rule>`, along with the following special symbols:
+- `*` - wildcard
+- `!` - deny rule
+
+Cowrie stops/denys at the first match, so any modifications to this file should start with the intended, specific rejections. When modifying this file, I had the following plan in mind:
+- Reject **some** simple passwords for root user such as `password`, `root`, `123456`, and so fourth. Much like the default file already has done. Also reject any combination including `honeypot`.
+- Accept some weak but realistic credentials. This would be like `admin:x:admin123`, `ubuntu:x:ubuntu, `ec2-user:x:ec2pass`
+
+In general, modifying this file will require future research in order to find an optimal solution for increasing honeypot realism. However for this trial phase, I have implemented the following configuration. It will be interesting to see how long it takes for a successful login. (currently inbound rules on port 22 are blocked until configurations have been set).
+
+
 
 

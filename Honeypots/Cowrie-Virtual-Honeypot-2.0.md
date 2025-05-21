@@ -1,4 +1,4 @@
-# Cowrie-Based Honeypot Deployment on AWS 2.0 (WIP!!!!!!!!!!!!!!!)
+# Cowrie-Based Honeypot Deployment on AWS 2.0
 
 ## 📚 Overview
 This follow up project is an adaptation and refinement of my original Cowrie honeypot deployment, found here: [link](https://github.com/wilbcn/BlueTeam/edit/main/Honeypots/Cowrie-Virtual-Honeypot.md). This project serves as both a trial phase towards my research project proposal on honeypot realism and fingerprinting (University project), as well as a continuation of hands-on experience that covers multiple security domains like OS hardening and network security.

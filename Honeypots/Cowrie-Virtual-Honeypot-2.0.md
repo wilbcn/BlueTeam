@@ -368,18 +368,37 @@ This screen shot outlines the expected syntax which will come in handy as my res
 # '/' can be used to write a regular expression
 ```
 
-Cowrie stops/denys at the first match, so any modifications to this file should start with the intended, specific rejections. When modifying this file, I had the following plan in mind:
-- Reject **some** simple passwords for root user such as `password`, `root`, `123456`, and so fourth. Much like the default file already has done. Also reject any combination including `honeypot`.
-- Accept some weak but realistic credentials. This would be like `admin:x:admin123`, `ubuntu:x:ubuntu, `ec2-user:x:ec2pass`
+Cowrie stops/denys at the first match, so any modifications to this file should start with the intended, specific rejections. 
 
-In general, modifying this file will require future research in order to find an optimal solution for increasing honeypot realism. However for this trial phase, I have implemented the following configuration. It will be interesting to see how long it takes for a successful login. (currently inbound rules on port 22 are blocked until configurations have been set).
+In general, modifying this file will require future research in order to find an optimal solution for increasing honeypot realism. However for this trial phase, I have implemented the following configuration. It will be interesting to see how long it takes for a successful login. (currently inbound rules on port 22 are blocked until configurations have been set). I used a combination of the top most used usernames and passwords from this resource [Link](https://www.f5.com/labs/articles/threat-intelligence/spaceballs-security--the-top-attacked-usernames-and-passwords)
 
 New `userdb.txt` configuration:
 
+```
+root:x:!root
+root:x:!123456
+root:x:!/honeypot/i
+root:x:11111
+root:x:admin
+admin:x:admin
+admin:x:admin123
+admin:x:password
+oracle:x:support
+ubuntu:x:ubuntu
+user:x:password
+*:x:!*
+```
+
+```
+bin/cowrie stop
+authbind --deep bin/cowrie start
+```
+
+### 5. - Investigating inbound traffic
+In this final step, I re-opened port 22 publicly, and monitored for inbound ssh connections. 15:45 BST.
 
 
 
 
-
-
+### 6. - Key takeaways and future expansions
 

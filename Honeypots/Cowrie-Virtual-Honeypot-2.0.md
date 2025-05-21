@@ -395,7 +395,52 @@ authbind --deep bin/cowrie start
 ```
 
 ### 5. - Investigating inbound traffic
-In this final step, I re-opened port 22 publicly, and monitored for inbound ssh connections. 15:45 BST.
+In this final step, I re-opened port 22 publicly, and monitored for inbound ssh connections from 15:45 BST. 12 or so minutes later, I had our first hit at: 14:57.
+
+```
+2025-05-21T14:57:47.537178Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 211.101.246.5:56070 (10.0.0.5:22) [session: 6e42da3ce654]
+2025-05-21T14:57:47.537755Z [HoneyPotSSHTransport,1,211.101.246.5] Remote SSH version: SSH-2.0-Go
+2025-05-21T14:57:49.127069Z [HoneyPotSSHTransport,1,211.101.246.5] SSH client hassh fingerprint: 084386fa7ae5039bcf6f07298a05a227
+2025-05-21T14:57:49.128079Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] kex alg=b'curve25519-sha256@libssh.org' key alg=b'ecdsa-sha2-nistp256'
+2025-05-21T14:57:49.128170Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] outgoing: b'aes128-ctr' b'hmac-sha2-256' b'none'
+2025-05-21T14:57:49.128234Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] incoming: b'aes128-ctr' b'hmac-sha2-256' b'none'
+2025-05-21T14:57:50.381508Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] NEW KEYS
+2025-05-21T14:57:50.381928Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] starting service b'ssh-userauth'
+2025-05-21T14:57:51.202638Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'' trying auth b'none'
+2025-05-21T14:57:56.243079Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-05-21T14:57:56.243265Z [HoneyPotSSHTransport,1,211.101.246.5] Connection lost after 8.7 seconds
+```
+
+#### 📊 Breakdown of Cowrie Log Snippet (Attacker Activity)
+
+| **Timestamp**            | **Event**                                                             | **Explanation**                                                                 |
+|--------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| `2025-05-21T14:57:47.537` | New connection: `211.101.246.5:56070 → 10.0.0.5:22`                    | External attacker connected to honeypot port 22                                 |
+| `2025-05-21T14:57:47.537` | Remote SSH version: `SSH-2.0-Go`                                       | Client is using the Go SSH library — likely a scanner or automation tool       |
+| `2025-05-21T14:57:49.127` | SSH client hassh fingerprint: `084386fa7ae5039bcf6f07298a05a227`       | Client key fingerprint — can help identify botnet reuse                        |
+| `2025-05-21T14:57:49.128` | KEX and crypto negotiated                                              | Secure session negotiated using `curve25519`, `aes128-ctr`, etc.               |
+| `2025-05-21T14:57:50.381` | NEW KEYS                                                               | Key exchange completed — encrypted channel is ready                            |
+| `2025-05-21T14:57:50.381` | Starting service: `ssh-userauth`                                       | SSH client is beginning authentication process                                 |
+| `2025-05-21T14:57:51.202` | Trying auth: `none`                                                    | Client attempted to login with no username/password — a common recon technique |
+| `2025-05-21T14:57:56.243` | Connection lost after 8.7 seconds                                      | Client disconnected — likely a passive scan, no brute-force this time          |
+
+#### Initial Summary
+- This was an automated scan using a Go-based SSH client
+- The client completed the full SSH handshake but skipped login (auth `none`)
+- It is likely part of a broad passive scan rather than a targeted attack
+- Valuable metadata was captured: IP address, SSH client version, key fingerprint, crypto used.
+
+### 6. - Investigating continued
+Approximately 5 minutes later, this ip repeatedly connected via numerous different ports.
+
+```
+2025-05-21T15:02:35.804354Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 211.101.246.5:44818 (10.0.0.5:22) [session: 76b8d5c8894f]
+2025-05-21T15:02:37.366941Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 211.101.246.5:44832 (10.0.0.5:22) [session: 9dfbe1823a95]
+2025-05-21T15:02:39.792149Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 211.101.246.5:44846 (10.0.0.5:22) [session: c5c1808e131f]
+```
+
+This address also began attempting to brute force the SSH server. At this point, I switched off the server, and began collecting attacker metrics from the cowrie log file.
+
 
 
 

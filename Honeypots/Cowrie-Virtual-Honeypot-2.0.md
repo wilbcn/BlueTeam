@@ -202,7 +202,9 @@ sudo vi /etc/ssh/sshd_config
 
 <img width="855" alt="image" src="https://github.com/user-attachments/assets/5abdb542-8e24-4650-9d20-e445e6515e3e" />
 
-I then elevated sudo privileges to user `cowrie` temporarily. This is so cowrie user can successfully configure authbind, which will allow
+I then elevated sudo privileges to user `cowrie` temporarily. This is so cowrie user can successfully configure authbind, which allows it to bind to restricted ports like port 22 without needing full root access. Normally, only the root user can listen on ports below 1024 — authbind is a secure workaround that lets a non-root service (like Cowrie) safely take over port 22.
+
+<img width="707" alt="image" src="https://github.com/user-attachments/assets/faf6722e-dad4-4618-80ec-cf31020cea98" />
 
 ```
 visudo /etc/sudoers
@@ -230,24 +232,13 @@ cowrie ALL=(ALL:ALL) ALL
 %sudo ALL=(ALL:ALL) ALL
 ```
 
-I then added the following line `export AUTHBIND_ENABLED=yes` to `bash_profile`. This
+I then added the following line export AUTHBIND_ENABLED=yes to ~/.bash_profile.
+This ensures that every time the cowrie user logs in or starts a session, the system knows to enable authbind for Cowrie automatically.
+Without this, Cowrie won't know it's allowed to bind to port 22, and will silently fail or fall back to its default port (like 2222).
 
-Earlier we created a copy of `cowrie.cfg.dist` as `cowrie.cfg`. Next I edited this copy file, changing the endpoint SSH options to: `listen_endpoints = tcp:22:interface=0.0.0.0`.
+Earlier we created a copy of `cowrie.cfg.dist` as `cowrie.cfg`. This copy file is what we should use to make changes from the baseline cowrie configuration. I then edited this copy file, changing the endpoint to listen on port 22 rather than 2222 for incoming SSH connections. 
 
-```
-diff cowrie.cfg cowrie.cfg.dist
-
-211c211
-< listen_endpoints = tcp:22:interface=0.0.0.0 # new file
----
-> listen_endpoints = tcp:6415:interface=127.0.0.1
-599a600,601
-> listen_endpoints = tcp:2222:interface=0.0.0.0
->
-677a680,681
->
-> listen_endpoints = tcp:2223:interface=0.0.0.0
-```
+<img width="937" alt="image" src="https://github.com/user-attachments/assets/69100738-98a4-455f-a425-3dd0d65aada7" />
 
 Then I restarted the SSH daemon.
 
@@ -318,9 +309,24 @@ ssh -i cowrie-trial-01.pem -p 22222 ubuntu@ec2-ip
 Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1029-aws x86_64)
 ```
 
-Back in AWS, I updated the rule on port 22 to be publicly accessible via SSH. I also ensured cowrie was running.
+I then stop/started cowrie, starting the process with `authbind` for port 22.
 
 ```
-cowrie@my-ip:~/cowrie$ bin/cowrie start
+cd ~/cowrie
+bin/cowrie stop
+authbind --deep bin/cowrie start
 ```
+
+Back in AWS, I updated the rule on port 22 to be publicly accessible via SSH. Afterwards I tested root access into the cowrie system on port 22 (ips redacted)
+
+```
+ssh root@my-ip
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+root@svr04:~# ls -l
+root@svr04:~# pwd
+/root
+root@svr04:~#
+```
+
 

@@ -430,7 +430,7 @@ In this final step, I re-opened port 22 publicly, and monitored for inbound ssh 
 - It is likely part of a broad passive scan rather than a targeted attack
 - Valuable metadata was captured: IP address, SSH client version, key fingerprint, crypto used.
 
-### 6. - Investigating continued
+### 6. - Analysing logs
 Approximately 5 minutes later, this ip repeatedly connected via numerous different ports.
 
 ```
@@ -445,32 +445,42 @@ This address also began attempting to brute force the SSH server. At this point,
 
 | **Metric** | **Count** |
 |------------|-----------|
-| Unique IPs  | 1 |
+| Unique IPs  | 1 (211.101.246.5) |
 | Successful Logins | 0 |
 | Failed Logins | 6 |
 | Auth attempts logged | 26 |
 
 | **Usernames** | **Passwords** |
 |---------------|---------------|
-| root | none, password (!Q2w3e4r)|
-| pi | none, password (raspberry)| 
+| root | password (!Q2w3e4r)|
+| pi | password (raspberry)| 
+| nginx | password (nginx)|
+| apache | password (apache123) |
+| hadoop | password (hadoop) |
+| test | password (1234qwer) |
 | hive | none |
-| nginx | none, password (nginx)|
 | mongo | none |
-| apache | none, password (apache123) |
 | git | none |
 | wang | none |
 | gpadmin | none |
-| hadoop | none, password (hadoop) |
-| test | none, password (1234qwer) |
 | flash | none |
 | lighthouse | none |
 | sonar | none |
 
+Additionally, I ran this IP address on VirusTotal, which results support that this address is malicious, and is known for port scanning and SSH brute force attempts.
 
+<img width="1439" alt="image" src="https://github.com/user-attachments/assets/cd256860-973e-4bf5-aa37-faa9ebeb1106" />
 
-
-
+<img width="575" alt="image" src="https://github.com/user-attachments/assets/1ada09cd-64c6-4b51-a757-e7314b0851f8" />
 
 ### 7. - Key takeaways and future expansions
+As a follow-up to my original Cowrie deployment, this project involved configuring and launching a new EC2 instance with a more realistic honeypot setup. Key improvements included:
+
+- Exposing the honeypot on the standard SSH/SFTP port (22) instead of the default Cowrie port (2222)
+- Securing admin access via a non-standard port (22222)
+- Customising the credential configuration to allow or reject specific username/password combinations
+
+This deployment served as a trial phase for my broader research on attacker behavior post-compromise. While full interaction analysis is reserved for the next stage, this phase already provided valuable insight into brute-force patterns and varied username and password attempts. 
+
+In future deployments, I aim to implement Splunk Universal Forwarders for log aggregation and analysis, as well as exploring in more detail how I can further improve honeypot realism.
 

@@ -445,7 +445,7 @@ This address also began attempting to brute force the SSH server. At this point,
 
 | **Metric** | **Count** |
 |------------|-----------|
-| Unique IPs  | 1 (211.101.246.5) |
+| Unique IPs  | 211.101.246.5 |
 | Successful Logins | 0 |
 | Failed Logins | 6 |
 | Auth attempts logged | 26 |

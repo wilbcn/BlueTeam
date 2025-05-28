@@ -19,6 +19,7 @@ For security reasons, this EC2 instance was terminated post project completion. 
 - Amazon EC2
 - [nmap](https://nmap.org/download.html#windows)
 - [learning material](https://tryhackme.com/room/nmap02)
+- [VirusTotal](https://www.virustotal.com/gui/home/upload)
 
 ## 📖 Project Walkthrough
 ### 1. 🚀 Launching the EC2 instance

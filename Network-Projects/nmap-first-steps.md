@@ -144,7 +144,7 @@ Traceroute (12 hops) confirmed the host is accessible across the internet with n
 Unlike a TCP connect scan which tries to complete the three-way handshake, the SYN scan only executes the first step. It sends a TCP SYN packet, and upon receiving a SYN, ACK in response, we immediately close the connection with RST (Case: TCP port is actually open).
 
 This method is:
-- Faster and stealthier** than a full TCP connect `-sT` scan
+- Faster and stealthier than a full TCP connect `-sT` scan
 - Less likely to be logged by some host-based firewalls or intrusion detection systems
 - Commonly used during initial triage or discovery by security analysts
 

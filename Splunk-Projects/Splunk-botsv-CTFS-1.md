@@ -1,4 +1,4 @@
-# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs
+![image](https://github.com/user-attachments/assets/c0fe0764-e684-4fcb-8d92-4454a1029331)# 🖥️ Splunk Investigations: Analysing the BOTSv3 dataset to answer CTFs
 
 ## 📖 Overview  
 Since configuring my Splunk Enterprise server on AWS and my initial analysis of the attack dataset, I was kindly provided with the dataset ctf questions and answers. This project documents my thought process on how I was able to answer the outlined questions. This document serves more of a learning resource for myself, but equally showcases my on going dedication improving my analytical skills and investigation skills using Splunk.
@@ -8,10 +8,12 @@ Since configuring my Splunk Enterprise server on AWS and my initial analysis of 
 
 Below I have outlined each question individually, and any steps or thought processes taken in order to successfully locate the answer. This has been fantastic hands-on practice, leveraging a variety of transforming commands, practice with SPL syntax, using the Splunk UI, and learning about new sources/sourcetypes specifically those tied to AWS.
 
+This will be a work in progress up until I have successfully answered all questions for the dataset.
+
 ## 🎯 Goals
 - Answer a wide variety of CTF question and answers from the BOTSv3 attack dataset
 - Logically carry out investigations using Splunk and analyse the returned events
-- Prepare myself for the BTL1 exam !
+- Prepare myself for the BTL1 exam ! Update: Now certified level 1 blue teamer! (May 2025)
 
 ### Question 1: List out the IAM users that accessed an AWS service (successfully or unsuccessfully) in Frothly's AWS environment?
 To answer this question, I ran an initial query focusing on AWS cloud trail, which covers API calls made from AWS users.
@@ -414,3 +416,44 @@ The actual secret key will not be in the splunk logs. For security reasons, this
 ![image](https://github.com/user-attachments/assets/36111894-5912-46b1-8306-22f495c36e10)
 
 **Answer**: `Bx8/gTsYC98T0oWiFhpmdROqhELPtXJSR9vFPNGk`
+
+### Question 21: Using the leaked key, the adversary makes an unauthorized attempt to create a key for a specific resource. What is the name of that resource? Answer guidance: One word.
+From the previous question, we know that the IAM user "web_admin" had its credentials leaked, including the access key ID and secret access key. I used this IAM user to form the SPL query for this next question. 
+
+```
+index=* sourcetype="aws:cloudtrail" userName=web_admin eventName=CreateAccessKey
+```
+
+- This returned just 1 event, where we have the naswer within the errorMessage part of the event.
+
+![image](https://github.com/user-attachments/assets/36e87e15-f968-456e-9811-8a031ae23d05)
+
+**Answer**: `nullweb_admin`
+
+### Question 22: Using the leaked key, the adversary makes an unauthorized attempt to describe an account. What is the full user agent string of the application that originated the request?
+For this question, I modified the previous query, looking for an eventName on wildcard "Describe".
+
+```
+index=* sourcetype="aws:cloudtrail" userName=web_admin eventName="*Describe*"
+```
+
+- This revealed 31 events, however I was able to narrow this down further by checking the new result for `eventName`. Here I spotted the anomaly `DescribeAccountAttributes`, matching the question.
+
+![image](https://github.com/user-attachments/assets/1302c0b7-3d6f-41a5-914d-e1f6b98dbdbf)
+
+```
+index=* sourcetype="aws:cloudtrail" userName=web_admin eventName=DescribeAccountAttributes
+```
+
+- In the `userAgent` field, we have our answer.
+
+![image](https://github.com/user-attachments/assets/4a41bcd7-2e54-4af5-a97d-fb54eb8639e6)
+
+**Answer**: `ElasticWolf/5.1.6`
+
+### Question 23: The adversary attempts to launch an Ubuntu cloud image as the compromised IAM user. What is the codename for that operating system version in the first attempt? Answer guidance: Two words.
+Another question related to the compromised IAM user, so I kept my query based on "web_admin".
+
+
+
+

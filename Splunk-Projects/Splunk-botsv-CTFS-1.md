@@ -451,9 +451,3 @@ index=* sourcetype="aws:cloudtrail" userName=web_admin eventName=DescribeAccount
 
 **Answer**: `ElasticWolf/5.1.6`
 
-### Question 23: The adversary attempts to launch an Ubuntu cloud image as the compromised IAM user. What is the codename for that operating system version in the first attempt? Answer guidance: Two words.
-Another question related to the compromised IAM user, so I kept my query based on "web_admin".
-
-
-
-

@@ -20,6 +20,7 @@ index=* | stats count by sourcetype | sort -count
 
 Sourcetypes to focus on:
 - `aws:cloudtrail`: Cloud Attack Surface
+- `stream:smtp`: Email Traffic
 - `osquery:results`: Track suspicious processes
 - `stream:dns + stream:http`: Network Threat Detection
 
@@ -81,4 +82,4 @@ index=* sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com"
 
 ![image](https://github.com/user-attachments/assets/039ba0c9-ba25-4d09-b132-d4fd34d88c80)
 
-### 2. Dashboard Overview: Insert
+### 2. Dashboard Overview: Email Traffic

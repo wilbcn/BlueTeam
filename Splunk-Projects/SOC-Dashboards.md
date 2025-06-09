@@ -84,7 +84,7 @@ index=* sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com"
 
 ### 2. Dashboard Overview: Email Traffic
 
-dashboard screenshot
+![image](https://github.com/user-attachments/assets/770d35e0-9bd8-4456-adea-346a7305631c)
 
 ### 2.1 Dashboard use cases
 - Total email traffic
@@ -157,7 +157,19 @@ The below key words don't exist in the dataset. However, these are common **Phis
 Query ran:
 
 ```
-
+index=* sourcetype="stream:smtp"
+| spath subject
+| spath sender
+| spath receiver_email{}
+| search subject="*apikey*" OR subject="*support case*" OR subject="*quarentine*"
+       OR subject="*financial*" OR subject="*urgent*" OR subject="*immediate action*"
+       OR subject="*act now*" OR subject="*exposed*" OR subject="*click here*"
+       OR subject="*verify*"
+| rename "receiver_email{}" as recipients
+| table _time, subject, sender, recipients
+| sort -_time
 ```
 
+![image](https://github.com/user-attachments/assets/35bb4c17-6b7b-44e5-9d99-113a40eb9411)
 
+This was great practice with spath for nested JSON data. This panel is really useful, can could be further expanded in a real production environment for more common Phishing and Malicious email indicators.

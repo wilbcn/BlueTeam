@@ -8,8 +8,9 @@ I have been learning Splunk for a while now, creating and deploying EC2 instance
 - Web Traffic
 
 ## 🎯 Goals
-- Insert
-- Insert
+- Practice Splunk SPL
+- Create enriched Splunk Dashboards, useful in a SOC-analyst environment
+- Practice with the Splunk UI, leveraging existing attacker datasets (BOTSv3)
 
 ### Pre-project Planning
 Before starting this project, I ran the below SPL query to get a better understanding of the sourcetypes within the data. That way I can logically pick sourcetypes that contain event data, for meaningful dashboards.
@@ -196,15 +197,18 @@ index=* sourcetype="stream:smtp"
 
 ### 3. Dashboard Overview: Web Traffic
 
+![image](https://github.com/user-attachments/assets/fd1798a7-4050-469a-a4d9-53a17e33f210)
+
 ### 3.1 Dashboard use cases
 - Top External Domains (DNS)
 - Top Addresses (HTTP)
 - HTTP Traffic over non-standard ports
 - Unusual App Detection
-- Get/Post requests
+- Powershell activity
 
 ### 3.1 Top External Domains
-intro
+Useful for checking top DNS traffic domains. 
+
 ```
 index=* sourcetype="stream:dns"
 | rename "hostname{}" as domain, sourcetype as protocol
@@ -215,7 +219,7 @@ index=* sourcetype="stream:dns"
 
 
 ### 3.2 Top Addresses (HTTP/S)
-Intro
+This panel shows the top destination addresses involved in http/s traffic. If an usually large amount of traffic was headed towards an unknown address, this would warrant further investigation. 
 
 ```
 index=* sourcetype="stream:http"
@@ -227,8 +231,9 @@ index=* sourcetype="stream:http"
 ```
 
 
+
 ### 3.3 HTTP/S traffic over non-standard ports
-Intro
+This panel looks for http/s traffic over non-standard ports, which could potentially be signs of malicious activity.
 
 ```
 index=* sourcetype="stream:tcp"
@@ -239,8 +244,10 @@ index=* sourcetype="stream:tcp"
 | sort -count
 ```
 
+![image](https://github.com/user-attachments/assets/84fb6b17-a7b2-4978-8d6e-0a54b1cb3945)
+
 ### 3.4 Unusual App Detection
-Intro
+In this panel we are detecting activity outside of a few known standard-ports, such as port 80: http, port 443: https, and port 22: ssh. This is useful for detecting anomalies, such as http traffic over port 3333 in the example.
 
 ```
 index=* sourcetype="stream:tcp"
@@ -251,10 +258,20 @@ index=* sourcetype="stream:tcp"
 | head 15
 ```
 
-### 3.5 Get/Post requests
-Intro
+![image](https://github.com/user-attachments/assets/52cee4cd-ab41-4ac1-96d2-ef11890bd430)
+
+### 3.5 Powershell activity
+Attackers use powershell as a tool to conduct malicious activity, being used to steal valuable data or inject malicious code into the system. 
+Query ran:
 
 ```
-
+index=* sourcetype="stream:http" "*powershell*" OR "*.ps1"
+| rename http_comment as "HTTP Status", http_method as "HTTP Method"
+| rename src_ip as "Source IP", dest_ip as "Destination IP"
+| rename uri_path as "Resource Accessed"
+| rename http_user_agent as "HTTP User Agent"
+| table _time, "Source IP", "Destination IP", "HTTP Method", "HTTP Status", "Resource Accessed", "HTTP User Agent"
 ```
+
+![image](https://github.com/user-attachments/assets/635c9c01-5be6-4119-aaab-ce4bbe610331)
 

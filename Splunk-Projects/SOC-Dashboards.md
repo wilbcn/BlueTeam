@@ -200,7 +200,8 @@ index=* sourcetype="stream:smtp"
 - Top External Domains (DNS)
 - Top Addresses (HTTP)
 - HTTP Traffic over non-standard ports
-- 
+- Unusual App Detection
+- Get/Post requests
 
 ### 3.1 Top External Domains
 intro
@@ -236,5 +237,24 @@ index=* sourcetype="stream:tcp"
 | where Port!=80 AND Port!=443
 | stats count by "Source IP", "Destination IP", "Port", "Application Layer Protocol"
 | sort -count
+```
+
+### 3.4 Unusual App Detection
+Intro
+
+```
+index=* sourcetype="stream:tcp"
+| rename app as "Application Layer Protocol"
+| stats count by "Application Layer Protocol", dest_port
+| where NOT (dest_port=80 OR dest_port=443 OR dest_port=22)
+| sort count
+| head 15
+```
+
+### 3.5 Get/Post requests
+Intro
+
+```
+
 ```
 

@@ -278,4 +278,4 @@ index=* sourcetype="stream:http" "*powershell*" OR "*.ps1"
 ![image](https://github.com/user-attachments/assets/635c9c01-5be6-4119-aaab-ce4bbe610331)
 
 ### Summary
-This project served at further hands-on experience with Splunk, leveraging the attacker dataset `BOTSv3` to create SOC-style dashboards. This was a good chance to practice further SPL, looking at data transformation commands, and how we can logically output relevant data into useful tables or other visualisation methods.
+This project served at further hands-on experience with Splunk, leveraging the attacker dataset `BOTSv3` to create SOC-style dashboards. This was a good chance to practice further SPL, looking at data transformation commands, and how we can logically output relevant data into useful tables or other visualisation methods. To reduce false positives in a real production environment, I understand that SPL queries must be refined further. However with the supplied dataset, I was still able to create useful SOC-style dashboards, which would assist me in answering the CTF style questions related to the security events within the data.

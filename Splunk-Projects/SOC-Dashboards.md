@@ -5,7 +5,7 @@ I have been learning Splunk for a while now, creating and deploying EC2 instance
 
 - AWS IAM Activity
 - Email Traffic
-- Insert
+- Web Traffic
 
 ## 🎯 Goals
 - Insert
@@ -194,7 +194,34 @@ index=* sourcetype="stream:smtp"
 
 ![image](https://github.com/user-attachments/assets/2bbbe664-d84c-46c4-9bb1-530666c145e9)
 
+### 3. Dashboard Overview: Web Traffic
 
+### 3.1 Dashboard use cases
+- Top External Domains (DNS)
+- Top Addresses (HTTP)
+- 
 
+### 3.1 Top External Domains/Addresses
+For this section, I ran 3 separate SPL queries to generate panels for each of the protocols.
 
+```
+index=* sourcetype="stream:dns"
+| rename "hostname{}" as domain, sourcetype as protocol
+| stats count by protocol, domain
+| sort -count
+| head 10
+```
+
+```
+index=* sourcetype="stream:http"
+| spath dest_ip
+| rename dest_ip as "destination address", sourcetype as protocol
+| stats count by "destination address", protocol
+| sort -count
+| head 10
+```
+
+```
+
+```
 

@@ -207,7 +207,7 @@ index=* sourcetype="stream:smtp"
 - Powershell activity
 
 ### 3.1 Top External Domains
-Useful for checking top DNS traffic domains. 
+Useful for checking anomalies in top DNS domains. 
 
 ```
 index=* sourcetype="stream:dns"
@@ -217,6 +217,7 @@ index=* sourcetype="stream:dns"
 | head 10
 ```
 
+![image](https://github.com/user-attachments/assets/29bcdc20-5d63-417c-9700-98bd41f19cbd)
 
 ### 3.2 Top Addresses (HTTP/S)
 This panel shows the top destination addresses involved in http/s traffic. If an usually large amount of traffic was headed towards an unknown address, this would warrant further investigation. 
@@ -230,6 +231,7 @@ index=* sourcetype="stream:http"
 | head 10
 ```
 
+![image](https://github.com/user-attachments/assets/c2d29459-d957-4c3d-83d5-7edb102bd46f)
 
 
 ### 3.3 HTTP/S traffic over non-standard ports
@@ -275,3 +277,5 @@ index=* sourcetype="stream:http" "*powershell*" OR "*.ps1"
 
 ![image](https://github.com/user-attachments/assets/635c9c01-5be6-4119-aaab-ce4bbe610331)
 
+### Summary
+This project served at further hands-on experience with Splunk, leveraging the attacker dataset `BOTSv3` to create SOC-style dashboards. This was a good chance to practice further SPL, looking at data transformation commands, and how we can logically output relevant data into useful tables or other visualisation methods.

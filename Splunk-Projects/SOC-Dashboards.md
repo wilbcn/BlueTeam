@@ -84,13 +84,14 @@ index=* sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com"
 
 ### 2. Dashboard Overview: Email Traffic
 
-![image](https://github.com/user-attachments/assets/770d35e0-9bd8-4456-adea-346a7305631c)
+![image](https://github.com/user-attachments/assets/5c6fa544-f4c6-4773-bfe0-c316681b0823)
 
 ### 2.1 Dashboard use cases
 - Total email traffic
 - Top email traffic by source IP
 - Top rare values
 - Suspicious Emails by subject
+- Emails with suspicious attachments
 
 ### 2.2 Total Email Traffic
 General overview of Email Traffic. Could be refined further for daily or weekly activity, if a date/time baseline had been established by the organisation. 
@@ -173,3 +174,27 @@ index=* sourcetype="stream:smtp"
 ![image](https://github.com/user-attachments/assets/35bb4c17-6b7b-44e5-9d99-113a40eb9411)
 
 This was great practice with spath for nested JSON data. This panel is really useful, can could be further expanded in a real production environment for more common Phishing and Malicious email indicators.
+
+### 2.6 Emails with suspicious attachments
+While the BOTS v3 dataset includes limited examples of email attachments, the SPL query and dashboard developed here were constructed with that constraint in mind. The current implementation focuses on identifying the presence of attachments in general; however, in a production environment, this logic should be expanded to detect a broader range of potentially malicious file types — such as .exe, .doc, .xls, .ps1, .zip, and others commonly used in phishing and malware delivery.
+
+This approach reflects a logical use of the dataset’s available content while acknowledging the need for broader detection coverage in real-world applications.
+
+```
+index=* sourcetype="stream:smtp"
+| spath sender
+| spath receiver_email{}
+| spath attach_filename{}
+| where isnotnull('attach_filename{}') AND 'attach_filename{}' != ""
+| rename "attach_filename{}" as attachments
+| rename "receiver_email{}" as recipients
+| table _time, sender, recipients, attachments
+| sort -_time
+```
+
+![image](https://github.com/user-attachments/assets/2bbbe664-d84c-46c4-9bb1-530666c145e9)
+
+
+
+
+

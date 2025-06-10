@@ -199,11 +199,11 @@ index=* sourcetype="stream:smtp"
 ### 3.1 Dashboard use cases
 - Top External Domains (DNS)
 - Top Addresses (HTTP)
+- HTTP Traffic over non-standard ports
 - 
 
-### 3.1 Top External Domains/Addresses
-For this section, I ran 3 separate SPL queries to generate panels for each of the protocols.
-
+### 3.1 Top External Domains
+intro
 ```
 index=* sourcetype="stream:dns"
 | rename "hostname{}" as domain, sourcetype as protocol
@@ -211,6 +211,10 @@ index=* sourcetype="stream:dns"
 | sort -count
 | head 10
 ```
+
+
+### 3.2 Top Addresses (HTTP/S)
+Intro
 
 ```
 index=* sourcetype="stream:http"
@@ -221,7 +225,16 @@ index=* sourcetype="stream:http"
 | head 10
 ```
 
-```
 
+### 3.3 HTTP/S traffic over non-standard ports
+Intro
+
+```
+index=* sourcetype="stream:tcp"
+| rename src_ip as "Source IP", dest_ip as "Destination IP", dest_port as "Port", app as "Application Layer Protocol"
+| search "Application Layer Protocol"=http OR "Application Layer Protocol"=https
+| where Port!=80 AND Port!=443
+| stats count by "Source IP", "Destination IP", "Port", "Application Layer Protocol"
+| sort -count
 ```
 

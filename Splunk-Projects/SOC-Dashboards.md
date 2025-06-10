@@ -7,6 +7,8 @@ I have been learning Splunk for a while now, creating and deploying EC2 instance
 - Email Traffic
 - Web Traffic
 
+This project was carried out in my own Kali Linux homelab on Splunk Enterprise. I manually mounted the data and relevant apps/add-ons into the splunk folder `/etc/apps`.
+
 ## 🎯 Goals
 - Practice Splunk SPL
 - Create enriched Splunk Dashboards, useful in a SOC-analyst environment

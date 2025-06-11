@@ -22,7 +22,7 @@ With DLP, we can define policies which outline the procedures and guidelines tha
 Setup policies for the following use cases:
 - PII Detection & External Sharing Block: Detect and restrict external sharing of PII such as passport numbers
 - Keyword Leakage: Prevent files with sensitive business tags from being shared externally (e.g, "Confidential", "Internal Use Only")
-- insert
+- File type-based policy: Detect and block specific file types from being shared externally (e.g., .zip, .exe)
 - insert
 - insert
 
@@ -39,10 +39,49 @@ This section outlines the steps taken to setup a DLP policy that detects and blo
 ![image](https://github.com/user-attachments/assets/dff030d3-dc10-4adc-a25c-77b0b4be8e40)
 6. For `protection actions`, I set the following (1 instance for testing):
 ![image](https://github.com/user-attachments/assets/3c40c2a9-0218-4be5-bdd2-4b992d038d3e)
-7. `Customize access and override settings` was left to default.
+7. I also ensured that `Send an alert to admins when a rule match occurs` was set to on.
 8. I switched the policy to on immediately so we can conduct tests. On the `Review and Finish` page, I hit `Submit`. 
 ![image](https://github.com/user-attachments/assets/77146853-ee00-4e25-a6a6-363dc0789b55)
 
 ### 1.1 Testing the new policy (PII Detection)
+In order to simulate tests in this project, I have already setup two new test users in the Admin Portal.
+![image](https://github.com/user-attachments/assets/e6e1f50b-2d0d-47c2-93ed-89b839431dbe)
+![image](https://github.com/user-attachments/assets/2b88f785-a8f0-4e28-ac5b-f17e025a7350)
+
+1. I first signed in to test user `Emma Cook` and navigated to Outlook.
+2. I then drafted and sent an email to an external gmail address, containing a fake/generated UK passport number.
+![image](https://github.com/user-attachments/assets/17d770d3-4885-4de2-b992-8354d2008719)
+3. Test user Emma then received an email alert stating that her email conflicts with a policy in the organisation.
+![image](https://github.com/user-attachments/assets/fea45a60-59c4-4e2f-adfd-15a68bbb5da6)
+4. I then went back to the `Purview Compliance Portal` -> `Data  Loss Prevention -> Alerts`.
+5. While the DLP policy correctly triggered user notifications and email warnings when sensitive content was shared, no incident alert appeared in the DLP Alerts dashboard during testing. This behavior is likely due to limitations in the Microsoft 365 E5 Developer Trial, which may not support single-event alerting or advanced incident reporting.
+
+### 2. DLP Policy for: Keyword leakage
+In this section I create another DLP policy to trigger alerts on Keyword matches. These keywords mimic sensitive business tags, such as "Confidential" and "Internal Use Only".
+
+1. I headed to `Data Loss Prevention -> Classifiers -> Sensitive info types`.
+2. Clicked `Create sensitive info type`
+![image](https://github.com/user-attachments/assets/7459d569-a217-4648-9d86-f4d50258182b)
+3. Then, created a new pattern with a keyword list, adding internal-like keywords to the list. Confidence level was set to low confidence.
+![image](https://github.com/user-attachments/assets/063f6eeb-b565-4443-9bd4-64a60c5961c2)
+4. Afterwards I clicked `Create` and `Finish`. 
+5. Back to `Data Loss Prevention -> Policies`, and create a custom policy.
+![image](https://github.com/user-attachments/assets/36c93455-3c24-4005-b789-bf64639f4e68)
+2. Name the policy and add an appropriate description.
+![image](https://github.com/user-attachments/assets/3acd0356-b593-4e6e-b690-b5c2a7d36326)
+3. No Admin units assigned for these kind of policy tests. The policy was applied to all locations as the previous one (Email, SharePoiint, OneDrive, etc).
+4. I created a custom rule for the policy. Here I applied a custom condition, selecting sensitive info type.
+![image](https://github.com/user-attachments/assets/b75889ce-c052-4487-b9da-ba51b9f54e2f)
+5. I left actions and exceptions blank, but configured user notifications to inform users on alert trigger.
+
+### 2.1 Testing the new policy (Keyword leakage)
+Using test user `Emma`, I simulated another external email with the subject "Confidential".
+![image](https://github.com/user-attachments/assets/ddd45d52-3b9c-4fb4-941f-b70fe193c033)
+Which successfully triggered the DLP policy with keyword classifier.
+![image](https://github.com/user-attachments/assets/6a991b51-569f-4d6c-b315-959d500bd03e)
+
+### 3. DLP Policy for: File types
+
+
 
 

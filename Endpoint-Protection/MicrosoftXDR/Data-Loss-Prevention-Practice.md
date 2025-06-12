@@ -23,8 +23,6 @@ Setup policies for the following use cases:
 - PII Detection & External Sharing Block: Detect and restrict external sharing of PII such as passport numbers
 - Keyword Leakage: Prevent files with sensitive business tags from being shared externally (e.g, "Confidential", "Internal Use Only")
 - File type-based policy: Detect and block specific file types from being shared externally (e.g., .zip, .exe)
-- insert
-- insert
 
 ### 1. DLP Policy for: PII Detection & External Sharing Block
 This section outlines the steps taken to setup a DLP policy that detects and blocks the external sharing of personal identifiable information (PII).
@@ -87,11 +85,24 @@ For the third DLP policy, I setup a custom rule to detect file extensions such a
 2. Name/Description: `Blocked File Types - Executables, Archives`.`This policy blocks sharing of specific high-risk file types (e.g., .exe, .zip, .pst) externally.`
 3. For locations, I selected: `Exchange Email`, `SharePoint sites`, and `OneDrive accounts`. These 3 locations support policies for detecting file extensions.
 4. For this policy we are created a customised/advanced DLP rule set.
-![image](https://github.com/user-attachments/assets/d737fbbd-f6da-4a1f-b3fd-5effbcf36e3c)
+![image](https://github.com/user-attachments/assets/e8dedde2-bac2-47d7-bed7-341d8b506cb3)
 5. I turned out notifications for users to inform and educate them for the proper use of sensitive info.
 6. After setting the severity to medium, I turned on the policy and submitted it.
 
 ### 3.1 Testing the new policy (Sensitive file types)
-
+Emma Cook then sent an email with a .zip attachment to an external address, which correctly triggered a response:
 ![image](https://github.com/user-attachments/assets/ae49b664-7b84-4c4b-986d-48d4c67788ce)
+
+### Project Summary
+This was fundemental yet eye-opening hands-on experience with Microsoft Purview Data Loss Prevention (DLP). Through this project, I explored how DLP policies can be created, scoped, and tested across different scenarios.
+I now have a much better grasp of how DLP fits into the broader Microsoft XDR and SOC workflow, from preventing accidental data leaks to supporting insider risk detection.
+
+While this lab focused on core capabilities, I’m aware of other DLP expansion areas such as:
+
+- User-based exceptions (e.g., policy overrides for execs)
+- Endpoint DLP (protecting data on devices)
+- Inbound data tagging (applying controls to external content)
+- Integration with Microsoft Defender for Cloud Apps and Insider Risk Management
+
+For the next project, I’ll be shifting focus to another Microsoft XDR area to continue building hands-on experience across the ecosystem.
 

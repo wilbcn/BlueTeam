@@ -30,13 +30,13 @@ Setup policies for the following use cases:
 This section outlines the steps taken to setup a DLP policy that detects and blocks the external sharing of personal identifiable information (PII).
 
 1. Navigate to `https://purview.microsoft.com/home` -> `Data Loss Prevention` -> `Policies`
-2. Click `Create Policy`, on `Categories` I chose `U.K. Personally Identifiable Information (PII) Data`. This helps detect the presence of common PII information such as drivers licence and passport numbers.
-3. I kept the name as default and description as default.
+2. Then `Create Policy` -> `Categories` -> `Privacy` -> `U.K. Personally Identifiable Information (PII) Data`. This helps detect the presence of common PII information such as drivers licence and passport numbers.
+3. Name and description of the policy.
 ![image](https://github.com/user-attachments/assets/654cb64f-44a6-4972-8996-394e4e2be31c)
-4. I did not assign any admin units, and left the locations to the preselected options.
-![image](https://github.com/user-attachments/assets/1f49426e-c513-4eb4-969a-1c5280b6262f)
-5. Continuing on with the policy settings, I added several extra content types to the `info to protect` section.
-![image](https://github.com/user-attachments/assets/dff030d3-dc10-4adc-a25c-77b0b4be8e40)
+4. For locations, we will be protecting the following for external sharing of PII.
+![image](https://github.com/user-attachments/assets/c01c9ead-6aac-4461-b5ba-fe41290b677d)
+5. I added several extra content types to the `info to protect` section, and added an additional condition for content shared with people outside my organization. 
+![image](https://github.com/user-attachments/assets/251af404-d0e8-4731-a7a0-cf6fa32d88dc)
 6. For `protection actions`, I set the following (1 instance for testing):
 ![image](https://github.com/user-attachments/assets/3c40c2a9-0218-4be5-bdd2-4b992d038d3e)
 7. I also ensured that `Send an alert to admins when a rule match occurs` was set to on.
@@ -50,14 +50,14 @@ In order to simulate tests in this project, I have already setup two new test us
 
 1. I first signed in to test user `Emma Cook` and navigated to Outlook.
 2. I then drafted and sent an email to an external gmail address, containing a fake/generated UK passport number.
-![image](https://github.com/user-attachments/assets/17d770d3-4885-4de2-b992-8354d2008719)
+![image](https://github.com/user-attachments/assets/0e52641f-1b0d-470b-a600-64e00c2c68e3)
 3. Test user Emma then received an email alert stating that her email conflicts with a policy in the organisation.
-![image](https://github.com/user-attachments/assets/fea45a60-59c4-4e2f-adfd-15a68bbb5da6)
+![image](https://github.com/user-attachments/assets/87114b4d-363d-4561-a2ea-bae8b1c02319)
 4. I then went back to the `Purview Compliance Portal` -> `Data  Loss Prevention -> Alerts`.
 5. While the DLP policy correctly triggered user notifications and email warnings when sensitive content was shared, no incident alert appeared in the DLP Alerts dashboard during testing. This behavior is likely due to limitations in the Microsoft 365 E5 Developer Trial, which may not support single-event alerting or advanced incident reporting.
 
 ### 2. DLP Policy for: Keyword leakage
-In this section I create another DLP policy to trigger alerts on Keyword matches. These keywords mimic sensitive business tags, such as "Confidential" and "Internal Use Only".
+In this section I create another DLP policy to trigger alerts on Keyword matches. These keywords mimic sensitive business tags, such as "Confidential" and "Internal Use Only". External sharing of confidential business information could happen by human-error, but could also be signs of malicious activity/data leakage. This rule helps to prevent that, providing alerts when the set tags are matched. These rules work well in combination with others, such as the next DLP rule that I set which blocks external sharing of certain file types (.exe, .zip) etc.
 
 1. I headed to `Data Loss Prevention -> Classifiers -> Sensitive info types`.
 2. Clicked `Create sensitive info type`
@@ -67,12 +67,12 @@ In this section I create another DLP policy to trigger alerts on Keyword matches
 4. Afterwards I clicked `Create` and `Finish`. 
 5. Back to `Data Loss Prevention -> Policies`, and create a custom policy.
 ![image](https://github.com/user-attachments/assets/36c93455-3c24-4005-b789-bf64639f4e68)
-2. Name the policy and add an appropriate description.
+6. Name the policy and add an appropriate description.
 ![image](https://github.com/user-attachments/assets/3acd0356-b593-4e6e-b690-b5c2a7d36326)
-3. No Admin units assigned for these kind of policy tests. The policy was applied to all locations as the previous one (Email, SharePoiint, OneDrive, etc).
-4. I created a custom rule for the policy. Here I applied a custom condition, selecting sensitive info type.
-![image](https://github.com/user-attachments/assets/b75889ce-c052-4487-b9da-ba51b9f54e2f)
-5. I left actions and exceptions blank, but configured user notifications to inform users on alert trigger.
+7. No Admin units assigned for these kind of policy tests. The policy was applied to all locations as the previous one (Email, SharePoiint, OneDrive, Teams).
+8. I then created a custom rule for the policy, applying the earlier created sensitive info type, and choosing to alert on content shared externally.
+![image](https://github.com/user-attachments/assets/858b36c2-b2bd-4683-9d42-655e209c2713)
+9. User and Admin alerts were set to on.
 
 ### 2.1 Testing the new policy (Keyword leakage)
 Using test user `Emma`, I simulated another external email with the subject "Confidential".
@@ -81,7 +81,15 @@ Which successfully triggered the DLP policy with keyword classifier.
 ![image](https://github.com/user-attachments/assets/6a991b51-569f-4d6c-b315-959d500bd03e)
 
 ### 3. DLP Policy for: File types
+For the third DLP policy, I setup a custom rule to detect file extensions such as executables and archives that are shared externally. 
 
+1. Back in `Data Loss Prevention -> Create policy -> Custom policy`.
+2. Name/Description: `Blocked File Types - Executables, Archives`.`This policy blocks sharing of specific high-risk file types (e.g., .exe, .zip, .pst) externally.`
+3. For locations, I selected: `Exchange Email`, `SharePoint sites`, and `OneDrive accounts`. These 3 locations support policies for detecting file extensions.
+4. For this policy we are created a customised/advanced DLP rule set.
+![image](https://github.com/user-attachments/assets/d737fbbd-f6da-4a1f-b3fd-5effbcf36e3c)
+5. I turned out notifications for users to inform and educate them for the proper use of sensitive info.
+6. After setting the severity to medium, I turned on the policy and submitted it.
 
-
+### 3.1 Testing the new policy (Sensitive file types)
 

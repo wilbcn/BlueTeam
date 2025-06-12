@@ -8,4 +8,4 @@ In this beginner project, I get familiar with Microsoft Purview and Data Loss Pr
 - Keyword Leakage: Prevent files with sensitive business tags from being shared externally (e.g, "Confidential", "Internal Use Only")
 - File type-based policy: Detect and block specific file types from being shared externally (e.g., .zip, .exe)
 
-## Email & Collaboration Threat Protection
+## Email-Collaboration-Threat-Protection

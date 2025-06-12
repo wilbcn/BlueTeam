@@ -93,3 +93,5 @@ For the third DLP policy, I setup a custom rule to detect file extensions such a
 
 ### 3.1 Testing the new policy (Sensitive file types)
 
+![image](https://github.com/user-attachments/assets/ae49b664-7b84-4c4b-986d-48d4c67788ce)
+

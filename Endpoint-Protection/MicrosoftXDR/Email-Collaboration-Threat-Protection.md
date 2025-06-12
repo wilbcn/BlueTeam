@@ -42,12 +42,12 @@ What do these mean?
 ![image](https://github.com/user-attachments/assets/c3a45db6-d687-46f0-94bf-114b7e2555f5)
 
 ### 1.1 Policy testing: Anti-phishing - User Impersonation Protection
-To test this policy, I went and created a brand new gmail account, impersonating one of my test users Emma Cook. From her gmail account, I constructed and test an email to the other test user Tom.
+1. To test this policy, I went and created a brand new gmail account, impersonating one of my test users Emma Cook. From her gmail account, I constructed and test an email to the other test user Tom.
 ![image](https://github.com/user-attachments/assets/107f17bd-f557-40b7-aeba-f204035f3c90)
-The email was appropriately moved to Tom's junk folder. This will be due to `Spoof Intelligence`.
+2. The email was appropriately moved to Tom's junk folder. This will be due to `Spoof Intelligence`.
 ![image](https://github.com/user-attachments/assets/5a1f75be-b900-4a15-87e4-e431c51199bf)
-Although the anti-phishing policy was configured to quarantine impersonated messages, this one was only moved to Junk. This is likely due to Exchange Online’s spam policies or spoof intelligence intercepting it before the custom policy actions applied.
-As I continue into the next sections, I’ll attempt to trigger a quarantine event and generate a related alert or incident that I can investigate through Microsoft 365 Defender.
+3. Although the anti-phishing policy was configured to quarantine impersonated messages, this one was only moved to Junk. This is likely due to Exchange Online’s spam policies or spoof intelligence intercepting it before the custom policy actions applied.
+4. As I continue into the next sections, I’ll attempt to trigger a quarantine event and generate a related alert or incident that I can investigate through Microsoft 365 Defender.
 
 ### 2. Anti-malware policy
 

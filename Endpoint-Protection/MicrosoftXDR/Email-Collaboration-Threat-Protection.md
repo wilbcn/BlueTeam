@@ -111,3 +111,17 @@ In `Email & Collaboration` -> `Attack simulation training` we can simulate phish
 11. After reviewing the campaign, I launched it against the two test users.
 
 ### 3.1 Interacting with the phishing campaign
+For this section, I will carry out interactions with the `Link to malware sim` on both test users. Emma will fall for the phishing email, whereas Tom will correctly identify and mark as phishing.
+
+1. Correctly sent to Toms inbox:
+![image](https://github.com/user-attachments/assets/65eae04e-7e7c-478d-833c-dd292624a965)
+![image](https://github.com/user-attachments/assets/c4fd66fb-5624-42f5-864b-be5369748b2f)
+
+2. Emma also received the same email, however she clicked on the `View Document` link and proceeded to download and open the file.
+![image](https://github.com/user-attachments/assets/792bb691-1a9f-47b0-a9e3-4d8b1f4857d2)
+3. In the `User Coverage` tab, we can see that this is correctly reflected: Emma failed the test
+![image](https://github.com/user-attachments/assets/690f2179-9918-4de0-9ce9-fff3435710c8)
+4. In the `Training completion` tab, Emma was also correctly set a training course on Social Engineering and Ransomware.
+![image](https://github.com/user-attachments/assets/a4697240-17a6-4031-907a-129a7d5fb0de)
+5. By opening the phishing campaign, we are provided with useful insights into the campaigns results. It breaks down the user activity into the finer details, such as how the email was interacted with.
+![image](https://github.com/user-attachments/assets/a835cb7d-c02c-4f5a-a2f1-e0eccb26fd39)

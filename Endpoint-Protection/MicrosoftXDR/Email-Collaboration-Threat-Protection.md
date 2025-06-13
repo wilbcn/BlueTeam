@@ -50,4 +50,39 @@ What do these mean?
 4. As I continue into the next sections, I’ll attempt to trigger a quarantine event and generate a related alert or incident that I can investigate through Microsoft 365 Defender.
 
 ### 2. Anti-malware policy
+Defender for 365 has a default anti-malware policy, which detects and blocks common file types such as `.bat, .cmd, .appx` and more. With a custom policy, I can define explicitly who the policy applies to, including per user, group, role, or region. I can also fine tune the policy, enabling `zero-hour auto purge for malware`, and notification settings on quarantined/detected messages containing malware.
+
+Steps taken:
+1. Still in Email & Collaboration, I navigated to `Policies & Rules` -> `Threat Policies` -> `Anti-malware`.
+2. I created a new anti-malware policy, enabling common attachment filters, and to quarantine the message when the filtered file types are found.
+3. I added the two test users to the policy, as well as the organisations domain. 
+4. I enabled zero-hour auto purge for malware, which quarantines any messages found to have malware after they are delivered to Exchange Online Mailboxes.
+5. I also enabled Admin notifications, saved, and submitted the policy.
+![image](https://github.com/user-attachments/assets/bfc69652-3d4d-4f22-be02-4c5d7febf226)
+
+### 2.1 Policy testing: Anti-malware
+To test this policy, I created a .txt document with a known anti-virus test string: `EICAR Standard Anti-Virus Test File`.
+![image](https://github.com/user-attachments/assets/8825012d-d0a5-41be-afa8-eff725944309)
+
+1. I logged in as test user Tom, and generated a fake/phishing style email addressed to Emma, with the malware attached disguised as an invoice.
+![image](https://github.com/user-attachments/assets/ffbe31be-bfc7-4a62-80b5-223932ae3e75)
+2. Back to the `security` dashboard, I navigated to `Email & Collaboration` -> `Review` -> `Quarantine`.
+![image](https://github.com/user-attachments/assets/58dac7c6-234b-4fb1-87cd-78720069edee)
+3. By selecting the email, we can preview the message to view the email that has been quarantined.
+![image](https://github.com/user-attachments/assets/ef2fef34-3a51-4e50-a132-acae065d57bf)
+4. Also by clicking on the email entry, we get the quarantine details. Here we can see that the new policy under `Policy name` was applied correctly, and it was correctly identified as malware.
+![image](https://github.com/user-attachments/assets/0ca24a3a-ee90-4087-a4c1-84e952f2577f)
+5. Further down we can find the threat classification as well as details on the original sender.
+![image](https://github.com/user-attachments/assets/37357d6d-cab2-4904-b6c9-f8fd476a0a03)
+6. At the very bottom of the report, we have the artifacts (urls/attachments) detected from the email. Here we can clearly see the attachment has been correctly detected as the EICAR test file.
+![image](https://github.com/user-attachments/assets/c3f91885-45a8-491d-a1cb-350cf91c18d6)
+7. By clicking on `View all Attachments`, we could then export the file for further investigations, though this should be done on an isolated virtual machine, configured for malware diagnosis and investigations.
+8. While still in the quarantine details report, at the very top is the `Take action` button, where the SOC analyst/security person can choose the appropriate response actions.
+![image](https://github.com/user-attachments/assets/82e042fa-b973-4b7d-a760-b5e50e24be04)
+9. To remediate this test, under `Take action`, I submitted to microsoft to review as a confirmed threat. I added the test users to the impacted assets, and clicked submit.
+![image](https://github.com/user-attachments/assets/ffabe7aa-eca1-4cca-ad6d-44313ab05339)
+![image](https://github.com/user-attachments/assets/4149bf29-fdc0-4cf7-92f4-8a8b218326f9)
+
+
+### 3. Anti-malware policy
 

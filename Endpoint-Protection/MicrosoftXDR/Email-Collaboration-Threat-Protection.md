@@ -82,7 +82,11 @@ To test this policy, I created a .txt document with a known anti-virus test stri
 9. To remediate this test, under `Take action`, I submitted to microsoft to review as a confirmed threat. I added the test users to the impacted assets, and clicked submit.
 ![image](https://github.com/user-attachments/assets/ffabe7aa-eca1-4cca-ad6d-44313ab05339)
 ![image](https://github.com/user-attachments/assets/4149bf29-fdc0-4cf7-92f4-8a8b218326f9)
-
+10. Additionally in `Email & Collaboration` -> `Explorer`, we have an overview of all emails, where we can filter by URLs, Top Clicks, Top targeted Users, and more. You can see the top message is the undeliverable message alert send to the admin email address from the EICAR test.
+![image](https://github.com/user-attachments/assets/4c90cd67-fad9-46c3-8189-8df140a5c68d)
+11. Also in the `Top targeted users` section, we have our two test users in which I have been simulating numerous tests for.
+![image](https://github.com/user-attachments/assets/370e3305-07a5-454d-ae48-3b2c578f532a)
+12. From this page, SOC analysts can also investigate and take actions against identified threats, as well as exporting the data. Outside of this project, I have been exploring the capabilities of `Explorer` to familiarise myself with it.
 
 ### 3. Anti-malware policy
 

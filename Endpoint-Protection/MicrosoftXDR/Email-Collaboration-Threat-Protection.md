@@ -125,3 +125,7 @@ For this section, I will carry out interactions with the `Link to malware sim` o
 ![image](https://github.com/user-attachments/assets/a4697240-17a6-4031-907a-129a7d5fb0de)
 5. By opening the phishing campaign, we are provided with useful insights into the campaigns results. It breaks down the user activity into the finer details, such as how the email was interacted with.
 ![image](https://github.com/user-attachments/assets/a835cb7d-c02c-4f5a-a2f1-e0eccb26fd39)
+6. Test user Emma will shortly receive a training course via email. We are able to track this courses completion from the above outlined views.
+
+### 🧩 Project Summary
+In this project, I gained practical experience using Microsoft Defender for Office 365, focusing on real-world use cases within the Email & Collaboration threat protection domain. I explored core capabilities such as anti-phishing policies, anti-malware enforcement, and attack simulation training. Through hands-on configuration and testing with custom users and simulated threats, I was able to observe how Defender detects, responds to, and helps remediate email-based attacks. This exercise strengthened my understanding of both technical policy setup and the SOC workflows that follow threat detection.

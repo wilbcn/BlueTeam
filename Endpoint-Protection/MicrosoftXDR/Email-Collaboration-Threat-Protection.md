@@ -89,4 +89,25 @@ To test this policy, I created a .txt document with a known anti-virus test stri
 12. From this page, SOC analysts can also investigate and take actions against identified threats, as well as exporting the data. Outside of this project, I have been exploring the capabilities of `Explorer` to familiarise myself with it.
 
 ### 3. Attack Simulation Training
+In `Email & Collaboration` -> `Attack simulation training` we can simulate phishing attacks against users within our organisation. This helps useful insights for SOC analysts/security professionals, such as users who have failed to spot phishing emails and require additional training. It also provides a clear overview of the organisation as a whole, supplying statistics which help to identify weak areas. Here we can also launch training campaigns, providing essential user training against the #1 attack vector, phishing emails. In this project, I will familiarise myself with the capabilities of `Attack simulation training`, and carry out a simulating phishing campaign against my test users.
 
+1. To begin, I will launch an instant simulation against my organisation. Microsoft then chooses the simulation content for us, e.g. credential harvester + the payload.
+![image](https://github.com/user-attachments/assets/622b376f-1155-46d7-ad04-17d25ed0c33e)
+2. I then launched the generated simulation. Preview below:
+![image](https://github.com/user-attachments/assets/be419768-626f-4b99-8c3a-28dfd91e2c2c)
+3. In the `Simulations` tab, we are able to see this credential harvester and the time it was launched.
+![image](https://github.com/user-attachments/assets/f227cbc0-7703-4d64-a7bd-534be6c3cd42)
+4. The phishing simulation was correctly received, to which I reported it as phishing. This was successfully reflected in the campaigns report view.
+![image](https://github.com/user-attachments/assets/a87761d8-8560-4071-b8e6-f7267737f51e)
+5. Moving forward, I setup and launched a more customised phishing campaign. For this custom campaign, I chose `Link to Malware`.
+6. For the payload and login page, I went with `One Drive Document Share`. This screen is really useful and even predicts the compromise rate based off of the payload chosen.
+![image](https://github.com/user-attachments/assets/ec7756d3-1370-4639-a549-28bfc6d14f9a)
+7. I targetted the two test users I have setup for these practical projects.
+![image](https://github.com/user-attachments/assets/bf58b8b4-a5db-425d-8259-1491c5108d88)
+8. I selected `Assign training for me`, which lets microsoft assign training courses based on the users interaction with the phishing campaign. The due date was set to 7 days, which is not so important for these tests but good to know we can specify this.
+9. I went with the default landing page, which is displayed if the user was successfully phished.
+![image](https://github.com/user-attachments/assets/cde2c8cf-a32b-4f8a-8544-8bf5ea99e599)
+10. For the `end user notifications`, I went with a positive reinforcement notification to be delivered during the simulation, as well as weekly reminders for thet user training.
+11. After reviewing the campaign, I launched it against the two test users.
+
+### 3.1 Interacting with the phishing campaign

@@ -18,9 +18,9 @@ Microsoft Email & Collaboration is a core part of XDR, focusing on securing comm
 Email threats are typically the first step into broader attacks, such as credential harvesting and ransomware. In this sense, Blue teamers need the ability to monitor and respond to these threats quickly and efficiently. Within this collaboration tool, we have a wide variety of Alert and Threat policies, in which I aim to gain practical experience with in this project. Not only to solidify existing knowledge, but to showcase my enthusiam and learning progression as I continually work towards my career in Cybersecurity.
 
 ## Email & Collaboration Goals
-- Anti-phishing policy - User Impersonation Protection
-- Anti-malware policy
-
+- Anti-phishing policy: User Impersonation Protection
+- Anti-malware policy: Detect and investigate a test malware file
+- Attack Simulation Training (AST): Simulate real-world phishing and social engineering attacks
 
 
 ### 1. Anti-phishing Policy - User Impersonation Protection
@@ -88,5 +88,5 @@ To test this policy, I created a .txt document with a known anti-virus test stri
 ![image](https://github.com/user-attachments/assets/370e3305-07a5-454d-ae48-3b2c578f532a)
 12. From this page, SOC analysts can also investigate and take actions against identified threats, as well as exporting the data. Outside of this project, I have been exploring the capabilities of `Explorer` to familiarise myself with it.
 
-### 3. Anti-malware policy
+### 3. Attack Simulation Training
 

@@ -1,4 +1,4 @@
-# 🛡️ Microsoft XDR: EntraID Policies
+# 🛡️ Microsoft XDR: Introducing Protection in Entra ID
 
 ## 📘 Overview
 In this hands-on and practical project, I look at Identity Protection policies in Entra ID. This is a follow up project, where I previously explored Email & Collaboration policies to better secure email communications. [project](https://github.com/wilbcn/BlueTeam/blob/main/Endpoint-Protection/MicrosoftXDR/Email-Collaboration-Threat-Protection.md). In this project I create a variety of policies related to user risks, user sign-ins, baseline conditional user access, and more. These projects in XDR serve as a learning resource for myself, whilst also demonstrating my on-going learning into industry standard cybersecurity tools. 
@@ -23,8 +23,10 @@ The core capabilities of Entra ID Protection are:
 - **Real-Time and Offline Detections**: Detects both live and offline threats by analysing risk factors.
 
 ## Entra ID Goals
-- Create a policy to enforce MFA on the two test users.
-
+- Create a conditional access policy to enforce MFA on the two test users.
+- Create a conditional access policy to block access for user logins outside trusted location.
+- Create a conditional access policy using an existing template: Require password change for high-risk users
+- Set a custom banned password list for users
 
 ### 1. Conditional Acess Policy: MFA for test users
 Microsoft recommends using **Conditional Access policies** over standalone User Risk and Sign-in policies. This offers more granular control over the policy, allowing us to combine sign-in or user risks with further conditions. 
@@ -69,8 +71,59 @@ I then initiated a login from the U.K., which is outside of the `named locations
 ![image](https://github.com/user-attachments/assets/2a02b62e-dcf2-4f03-9114-4b55093d7880)
 There is no high-level “alert” to be triggered because Microsoft saw this as a policy success, not a security escalation. However if connected to `Microsoft Sentinel`, we could create analytical rules for this kind of policy violation.
 
-### 3. Conditional Acess Policy:
+### 3. Conditional Access Policy from template: Require password change for high-risk users
+In the `Conditional Access | Policies` page we can also setup a new policy using an existing template. These templates fall under multiple categories, including secure foundation, zero trust, remote work, and more.
+
+Steps taken:
+1. In the `Conditional Access | Policies` page, I clicked `New policy from template`.
+2. Under `Zero Trust` I chose `Require password change for high-risk users`. 
+![image](https://github.com/user-attachments/assets/f2609137-770f-4dc7-937a-4893b6c6169f)
+3. A user is flagged as high-risk when Microsoft detects credible indicators that their identity might be under attacker control. We dont control this but instead control how to respond with policies and manual remediations.
+![image](https://github.com/user-attachments/assets/b6e8bf42-cfef-4e51-9a85-c80d4b229665)
+4. These risky sign-ins would appear in the `Report` section of `Identity Protection`.
+![image](https://github.com/user-attachments/assets/d6a4e8ad-ca11-483e-ab87-100bf80edb5f)
+
+### 4. Authentication methods: Set a custom banned password list for users
+In Entra `Authentication methods`, we have the option to enforce a custom list of banned passwords, providing an extra layer of security for password-based authentication by enforcing both a global and custom list of banned words for user passwords. Here we cant define detailed password complexity rules directly, instead microsoft enforces default cloud password policies which define the minimum length, character complexity etc. [Password Policy](https://www.cayosoft.com/azure-security-best-practices/azure-ad-password-policy/#Section3). The custom passwords I create later must at least comply with the restrictions.
+
+![image](https://github.com/user-attachments/assets/b2b78dfc-2d31-4f35-b697-4576bd8ee8c8)
+
+Creating custom banned passwords are still highly useful, as they allow organisations to proactively block predictable, weak, or company-related passwords that attackers often guess in spray attacks. Practicing this now reinforces the importance of credential hygiene and helps simulate real-world security baselines that reduce the success rate of password-based attacks — even in lightweight, cloud-native environments like my test lab.
+
+### Goals of the custom banned password list
+Prevent users from choosing the following:
+- Obvious weak passwords
+- Password tied to the organisations identity or culture
+- Varients of breached passwords
+- Predictable patterns attackers would try in password spray attacks
 
 
+Steps taken:
+1. To create the custom banned password list, I headed to `Entra` -> `Protection` -> `Authentication methods` -> `Password protection`.
+2. By toggling enforce custom list, we now access to type or paste in a custom list of banned passwords.
+3. For this project and test scenario, we are creating a custom banned password list for a hypothetical organisation. The below information outlines the logic tied to this banned password list.
 
+- **Company name**: Big Blue Security
+- **Location**: Barcelona
+- **Domain**: Cybersecurity
 
+Along side the above, I will also be targeting other common buzzwords and themes such as:
+- Seasonal passwords like `Summer2025`
+- Weak/Predictable passwords like `CyberAdmin123` or `SOCAdmin1`
+
+4. With this logic in mind, I created the below custom banned password list and hit `Save`:
+![image](https://github.com/user-attachments/assets/826e916c-3447-4b52-a42f-aceac6685b7a)
+
+![image](https://github.com/user-attachments/assets/deadc742-c9a3-4f54-9ba9-2ff87e35a0ff)
+
+### 4.1 Testing the custom banned password list
+To verify this custom list was working, I logged in as one of my test users and attempted to change their password.
+
+1. As test user Emma, in `myaccount.microsoft.com` I clicked on `Change Password`, and entered one of the blocked passwords from the custom list.
+![image](https://github.com/user-attachments/assets/9caa74b8-028c-40b1-a9c8-72b287533175)
+2. The new password was not accepted! An invalid word was used.
+
+### Project Summary
+In this project, I explored some of the core identity protection features within Microsoft Entra, focusing on conditional access policies and authentication hardening. Through these hands-on configurations and tests, I implemented a variety of key policies including MFA enforcement, geo-based access restrictions, and automated remediation for high-risk users. I additionally configured a custom banned password list to reflect real-world credential hygiene standards.
+
+This practical experience helped reinforce critical identity security concepts such as least privilege, zeor trust, and credential protection. This project is a learning resource for myself, helping to solidify knowledge as I carry out projects and work with industry standard security tools. I aim to continue on this path working with Microsoft Defender to build a strong foundational knowledge base. 

@@ -112,6 +112,7 @@ Along side the above, I will also be targeting other common buzzwords and themes
 - Weak/Predictable passwords like `CyberAdmin123` or `SOCAdmin1`
 
 4. With this logic in mind, I created the below custom banned password list and hit `Save`:
+
 ![image](https://github.com/user-attachments/assets/826e916c-3447-4b52-a42f-aceac6685b7a)
 
 ![image](https://github.com/user-attachments/assets/deadc742-c9a3-4f54-9ba9-2ff87e35a0ff)
@@ -120,7 +121,9 @@ Along side the above, I will also be targeting other common buzzwords and themes
 To verify this custom list was working, I logged in as one of my test users and attempted to change their password.
 
 1. As test user Emma, in `myaccount.microsoft.com` I clicked on `Change Password`, and entered one of the blocked passwords from the custom list.
+
 ![image](https://github.com/user-attachments/assets/9caa74b8-028c-40b1-a9c8-72b287533175)
+
 2. The new password was not accepted! An invalid word was used.
 
 ### Project Summary

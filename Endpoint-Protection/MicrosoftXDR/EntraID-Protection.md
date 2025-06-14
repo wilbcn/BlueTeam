@@ -64,5 +64,7 @@ Steps taken:
 10. Policy list:
 ![image](https://github.com/user-attachments/assets/71bc80a1-b3e6-4e0e-82e8-269b6095b760)
 
- 
+### 2.1 Testing the policy: Block access for user logins outside trusted location
+
+
 

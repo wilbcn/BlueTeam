@@ -65,6 +65,10 @@ Steps taken:
 ![image](https://github.com/user-attachments/assets/71bc80a1-b3e6-4e0e-82e8-269b6095b760)
 
 ### 2.1 Testing the policy: Block access for user logins outside trusted location
+I then initiated a login from the U.K., which is outside of the `named locations` we set earlier. This correctly appeared with status `Failure`, in the `Users | Sign-in logs`.
+![image](https://github.com/user-attachments/assets/2a02b62e-dcf2-4f03-9114-4b55093d7880)
+There is no high-level “alert” to be triggered because Microsoft saw this as a policy success, not a security escalation.
+
 
 
 

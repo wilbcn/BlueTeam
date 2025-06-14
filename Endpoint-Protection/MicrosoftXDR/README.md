@@ -13,3 +13,12 @@ In this follow up project, I explore Email & Collaboration threat protection dom
 - Anti-phishing policy: User Impersonation Protection
 - Anti-malware policy: Detect and investigate a test malware file
 - Attack Simulation Training (AST): Simulate real-world phishing and social engineering attacks
+
+## EntraID-User-Protection
+In the third project of my Microsoft XDR series, I explore some of the capabilities of Entra ID, which focuses on identifying, analysing, and mitigating identity-related risks in real time. By leverading advanced machine learning and AI, behaviour anomalies can be detected and conditional access policies enforced to assist in preventing unauthorised access. Entra ID acts as a first line of defence against identity-based threats, ensuring that only legitimate users are able to gain access to their intended resources. In this project I:
+
+- Create a conditional access policy to enforce MFA on the two test users.
+- Create a conditional access policy to block access for user logins outside trusted location.
+- Create a conditional access policy using an existing template: Require password change for high-risk users
+- Set a custom banned password list for users
+

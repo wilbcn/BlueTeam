@@ -1,4 +1,4 @@
-# 🛡️ Microsoft XDR: Attack Surface Reduction
+# 🛡️ Microsoft XDR: Attack Surface Reduction (WIP)
 
 ## 📘 Overview
 Another hands-on practical project, this time focusing on Defender for Endpoint. The goal of this project is to create and test Attack Surface Reduction (ASR) rules that harden Windows endpoints against common malware, hishing, and attacker exploitation techniques. ASR is a Defender for Endpoint feature, managed via Intune or other tools. These projects serve as a learning resource for myself, whilst also demonstrating my on-going learning into industry standard cybersecurity tools. 

@@ -3,8 +3,11 @@
 ## 📘 Overview
 Another hands-on practical project, this time focusing on Defender for Endpoint. The goal of this project is to create and test Attack Surface Reduction (ASR) rules that harden Windows endpoints against common malware, hishing, and attacker exploitation techniques. ASR is a Defender for Endpoint feature, managed via Intune or other tools. These projects serve as a learning resource for myself, whilst also demonstrating my on-going learning into industry standard cybersecurity tools. 
 
-## 🎯 Project Objectives
+**Policy Tests**: Licensing limitations in the current lab environment prevented me from testing these policies on the Microsoft Office applications. However the exercise of configuring and targeting these policies through Intune is still highly valuable, demonstrating practical familiarity with endpoint protection techni  ues. 
 
+## 🎯 Project Objectives
+- Configure and familiarise myself with ASR policies and their capabilities
+- 
 
 ## Attack Surface Reduction (ASR) Summary
 An attack surface includes all the places in which an attacker could comprimise the organisations devices (endpoints) or networks. Reducing the attack surface means we are giving attackers fewer ways to perform their attacks, targeting software behaviours such as:
@@ -15,7 +18,8 @@ An attack surface includes all the places in which an attacker could comprimise 
 These software behaviours are sometimes seen in legitimate applications, however in this case they are risky as attackers commonly abuse them through malware. ASR rules cna help minimise this risk and help keep the organisation safe. [Resource](https://learn.microsoft.com/en-us/defender-endpoint/attack-surface-reduction)
 
 ## ASR Goals
-
+- Configure an ASR policy to block office child process creation
+- 
 
 ### 1. ASR Policy: Block Office Child Process Creation
 ASR policies will directly affect the devices(endpoints) within my organisation. Before creating the first policy, I configured, deployed, and onboarded a device in Azure on Windows (not shown).
@@ -42,4 +46,4 @@ Attack surface reduction is currently located under `intune.microsoft.com` -> `E
 
 ![image](https://github.com/user-attachments/assets/ef2dde41-7d38-4324-a057-6e80be79f2fd)
 
-### 1.1 Testing ASR Policy: Block Office Child Process Creation
+### 2. ASR Policy:

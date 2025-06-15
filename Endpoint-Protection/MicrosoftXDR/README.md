@@ -22,3 +22,9 @@ In the third project of my Microsoft XDR series, I explore some of the capabilit
 - Create a conditional access policy using an existing template: Require password change for high-risk users
 - Set a custom banned password list for users
 
+## Attack-Surface-Reduction
+Another hands-on practical project, this time focusing on Defender for Endpoint. The goal of this project is to create and test Attack Surface Reduction (ASR) rules that harden Windows endpoints against common malware, hishing, and attacker exploitation techniques. ASR is a Defender for Endpoint feature, managed via Intune or other tools. In this project I: 
+
+- Configure an ASR policy to block office child process creation
+- Configure an ASR policy to block executables from Email and Webmail
+- Configure an ASR policy to block untrusted and unsigned processes that run from USB

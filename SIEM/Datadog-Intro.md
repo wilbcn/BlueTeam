@@ -50,4 +50,27 @@ In this section, I briefly cover the configuration and installation of the Datad
 
 ![image](https://github.com/user-attachments/assets/d56cbc16-c3e9-4960-ab15-35070f153d39)
 
-8. 
+8. The next step was to enable and configure `Cloud SIEM`. I went to `Security` -> `Cloud SIEM` -> `Content Packs`.
+9. Here I ran through the appropriate actions, including install, and rearranging the index.
+
+![image](https://github.com/user-attachments/assets/bcfc17fe-390a-4ab4-8b0b-fab6c83c78be)
+
+10. After some time, the content pack switched to green/active and it was ready to use. The content pack comes with 76 detection rules and 1 custom dashboard, which I will leverage in the next section. 
+
+![image](https://github.com/user-attachments/assets/9bc313f2-3efe-4302-9106-2fe37bf2ddcc)
+
+### Simulating Security Events and navigating Datadog UI
+Now that security logs are being successfully ingested into Datadog Log Explorer, and the content pack including security detection rules is operational, I ran a simulated security event to test detection rule logic and practice a SOC-style investigation using Datadog Cloud SIEM.
+
+1. Expanding on the content pack, I filtered by detection rules on `user`. Here I came accross the detection rule `Windows hidden local user creation`.
+
+![image](https://github.com/user-attachments/assets/447df121-1c47-442f-8e7f-7b6222efc1eb)
+
+2. Expanding again on this specific rule, we are provided a complete overview of the rule which includes the related MITRE ATTACK techniques and tools, the goal and strategy of the rule, and the recommended Triage & Reponse steps during Incident Response. In summary, this rule detects when a new user account has been created (Event ID 4720), with a specific focus on accounts that end with a dollar `$`. Hidden user accounts typically end with this to mimic legitimate system accounts, making them less detectable and is an evasion tactic used by attackers to blend persistence mechanisms with legitimate system accounts.
+3. To trigger the alert I ran the following line in `PowerShell` as Administrator on the Virtual Machine.
+
+```
+net user hiddenuser$ Passw0rd! /add
+```
+
+4. 

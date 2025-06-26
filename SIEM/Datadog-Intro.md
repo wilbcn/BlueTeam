@@ -73,4 +73,59 @@ Now that security logs are being successfully ingested into Datadog Log Explorer
 net user hiddenuser$ Passw0rd! /add
 ```
 
-4. 
+4. This created a `high` alert in the Datadog Cloud SIEM dashboard for Windows Event Log.
+
+![image](https://github.com/user-attachments/assets/cb4d4c06-4d7b-4a8e-938f-ed2929385fab)
+
+5. I then navigated to `Security` -> `Signals` where I could review this alert in full.
+
+![image](https://github.com/user-attachments/assets/6ed89d61-f4a9-4b0c-b6be-bee9fa7f3add)
+
+6. Clicking on the alert we are able to view the Playbook related to it, which provides clear instructions on the Triage & response steps for this kind of rule. We also have Triage and Take action buttons on the right hand side in blue. I swapped the Case from Open to In-Progress, and assigned it to myself.
+
+![image](https://github.com/user-attachments/assets/b9d3ebe2-ac04-4311-9757-9522b7eae907)
+
+7. This is a confirmed test to validate SIEM detection rules, however In production, I would declare this a P1 incident if the user was unknown or tied to suspicious lateral movement. I then archived the message with an appropriate comment.
+
+![image](https://github.com/user-attachments/assets/109d04ff-80db-41e4-bbe3-c9fe8f46b5c8)
+
+8. For hands-on practice, I simulated an investigation using the `Triage & Response` section of the Playbook.
+
+![image](https://github.com/user-attachments/assets/5417746e-e4d7-41ba-9031-a5ef87d33f77)
+
+1. Identify the `EC2AMAZ-NILIHU8` system where the hidden user account was created.
+- Confirmed that the host `EC2AMAZ-NILIHU8` is the source Windows EC2 instance.
+
+2. Examine the name of the newly created hidden account in the `TargetUserName` field.
+- In the `JSON` section of the alert, we see the `TargetUserName` field is `hiddenuser$`
+- Trailing $ is a common stealth technique
+
+3. Identify which account created the hidden user by reviewing the `SubjectUserName` field.
+- Above the target user is the `SubjectUserName`: Administrator
+
+4. Check for account modifications such as modifying the `UserAccountControl` attribute to further conceal the account.
+- Filter in `Log Explorer` on `EventID 4738`: User account was changed.
+- Look for suspicious changes i.e. user no longer needs a password, password never expires, etc.
+
+5. Review if the account was added to privileged groups by examining group membership change events.
+- Filter in `Log Explorer` on `EventID 4728`: User added to a security-enabled global group
+- Check which group they were added to, i.e. `Administrator`.
+
+6. Look for logon success events associated with the account to determine if it's actively being used.
+- Filter in `Log Explorer` on `EventID 4624`: Successful logon
+- Also filtering purely on `TargetUserName:hiddenuser$` to see all related activity.
+
+- **Account was created**
+![image](https://github.com/user-attachments/assets/3cfc496a-4eab-481f-a22b-2491ce0e17f1)
+
+- **With 0 Successful Logins**
+![image](https://github.com/user-attachments/assets/d0a5b462-ffba-4865-8071-8206750b7aa5)
+
+7. Examine any scheduled tasks or services configured to run under this account's context
+- Filter in `Log Explorer` on `EventID 4698`: A scheduled task was created on a Windows System and `EventID 7045`: A new service was installed
+- Review the image path or command being executed
+- Review the user account under which the task/service runs
+- Review the parent process
+- Look for anomalies such as non-standard paths or anything running as the suspicious user.
+
+8. 

@@ -128,4 +128,12 @@ net user hiddenuser$ Passw0rd! /add
 - Review the parent process
 - Look for anomalies such as non-standard paths or anything running as the suspicious user.
 
-8. 
+8. Review registry modifications and service installations related to the hidden user. Disable the account immediately if the creation is unauthorized.
+- Filter in `Log Explorer` on `EventID 4657`: Registry value modified and `EventID 4663`: Object access attempt
+- Look for suspicious modifications under key paths `HKLM\Software or System`
+
+9. Remove the account from any privileged groups and investigate other systems for similar hidden accounts
+- Block or disable the user via EDR i.e. Crowdstrike
+
+10. Investigate the system and user who created the account for other compromise indicators
+- Audit the creator - In this case it was the Administrator. Check if its a service or other domain user, then view their recent activity. Cross reference with EDR. What did they do next? 

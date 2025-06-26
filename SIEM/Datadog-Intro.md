@@ -1,7 +1,7 @@
 # 🔎 Datadog: Introducing a new security tool!
 
 ## 📖 Overview
-This project is an expansion on my hands-on SIEM series. In previous projects I have focused primarily on Splunk, leveraging its capabilities for investigative work on attacker datasets, and practice creating alerts / dashboards in a SOC-style mindset. In this project, I pivot to Datadog, a cloud-based monitoring and analytics platform. I explore Datadogs UI as a whole, while focusing on Datadog's Cloud SIEM tool which is a solution built on top of Datadog's log management platform, designed to detect threats in cloud-scale environments. With this project I am expanding my skillset, familiarising myself with security standard tools outside of Splunk, showcasing my proactiveness and adaptability to other platforms.
+This project builds on my hands-on SIEM series. While I previously focused on Splunk for threat detection and dashboarding, here I pivot to Datadog, a cloud-native monitoring and analytics platform. Specifically, I focus on Cloud SIEM, Datadog’s log-based threat detection layer, designed for modern, cloud-scale environments. My goal is to broaden my platform exposure, demonstrate proactive learning, and simulate end-to-end detection workflows using Datadog.
 
 ## 🎯 Goals
 - Configure and launch a fresh EC2 instance running Windows
@@ -70,6 +70,7 @@ Now that security logs are being successfully ingested into Datadog Log Explorer
 3. To trigger the alert I ran the following line in `PowerShell` as Administrator on the Virtual Machine.
 
 ```
+# Simulate a stealth user creation to trigger detection rule
 net user hiddenuser$ Passw0rd! /add
 ```
 
@@ -136,4 +137,7 @@ net user hiddenuser$ Passw0rd! /add
 - Block or disable the user via EDR i.e. Crowdstrike
 
 10. Investigate the system and user who created the account for other compromise indicators
-- Audit the creator - In this case it was the Administrator. Check if its a service or other domain user, then view their recent activity. Cross reference with EDR. What did they do next? 
+- Audit the creator - In this case it was the Administrator. Check if its a service or other domain user, then view their recent activity. Cross reference with EDR. What did they do next?
+
+### Summary
+This project demonstrates a full lifecycle use of Datadog Cloud SIEM — from deploying the agent and ingesting logs to simulating attacks, triggering alerts, and triaging incidents. I successfully validated detection rules using a stealth account creation tactic, mapped it to MITRE ATT&CK (T1136), and walked through Datadog’s built-in playbook triage steps. This hands-on approach helped me quickly familiarize myself with Datadog’s UI, detection pipelines, and real-world SOC workflows.

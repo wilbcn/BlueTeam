@@ -39,9 +39,9 @@ In this section, I briefly cover the configuration and installation of the Datad
 - **My .yaml file**
 ![image](https://github.com/user-attachments/assets/1c9ca30f-9c49-4c35-a27f-a3b2f2fdd68a)
 
-6. After restarting the Datadog agent via the CLI (`Restart-Service datadogagent -Force`), logs started to appear in `Log Explorer`.
+6. After restarting the Datadog agent via the CLI (`Restart-Service datadogagent -Force`), logs started to appear in `Log Explorer`. Datadog query `source:windows.events`.
 
-![image](https://github.com/user-attachments/assets/0a426d92-1b43-44b5-b0c1-e36af917bf27)
+![image](https://github.com/user-attachments/assets/63a41016-952b-4ed9-919f-dbc83c57c262)
 
 7. At this stage I also enabled CWS and CSPM inside (`C:\ProgramData\Datadog\security-agent.yaml`). While not required for Cloud SIEM log-based detections, these protection features activate runtime security features that are part of Datadogs full security platform. CSPM for instance, continously scans cloud-based resources such as user roles and privileges, access keys or tokens, and infrastructure components, for vulnerable configurations.
 

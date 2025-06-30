@@ -87,13 +87,18 @@ powershell -enc UwB0AGEAcgB0AC0AUABvAHMAZQBzAHMAIABjAGEAbABjAC4AZQB4AGUA
 - The base64 string decodes to: `Start-Process calc.exe` (CyberChef was used here). This example is harmless - but the tactic realistic. Attackers use this method to hide dangerous payloads.
 
 ### 4. SOC Investigation (NIST SP 800-61)
-In this scenario, the SOC team have had numerous alerts raised on their EDR and SIEM platform, which contained the following alert messages:
-- Number of invalid logins for account `itadmin` has exceeded threshold of 3 within 10 minutes.
-- New user account has been created and added to a security-enabled group
-- Malicious PowerShell code detected on host: `EC2AMAZ-NILIHU8`
+In this scenario, multiple alerts were raised by the organization’s SIEM (Splunk) and EDR (Microsoft XDR) platforms, indicating suspicious behavior on host EC2AMAZ-NILIHU8. Alert messages included:
+- Excessive failed login attempts for account itadmin (threshold exceeded: 3 within 10 minutes)
+- New user account creation followed by membership in a privileged security group
+- Encoded PowerShell execution detected on the endpoint
 
 ### 4.1 Preparation
-This phase of the framework comes before an incident, and involves log management, playbooks, detection rules such as in EDR/SIEM platforms, asset inventories, and user training. The goal of this stage overall is to ensure you are ready before a security incident.
+This phase precedes the incident and includes the setup of log collection mechanisms, detection rules (EDR/SIEM), documented playbooks, and incident handling procedures. Proper preparation ensures that the organisation has visibility and response capability before threats occur. In this lab environment, preparation included:
+
+- Sysmon installed with a hardened configuration (Olaf Hartong’s modular config)
+- AWS EC2 host configured for inbound RDP access
+- User monitoring and logging enabled
+
 
 ### 4.2 Detection & Analysis
 The alerts from this incident have came from the organisations SIEM (Splunk) and EDR (Microsoft XDR) platforms. However, this can also involve manual user escalations or threat intel. In this stage, triaging the alert helps to confirm if it is real by investigating the alert sources in greater detail. In this project, as the SOC L1 analyst, I assign myself ownership of the cases, and begin the investigation. The SIEM alerts have revealed IOCs (indicators of compromise) such as host: `EC2AMAZ-NILIHU8` and user: `itadmin`. I then access the machine and open up Windows Event Viewer to investigate further.
@@ -132,7 +137,44 @@ C:\Users\svc_task\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine
 
 ![image](https://github.com/user-attachments/assets/1c127e03-48e0-401c-9845-e148a6d0db7e)
 
-This is when I discovered more malicious PowerShell code that was not picked up in Sysmon. This was a `certutil.exe` abuse attempt to fetch a malicious payload from an external website.
+This is when I discovered more malicious PowerShell code that was not picked up in Sysmon. This was a `certutil.exe` abuse attempt to fetch a malicious payload from an external website. Although this is a simulated security event, the next step in this investigation would be to research the malicious IP address using threat intelligence platforms such as `Cisco Threat Intelligence` and `Virus Total`.
 
 ### 4.3 Containment
+The containment phase aims to limit the damage of the security event and prevent the damage from spreading. This can involve quarantining the endpoint and isolating it from the network in the EDR, and disabling the compromised accounts. After confirming the suspicious behaviour, I ran the following to disable the compromised account while the investigation would continue.
 
+```
+Disable-LocalUser -Name "itadmin"
+```
+
+### 4.4 Eradication
+This phase covers the removal of the root cause of the threat. It can involve removing malware, cleaning up registry keys, patching exploited vulnerabilities, and blocking malicious domain/IP addresses. For this phase I removed the malicious user account `svc_task`, and blocking the identified malicious IP address.
+
+```
+Remove-LocalUser -Name "svc_task"
+```
+
+### 4.5 Recovery
+This phase aims to restore the systems to a normal operation, involving re-imaging of the infected machine(s) if necessary, resetting user credentials, and continious monitoring for refinection. In this phase I would remove the payload.txt and audit for persistence.
+
+```
+Remove-Item C:\Temp\payload.txt
+```
+
+Next I would reset `itadmin` credentials and inform the appropriate account owner of proper use of strong passwords. Enforcing a password policy via the EDR should also be done - [NIST](https://auditboard.com/blog/nist-password-guidelines) has their own password policy framework.
+
+```
+net user itadmin NewSecurePassword123!
+```
+
+Following this, I would tighten the AWS Security Group rules, which previously allowed uncontrolled external access into the machine.
+
+![image](https://github.com/user-attachments/assets/b057f502-7805-4a5e-9d95-b7ff5866c1e0)
+
+### 4.6 Lessons Learned
+This phase is used to review and improve post incident. It can include updating detection rules, improving supporting documents like playbooks, and educating users/user awareness training. For this project, the security posture improvements would include:
+
+- Detection: Add rules for encoded PowerShell (-enc), excessive 4625 events, and admin group changes
+- Hygiene: Remove unused accounts, enforce least privilege
+- Awareness: Train staff to recognize brute-force and phishing attempts
+- Documentation: Update playbooks and IR runbooks with this scenario
+- Monitoring: Ensure continuous logging coverage via Sysmon, EDR, and Windows

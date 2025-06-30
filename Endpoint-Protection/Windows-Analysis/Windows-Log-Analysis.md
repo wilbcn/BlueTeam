@@ -170,7 +170,10 @@ Following this, I would tighten the AWS Security Group rules, which previously a
 
 ![image](https://github.com/user-attachments/assets/b057f502-7805-4a5e-9d95-b7ff5866c1e0)
 
-### 4.6 Lessons Learned
+### 5 MITRE ATTACK
+
+
+### 6 Lessons Learned
 This phase is used to review and improve post incident. It can include updating detection rules, improving supporting documents like playbooks, and educating users/user awareness training. For this project, the security posture improvements would include:
 
 - Detection: Add rules for encoded PowerShell (-enc), excessive 4625 events, and admin group changes

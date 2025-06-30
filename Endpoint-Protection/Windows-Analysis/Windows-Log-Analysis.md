@@ -96,15 +96,15 @@ In this scenario, the SOC team have had numerous alerts raised on their EDR and 
 This phase of the framework comes before an incident, and involves log management, playbooks, detection rules such as in EDR/SIEM platforms, asset inventories, and user training. The goal of this stage overall is to ensure you are ready before a security incident.
 
 ### 4.2 Detection & Analysis
-The alerts from this incident have came from the organisations SIEM (Splunk) and EDR (Microsoft XDR) platforms. However, this can also involve manual user escalations or threat intel. In this stage, triaging the alert helps to confirm if it is real by investigating the alert sources in greater detail. In this project, the SOC L1 assigns himself ownership of the cases, and begins the investigation. The SIEM alerts have revealed IOCs (indicators of compromise) such as host: `EC2AMAZ-NILIHU8` and user: `itadmin`. The L1 then pivots into this machine and opens up Windows Event Viewer to look deeper.
+The alerts from this incident have came from the organisations SIEM (Splunk) and EDR (Microsoft XDR) platforms. However, this can also involve manual user escalations or threat intel. In this stage, triaging the alert helps to confirm if it is real by investigating the alert sources in greater detail. In this project, as the SOC L1 analyst, I assign myself ownership of the cases, and begin the investigation. The SIEM alerts have revealed IOCs (indicators of compromise) such as host: `EC2AMAZ-NILIHU8` and user: `itadmin`. I then access the machine and open up Windows Event Viewer to investigate further.
 
-In `Event Viewer` -> `Windows Logs` -> `Security` the L1 filters on Event ID `4625`: failed logins. 10 login attempts were made at around `12:37 PM`. By going through these events individually, we see that the account name `itadmin` has been under a brute-force attack. The IP address 16.16.66.207 is an external/unknown IP address. The failure reason explains that the username of password was incorrect. 
+In `Event Viewer` -> `Windows Logs` -> `Security` I begin by filtering on Event ID `4625`: failed logins. 10 login attempts were made at around `12:37 PM`. By going through these events individually, we see that the account name `itadmin` has been under a brute-force attack. The IP address 16.16.66.207 is an external/unknown IP address. The failure reason explains that the username of password was incorrect. 
 
 ![image](https://github.com/user-attachments/assets/fcd9b2bd-e695-4594-8e67-59113a04af3b)
 
 ![image](https://github.com/user-attachments/assets/bb4a9e38-8ac2-4eab-b99d-07c59513f34f)
 
-The L1 then changes his search towards successful logins: Event ID `4624` and creates a custom XML filter on the target username identified `itadmin`.
+I then look for successful logins: Event ID `4624` and create a custom XML filter on the target username identified `itadmin`.
 
 ![image](https://github.com/user-attachments/assets/a58d4f74-e558-4da9-a5fd-f9f73b7b2c69)
 
@@ -133,3 +133,6 @@ C:\Users\svc_task\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine
 ![image](https://github.com/user-attachments/assets/1c127e03-48e0-401c-9845-e148a6d0db7e)
 
 This is when I discovered more malicious PowerShell code that was not picked up in Sysmon. This was a `certutil.exe` abuse attempt to fetch a malicious payload from an external website.
+
+### 4.3 Containment
+

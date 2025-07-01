@@ -172,6 +172,17 @@ Following this, I would tighten the AWS Security Group rules, which previously a
 
 ### 5 MITRE ATTACK
 
+| Tactic (TA)                                  | Technique (ID)                                                                                                      | Description                                                                                 | Evidence in Lab                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| **Initial Access**                           | [T1110.001 – Brute Force: Password Guessing](https://attack.mitre.org/techniques/T1110/001/)                        | The attacker used Hydra to brute-force login credentials for the `itadmin` account.         | 4625 (Failed logons), 4624 (Success)          |
+| **Execution**                                | [T1059.001 – PowerShell](https://attack.mitre.org/techniques/T1059/001/)                                            | PowerShell was used to execute commands on the target, including encoded scripts.           | Sysmon ID 1, PSReadLine                       |
+| **Execution**                                | [T1105 – Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)                                         | Attacker used `certutil.exe` to download a payload from an external domain.                 | PSReadLine, Sysmon (if captured)              |
+| **Persistence**                              | [T1136.001 – Create Account: Local Account](https://attack.mitre.org/techniques/T1136/001/)                         | A new local account `svc_task` was created and added to the Admin group for persistence.    | 4720 (Account created), 4732 (Group addition) |
+| **Privilege Escalation**                     | [T1068 – Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068/) *(mapped conceptually)* | Account `svc_task` was elevated to administrator after being created.                       | 4732                                          |
+| **Defense Evasion**                          | [T1140 – Deobfuscate/Decode Files or Information](https://attack.mitre.org/techniques/T1140/)                       | PowerShell command was base64 encoded to hide intent from casual inspection or alert rules. | EncodedCommand flag in logs                   |
+| **Lateral Movement** *(simulated)*           | [T1078 – Valid Accounts](https://attack.mitre.org/techniques/T1078/)                                                | The attacker reused valid credentials for lateral movement (RDP with known password).       | 4624, RDP session logs                        |
+| **Command and Control** *(simulated)*        | [T1105 – Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)                                         | Downloading of remote file indicates possible C2 setup or payload staging.                  | certutil.exe use                              |
+
 
 ### 6 Lessons Learned
 This phase is used to review and improve post incident. It can include updating detection rules, improving supporting documents like playbooks, and educating users/user awareness training. For this project, the security posture improvements would include:

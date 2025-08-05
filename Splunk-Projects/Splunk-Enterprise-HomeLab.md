@@ -91,7 +91,7 @@ By default, Splunk Enterprise runs on `http`, which is an insecure protocol. For
 2. Toggled the radio button to `Yes` for `Enable SSL (HTTPS) in Splunk Web?`, then clicked save.
 3. Back to the CLI now, I restarted splunk. 
 ```
-root@my-ip-address:/opt/splunk/etc/system# /opt/splunk/bin/splunk restart
+root@my-ip-address: /opt/splunk/bin/splunk restart
 ```
 4. I was then able to successfully access the Splunk Server via `https`.
 
